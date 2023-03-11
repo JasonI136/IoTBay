@@ -50,6 +50,9 @@ public class MainServlet extends HttpServlet {
             throw new ServletException("An error occurred whilst intialising the database: " + e.getMessage());
         }
         
+        // Make the db object accessible from other servlets.
+        getServletContext().setAttribute("db", db);
+        
         
         
     }
