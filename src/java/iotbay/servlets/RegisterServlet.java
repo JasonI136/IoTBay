@@ -6,8 +6,8 @@ package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
 import iotbay.database.UserManager;
+import iotbay.models.User;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Properties;
@@ -20,53 +20,18 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author cmesina
  */
-public class MainServlet extends HttpServlet {
+public class RegisterServlet extends HttpServlet {
     
-    private Properties appConfig;
+    UserManager userManager;
 
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
         
-        // Load the application configuration.
-        InputStream inputStream = getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
+        Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
         
-        appConfig = new Properties();
-        
-        try {
-            appConfig.load(inputStream);
-        } catch (IOException err) {
-            throw new ServletException("Application configuration failed to load.");
-        }
-        
-        // Initialise the database
-        DatabaseManager db;
-        try {
-             db = new DatabaseManager(
-                appConfig.getProperty("database.url"), 
-                appConfig.getProperty("database.username"),
-                appConfig.getProperty("database.password"),
-                appConfig.getProperty("database.name")
-            );
-        } catch (Exception e) {
-            throw new ServletException("An error occurred whilst intialising the database: " + e.getMessage());
-        }
-        
-        UserManager userManager = new UserManager(db, Integer.parseInt(appConfig.getProperty("auth.saltLength")), Integer.parseInt(appConfig.getProperty("auth.encryptionIterations")));
-        
-        // Make the db object accessible from other servlets.
-        getServletContext().setAttribute("db", db);
-        // Make config accessible from other servlets.
-        getServletContext().setAttribute("appConfig", appConfig);
-        // Make user manager accessible from other servlets.
-        getServletContext().setAttribute("userManager", userManager);
-        
-        
-        
-        
+        this.userManager = (UserManager) getServletContext().getAttribute("userManager");
     }
-    
-    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -85,10 +50,10 @@ public class MainServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet MainServlet</title>");            
+            out.println("<title>Servlet RegisterServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet MainServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RegisterServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -120,7 +85,42 @@ public class MainServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String emailAddress = request.getParameter("email");
+        String address = request.getParameter("address");
+        
+        int phoneNumber = 0;
+        try {
+           phoneNumber = Integer.parseInt(request.getParameter("phone"));
+        } catch (Exception e) {
+            throw new ServletException("Unable to parse phone number: " + e.getMessage());
+        } 
+        
+        User newUser = new User();
+        newUser.setUsername(username);
+        newUser.setPassword(password);
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
+        newUser.setEmail(emailAddress);
+        newUser.setAddress(address);
+        newUser.setPhoneNumber(phoneNumber);
+        
+        try {
+            this.userManager.registerUser(newUser);
+        } catch (Exception e) {
+            throw new ServletException("An error occurred whilst registering " + username + ". " + e.getMessage());
+        }
+        
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("Registration successful");
+        }
+        
     }
 
     /**
@@ -132,5 +132,6 @@ public class MainServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+     
 
 }
