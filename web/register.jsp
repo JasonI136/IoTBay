@@ -16,7 +16,7 @@
     </head>
 
     <body>
-        <section class="vh-100" style="background-color: #eee;">
+        <section class="vh-100" style="background-color: #fff;">
             <div class="container h-100">
                 <div class="row d-flex justify-content-center align-items-center h-100">
                     <div class="col-lg-12 col-xl-11">
@@ -32,56 +32,55 @@
                                             <div class="d-flex flex-row align-items-center mb-4">
                                                 <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                                 <div class="form-outline flex-fill mb-0">
-                                                    <input type="text" id="username" name="username" required class="form-control" />
                                                     <label class="form-label test" for="username">Your Username</label>
+                                                    <input type="text" id="username" name="username" required class="form-control" />
                                                 </div>
                                             </div>
 
                                             <div class="d-flex flex-row align-items-center mb-4">
                                                 <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                                 <div class="form-outline flex-fill mb-0">
-                                                    <input type="text" id="firstName" name="firstName" required class="form-control" />
                                                     <label class="form-label" for="firstName">Your First Name</label>
+                                                    <input type="text" id="firstName" name="firstName" required class="form-control" />
                                                 </div>
                                             </div>
-
                                             <div class="d-flex flex-row align-items-center mb-4">
                                                 <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                                 <div class="form-outline flex-fill mb-0">
-                                                    <input type="text" id="lastName" name="lastName" required class="form-control" />
                                                     <label class="form-label" for="firstName">Your Last Name</label>
+                                                    <input type="text" id="lastName" name="lastName" required class="form-control" />
                                                 </div>
                                             </div>
 
                                             <div class="d-flex flex-row align-items-center mb-4">
                                                 <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                                 <div class="form-outline flex-fill mb-0">
-                                                    <input type="email" id="email" name="email" required class="form-control" />
                                                     <label class="form-label" for="email">Your Email</label>
+                                                    <input type="email" id="email" name="email" required class="form-control" />
                                                 </div>
                                             </div>
 
                                             <div class="d-flex flex-row align-items-center mb-4">
                                                 <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                                 <div class="form-outline flex-fill mb-0">
-                                                    <input type="password" id="password" name="password" required class="form-control" />
                                                     <label class="form-label" for="password">Password</label>
+                                                    <input type="password" id="password" name="password" required class="form-control" />
                                                 </div>
                                             </div>
                                             
                                             <div class="d-flex flex-row align-items-center mb-4">
                                                 <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                                 <div class="form-outline flex-fill mb-0">
-                                                    <input type="text" id="address" name="address" required class="form-control" />
                                                     <label class="form-label" for="address">Address</label>
+                                                    <input type="text" id="address" name="address" required class="form-control" />
                                                 </div>
                                             </div>
 
                                             <div class="d-flex flex-row align-items-center mb-4">
                                                 <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                                 <div class="form-outline flex-fill mb-0">
-                                                    <input type="tel" id="phone" name="phone" required class="form-control" />
                                                     <label class="form-label" for="phone">Phone Number</label>
+                                                    <input type="tel" id="phone" name="phone" required class="form-control" />
                                                 </div>
                                             </div>
                                             
