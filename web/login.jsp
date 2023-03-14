@@ -74,16 +74,16 @@
                         <form method="post" action="login-user">
                             <!-- Email input -->
                             <div class="form-outline mb-4">
+                                <label class="form-label" for="form3Example3">Username</label>
                                 <input type="text" name="username" id="form3Example3" class="form-control form-control-lg"
                                        placeholder="Enter a valid username" />
-                                <label class="form-label" for="form3Example3">Username</label>
                             </div>
 
                             <!-- Password input -->
                             <div class="form-outline mb-3">
+                                <label class="form-label" for="form3Example4">Password</label>
                                 <input type="password" name="password" id="form3Example4" class="form-control form-control-lg"
                                        placeholder="Enter password" />
-                                <label class="form-label" for="form3Example4">Password</label>
                             </div>
 
                             <div class="text-center text-lg-start mt-4 pt-2">
