@@ -5,6 +5,7 @@
 package iotbay.database;
 
 import iotbay.exceptions.UserNotFoundException;
+import iotbay.models.Product;
 import iotbay.models.User;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -13,6 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -49,10 +52,48 @@ public class DatabaseManager {
             conn.commit();
         }
         
+        if (!this.tableExists("PRODUCTS")) {
+            String createTableQuery = "CREATE TABLE PRODUCTS (" 
+                + "productId INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," 
+                + "name VARCHAR(256)," 
+                + "description CLOB," 
+                + "price INT," 
+                + "quantity INT," 
+                + "PRIMARY KEY (productId)"
+                + ")";
+            
+            Statement stmt = this.conn.createStatement();
+            stmt.execute(createTableQuery);
+            conn.commit();
+        }
+        
         
         System.out.println("Database initalised successfully.");
 
                 
+    }
+    
+    public List<Product> getProducts(int limit, int offset) throws SQLException {
+        List<Product> productList = new ArrayList<>();
+        String sql = "SELECT * FROM PRODUCTS ORDER BY productId OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, offset);
+            pstmt.setInt(2, limit);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setProductId(rs.getInt("productId"));
+                    product.setName(rs.getString("name"));
+                    product.setDescription(rs.getString("description"));
+                    product.setPrice(rs.getInt("price"));
+                    product.setQuantity(rs.getInt("quantity"));
+                    productList.add(product);
+                }
+            }
+        }
+        return productList;
     }
     
     public User getUser(String username) throws SQLException, UserNotFoundException {
