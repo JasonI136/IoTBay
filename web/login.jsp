@@ -18,57 +18,6 @@ String error = request.getParameter("error");
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     </head>
     <body>
-        <nav class="navbar navbar-expand-sm   navbar-light bg-light">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li>
-                    <li class="nav-item dropdown dmenu">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                            Our Service
-                        </a>
-                        <div class="dropdown-menu sm-menu">
-                            <a class="dropdown-item" href="#">service2</a>
-                            <a class="dropdown-item" href="#">service 2</a>
-                            <a class="dropdown-item" href="#">service 3</a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Call</a>
-                    </li>
-                    <!-- <li class="nav-item dropdown dmenu">
-                     <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                       Dropdown link
-                     </a>
-                     <div class="dropdown-menu sm-menu">
-                       <a class="dropdown-item" href="#">Link 1</a>
-                       <a class="dropdown-item" href="#">Link 2</a>
-                       <a class="dropdown-item" href="#">Link 3</a>
-                       <a class="dropdown-item" href="#">Link 4</a>
-                       <a class="dropdown-item" href="#">Link 5</a>
-                       <a class="dropdown-item" href="#">Link 6</a>
-                     </div>
-                   </li> -->
-                </ul>
-                <div class="social-part">
-                    <i class="fa fa-facebook" aria-hidden="true"></i>
-                    <i class="fa fa-twitter" aria-hidden="true"></i>
-                    <i class="fa fa-instagram" aria-hidden="true"></i>
-                </div>
-            </div>
-        </nav>
-
         <section class="vh-100">
             <div class="container-fluid h-custom">
                 <div class="row d-flex justify-content-center align-items-center h-100">
