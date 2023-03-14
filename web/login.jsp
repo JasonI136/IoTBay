@@ -4,7 +4,13 @@
     Author     : cmesina
 --%>
 
+<%@page import="com.sun.xml.rpc.processor.modeler.j2ee.xml.paramValueType"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+
+<%
+String error = request.getParameter("error");
+%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -70,7 +76,15 @@
                         <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
                              class="img-fluid" alt="Sample image">
                     </div>
-                    <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                        <c:if test="${not empty param.error}">
+                            <div class="alert alert-danger" role="alert">
+                                ${param.error}
+                          </div>
+                        </c:if>
+                    
+                    
+
                         <form method="post" action="login-user">
                             <!-- Email input -->
                             <div class="form-outline mb-4">

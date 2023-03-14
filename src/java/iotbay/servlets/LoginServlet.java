@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");            
+            out.println("<title>Servlet LoginServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
@@ -72,44 +72,31 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         UserManager userManager = (UserManager) getServletContext().getAttribute("userManager");
-        
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        
+
         try {
             User user = userManager.authenticateUser(username, password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
                 response.sendRedirect(request.getContextPath() + "/user.jsp");
-                
-                
             } else {
                 response.setStatus(401);
-                response.setContentType("text/html;charset=UTF-8");
-                try (PrintWriter out = response.getWriter()) {
-                    /* TODO output your page here. You may use following sample code. */
-                    out.println("Login failed");
-                }
+                response.sendRedirect(request.getContextPath() + "/login.jsp?error=The%20username%20or%20password%20is%20incorrect.");
             }
         } catch (Exception e) {
             if (e instanceof UserNotFoundException) {
                 response.setStatus(404);
-                response.setContentType("text/html;charset=UTF-8");
-                try (PrintWriter out = response.getWriter()) {
-                    /* TODO output your page here. You may use following sample code. */
-                    out.println("User not found");
-                }
+                response.sendRedirect(request.getContextPath() + "/login.jsp?error=Account%20does%20not%20exist.");
             } else {
                 throw new ServletException("Error: " + e.getMessage());
             }
-            
+
         }
-        
-        
-        
-        
+
     }
 
     /**
