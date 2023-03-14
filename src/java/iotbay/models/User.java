@@ -103,6 +103,8 @@ public class User implements Serializable {
     public void setIsStaff(boolean isStaff) {
         this.isStaff = isStaff;
     }
+    
+    
 
 
 }

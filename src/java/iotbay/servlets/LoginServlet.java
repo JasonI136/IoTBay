@@ -6,6 +6,7 @@ package iotbay.servlets;
 
 import iotbay.database.UserManager;
 import iotbay.exceptions.UserNotFoundException;
+import iotbay.models.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -78,12 +79,12 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         
         try {
-            if (userManager.authenticateUser(username, password)) {
-                response.setContentType("text/html;charset=UTF-8");
-                try (PrintWriter out = response.getWriter()) {
-                    /* TODO output your page here. You may use following sample code. */
-                    out.println("Login successfull");
-                }
+            User user = userManager.authenticateUser(username, password);
+            if (user != null) {
+                request.getSession().setAttribute("user", user);
+                response.sendRedirect(request.getContextPath() + "/user.jsp");
+                
+                
             } else {
                 response.setStatus(401);
                 response.setContentType("text/html;charset=UTF-8");

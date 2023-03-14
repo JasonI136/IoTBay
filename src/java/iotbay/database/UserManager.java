@@ -42,12 +42,17 @@ public class UserManager {
         return newUser;
     }
     
-    public boolean authenticateUser(String username, String password) throws UserNotFoundException, Exception {
+    public User authenticateUser(String username, String password) throws UserNotFoundException, Exception {
         User user = this.db.getUser(username);
         
         byte[] salt = Base64.getDecoder().decode(user.getPasswordSalt());
         byte[] encryptedPassword = encryptPassword(password, salt);
-        return MessageDigest.isEqual(encryptedPassword, Base64.getDecoder().decode(user.getPassword()));
+        
+        if (MessageDigest.isEqual(encryptedPassword, Base64.getDecoder().decode(user.getPassword()))) {
+            return user;
+        } else {
+            return null;
+        }
     }
     
     private byte[] createSalt() {

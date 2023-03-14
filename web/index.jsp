@@ -7,11 +7,17 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<body>
+
+<h1>IoTBay</h1>
+
+<p>Welcome to the store!</p>
+
+<nav>
+<a href="<%=request.getContextPath()%>/login.jsp">LOGIN</a> |
+<a href="<%=request.getContextPath()%>/register.jsp">REGISTER</a> | 
+</nav>
+
+</body>
 </html>
+

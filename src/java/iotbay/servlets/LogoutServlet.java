@@ -4,13 +4,8 @@
  */
 package iotbay.servlets;
 
-import iotbay.database.DatabaseManager;
-import iotbay.database.UserManager;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.HashSet;
-import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,53 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author cmesina
  */
-public class MainServlet extends HttpServlet {
-    
-    private Properties appConfig;
-
-    @Override
-    public void init() throws ServletException {
-        super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-        
-        // Load the application configuration.
-        InputStream inputStream = getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
-        
-        appConfig = new Properties();
-        
-        try {
-            appConfig.load(inputStream);
-        } catch (IOException err) {
-            throw new ServletException("Application configuration failed to load.");
-        }
-        
-        // Initialise the database
-        DatabaseManager db;
-        try {
-             db = new DatabaseManager(
-                appConfig.getProperty("database.url"), 
-                appConfig.getProperty("database.username"),
-                appConfig.getProperty("database.password"),
-                appConfig.getProperty("database.name")
-            );
-        } catch (Exception e) {
-            throw new ServletException("An error occurred whilst intialising the database: " + e.getMessage());
-        }
-        
-        UserManager userManager = new UserManager(db, Integer.parseInt(appConfig.getProperty("auth.saltLength")), Integer.parseInt(appConfig.getProperty("auth.encryptionIterations")));
-        
-        // Make the db object accessible from other servlets.
-        getServletContext().setAttribute("db", db);
-        // Make config accessible from other servlets.
-        getServletContext().setAttribute("appConfig", appConfig);
-        // Make user manager accessible from other servlets.
-        getServletContext().setAttribute("userManager", userManager);
-        
-        
-        
-        
-    }
-    
-    
+public class LogoutServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -79,7 +28,19 @@ public class MainServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet LogoutServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet LogoutServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -94,7 +55,12 @@ public class MainServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        request.getSession().invalidate();
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("Logged out!");
+        }
     }
 
     /**
