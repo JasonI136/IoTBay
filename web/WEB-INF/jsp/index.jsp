@@ -114,7 +114,7 @@
                                 </div>
 
                                 <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
-                                    <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                    <h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1">
                                         Security RFID
                                     </h2>
                                 </div>
@@ -138,7 +138,7 @@
                                 </div>
 
                                 <div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
-                                    <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                    <h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1">
                                         2023 Displays
                                     </h2>
                                 </div>
@@ -162,7 +162,7 @@
                                 </div>
 
                                 <div class="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay="800">
-                                    <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                    <h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1">
                                         New arrivals
                                     </h2>
                                 </div>
