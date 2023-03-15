@@ -4,17 +4,6 @@
     Author     : cmesina
 --%>
 
-<%@page import="java.util.List"%>
-<%@page import="iotbay.database.DatabaseManager"%>
-<%@page import="iotbay.models.Product"%>
-
-<%
-    DatabaseManager db = (DatabaseManager) getServletContext().getAttribute("db");
-    List<Product> products = db.getProducts(10, 0);
-    request.setAttribute("products", products);
-%>
-
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <!DOCTYPE html>

@@ -8,9 +8,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 
-<%
-String error = request.getParameter("error");
-%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -26,15 +23,15 @@ String error = request.getParameter("error");
                              class="img-fluid" alt="Sample image">
                     </div>
                         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                        <c:if test="${not empty param.error}">
+                        <c:if test="${not empty error}">
                             <div class="alert alert-danger" role="alert">
-                                ${param.error}
+                                ${error}
                           </div>
                         </c:if>
                     
                     
 
-                        <form method="post" action="login-user">
+                        <form method="post" action="login">
                             <!-- Email input -->
                             <div class="form-outline mb-4">
                                 <label class="form-label" for="form3Example3">Username</label>
@@ -52,7 +49,7 @@ String error = request.getParameter("error");
                             <div class="text-center text-lg-start mt-4 pt-2">
                                 <button type="submit" value="Login" class="btn btn-primary btn-lg"
                                         style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
-                                <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="#!"
+                                <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="${pageContext.request.contextPath}/register"
                                                                                                   class="link-danger">Register</a></p>
                             </div>
 

@@ -54,11 +54,11 @@
                             My Account
                         </a>
 
-                        <a href="<%=request.getContextPath()%>/login.jsp" class="flex-c-m trans-04 p-lr-25">
+                        <a href="${pageContext.request.contextPath}/login" class="flex-c-m trans-04 p-lr-25">
                             Login
                         </a>
 
-                        <a href="<%=request.getContextPath()%>/register.jsp" class="flex-c-m trans-04 p-lr-25">
+                        <a href="${pageContext.request.contextPath}/register" class="flex-c-m trans-04 p-lr-25">
                             Register
                         </a>
                     </div>
@@ -86,7 +86,7 @@
                             </li>
 
                             <li>
-                                <a href="product.html">Shop</a>
+                                <a href="${pageContext.request.contextPath}/shop">Shop</a>
                             </li>
 
                             <li class="label1" data-label1="hot">

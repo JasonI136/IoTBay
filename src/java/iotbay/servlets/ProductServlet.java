@@ -4,11 +4,12 @@
  */
 package iotbay.servlets;
 
-import iotbay.database.UserManager;
-import iotbay.exceptions.UserNotFoundException;
-import iotbay.models.User;
+import iotbay.database.DatabaseManager;
+import iotbay.models.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,18 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author cmesina
  */
-public class LoginServlet extends HttpServlet {
+public class ProductServlet extends HttpServlet {
+    
+    DatabaseManager db;
+
+    @Override
+    public void init() throws ServletException {
+        super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
+    }
+    
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +49,10 @@ public class LoginServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
+            out.println("<title>Servlet ProductServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ProductServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,7 +70,17 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+        
+        List<Product> products;
+        try {
+            products = db.getProducts(10, 0);
+        } catch (SQLException e) {
+            throw new ServletException("Failed to query database: " + e.getMessage());
+        }
+        
+        
+        request.setAttribute("products", products);
+        request.getRequestDispatcher("/WEB-INF/jsp/products.jsp").forward(request, response);
     }
 
     /**
@@ -72,34 +94,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        UserManager userManager = (UserManager) getServletContext().getAttribute("userManager");
-
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        try {
-            User user = userManager.authenticateUser(username, password);
-            if (user != null) {
-                request.getSession().setAttribute("user", user);
-                response.sendRedirect(request.getContextPath() + "/user");
-            } else {
-                response.setStatus(401);
-                request.setAttribute("error", "The username or password was incorrect.");
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
-               
-            }
-        } catch (Exception e) {
-            if (e instanceof UserNotFoundException) {
-                response.setStatus(404);
-                request.setAttribute("error", "The account does not exist.");
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
-            } else {
-                throw new ServletException("Error: " + e.getMessage());
-            }
-
-        }
-
+        processRequest(request, response);
     }
 
     /**

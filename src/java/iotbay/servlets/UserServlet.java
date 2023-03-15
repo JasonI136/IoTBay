@@ -4,9 +4,6 @@
  */
 package iotbay.servlets;
 
-import iotbay.database.UserManager;
-import iotbay.exceptions.UserNotFoundException;
-import iotbay.models.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -18,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author cmesina
  */
-public class LoginServlet extends HttpServlet {
+public class UserServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +34,10 @@ public class LoginServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
+            out.println("<title>Servlet UserServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UserServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,7 +55,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
     }
 
     /**
@@ -72,34 +69,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        UserManager userManager = (UserManager) getServletContext().getAttribute("userManager");
-
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        try {
-            User user = userManager.authenticateUser(username, password);
-            if (user != null) {
-                request.getSession().setAttribute("user", user);
-                response.sendRedirect(request.getContextPath() + "/user");
-            } else {
-                response.setStatus(401);
-                request.setAttribute("error", "The username or password was incorrect.");
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
-               
-            }
-        } catch (Exception e) {
-            if (e instanceof UserNotFoundException) {
-                response.setStatus(404);
-                request.setAttribute("error", "The account does not exist.");
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
-            } else {
-                throw new ServletException("Error: " + e.getMessage());
-            }
-
-        }
-
+        processRequest(request, response);
     }
 
     /**
