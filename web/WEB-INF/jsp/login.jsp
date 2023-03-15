@@ -23,9 +23,16 @@
                              class="img-fluid" alt="Sample image">
                     </div>
                         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                            
                         <c:if test="${not empty error}">
                             <div class="alert alert-danger" role="alert">
                                 ${error}
+                          </div>
+                        </c:if>
+                            
+                        <c:if test="${not empty success}">
+                            <div class="alert alert-success" role="alert">
+                                ${success}
                           </div>
                         </c:if>
                     

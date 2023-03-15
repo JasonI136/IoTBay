@@ -4,6 +4,7 @@
  */
 package iotbay.database;
 
+import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.User;
 import java.security.MessageDigest;
@@ -31,7 +32,7 @@ public class UserManager {
         this.db = db;
     }
     
-    public User registerUser(User newUser) throws Exception {
+    public User registerUser(User newUser) throws Exception, UserExistsException { 
         byte[] salt = this.createSalt();
         byte[] passwordHash = this.encryptPassword(newUser.getPassword(), salt);
         

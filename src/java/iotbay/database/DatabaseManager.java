@@ -4,6 +4,7 @@
  */
 package iotbay.database;
 
+import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.Product;
 import iotbay.models.User;
@@ -121,7 +122,46 @@ public class DatabaseManager {
        return user;
     }
     
-    public void addUser(User user) throws SQLException { 
+     public User getUserByEmail(String email) throws SQLException, UserNotFoundException {
+        PreparedStatement userQuery = this.conn.prepareStatement("SELECT * FROM USERS WHERE email = ?");
+        userQuery.setString(1, email);
+        
+        ResultSet rs = userQuery.executeQuery();
+        
+        if (!rs.next()) {
+            throw new UserNotFoundException("The user with email " + email + " does not exist.");
+        }
+        
+       User user = new User();
+       user.setUserId(rs.getInt("userId"));
+       user.setUsername(rs.getString("username"));
+       user.setPassword(rs.getString("password"));
+       user.setPasswordSalt(rs.getString("passwordSalt"));
+       user.setFirstName(rs.getString("firstName"));
+       user.setLastName(rs.getString("lastName"));
+       user.setEmail(rs.getString("email"));
+       user.setAddress(rs.getString("address"));
+       user.setPhoneNumber(rs.getInt("phoneNumber"));
+       user.setIsStaff(rs.getBoolean("isStaff"));
+       
+       return user;
+    }
+    
+    public void addUser(User user) throws SQLException, UserExistsException {
+        
+        PreparedStatement checkUserQuery = this.conn.prepareStatement(
+        "SELECT COUNT(*) FROM USERS WHERE username = ? OR email = ?"
+        );
+        
+        checkUserQuery.setString(1, user.getUsername());
+        checkUserQuery.setString(2, user.getEmail());
+        
+        ResultSet rs = checkUserQuery.executeQuery();
+        
+        if (rs.next() && rs.getInt(1) > 0) {
+            throw new UserExistsException("User already exists.");
+        }
+        
         PreparedStatement addUserQuery = this.conn.prepareStatement(
                 "INSERT INTO USERS (username, password, passwordSalt, firstName, lastName, email, address, phoneNumber) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"

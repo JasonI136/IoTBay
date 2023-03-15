@@ -5,14 +5,14 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <!DOCTYPE html>
 <html>
     <head>
         <title>Registration Form</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
         <link rel="stylesheet"  type="text/css" href="styles.css" />
-        <style><%@include file="/WEB-INF/css/style.css"%></style>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/style.css">
     </head>
 
     <body>
@@ -26,13 +26,19 @@
                                     <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
 
                                         <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
+                                         <c:if test="${not empty error}">
+                                            <div class="alert alert-danger" role="alert">
+                                                ${error}
+                                            </div>
+                                        </c:if>
 
+                                        
                                         <form class="mx-1 mx-md-4" method="POST" action="register">
 
                                             <div class="d-flex flex-row align-items-center mb-4">
                                                 <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                                 <div class="form-outline flex-fill mb-0">
-                                                    <label class="form-label test" for="username">Your Username</label>
+                                                    <label class="form-label" for="username">Your Username</label>
                                                     <input type="text" id="username" name="username" required class="form-control" />
                                                 </div>
                                             </div>

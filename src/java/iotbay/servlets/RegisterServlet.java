@@ -4,12 +4,11 @@
  */
 package iotbay.servlets;
 
-import iotbay.database.DatabaseManager;
 import iotbay.database.UserManager;
+import iotbay.exceptions.UserExistsException;
 import iotbay.models.User;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashSet;
 import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -112,14 +111,16 @@ public class RegisterServlet extends HttpServlet {
         try {
             this.userManager.registerUser(newUser);
         } catch (Exception e) {
+            if (e instanceof UserExistsException) {
+                request.setAttribute("error", "A user with the same username or email already exists.");
+                request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            }
+            
             throw new ServletException("An error occurred whilst registering " + username + ". " + e.getMessage());
         }
         
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("Registration successful");
-        }
+        request.setAttribute("success", "Registration successful, you may now login.");
+        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
         
     }
 
