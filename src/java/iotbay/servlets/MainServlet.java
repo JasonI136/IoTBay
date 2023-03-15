@@ -6,8 +6,11 @@ package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
 import iotbay.database.UserManager;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Properties;
@@ -94,7 +97,29 @@ public class MainServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+            String path = request.getRequestURI().substring(request.getContextPath().length());
+            if (path.startsWith("/public/")) {
+            // Serve a local file
+            String filePath = request.getServletContext().getRealPath(path);
+            File file = new File(filePath);
+            if (file.exists()) {
+                response.setContentType(getServletContext().getMimeType(filePath));
+                FileInputStream input = new FileInputStream(file);
+                OutputStream output = response.getOutputStream();
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                }
+                input.close();
+                output.flush();
+            } else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+    } else {
+        // Forward the request to the JSP page
         request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
+    }
     }
 
     /**
