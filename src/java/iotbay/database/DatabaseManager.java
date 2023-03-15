@@ -4,6 +4,7 @@
  */
 package iotbay.database;
 
+import iotbay.exceptions.ProductNotFoundException;
 import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.Product;
@@ -120,6 +121,28 @@ public class DatabaseManager {
        user.setIsStaff(rs.getBoolean("isStaff"));
        
        return user;
+    }
+    
+    public Product getProduct(int productId) throws SQLException, ProductNotFoundException {
+        PreparedStatement productQuery = this.conn.prepareStatement("SELECT * FROM PRODUCTS WHERE productid = ?");
+        productQuery.setInt(1, productId);
+        
+        ResultSet rs = productQuery.executeQuery();
+        
+        if (!rs.next()) {
+            throw new ProductNotFoundException("The product with id " + productId + " does not exist.");
+        }
+        
+       Product product = new Product();
+       product.setProductId(rs.getInt("productid"));
+       product.setName(rs.getString("name"));
+       product.setDescription(rs.getString("description"));
+       product.setPrice(rs.getInt("price"));
+       product.setQuantity(rs.getInt("quantity"));
+        
+        
+       
+       return product;
     }
     
      public User getUserByEmail(String email) throws SQLException, UserNotFoundException {

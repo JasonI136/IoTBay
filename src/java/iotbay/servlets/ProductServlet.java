@@ -5,10 +5,12 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
+import iotbay.exceptions.ProductNotFoundException;
 import iotbay.models.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -71,6 +73,8 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        this.initShoppingCart(request);
+        
         List<Product> products;
         try {
             products = db.getProducts(10, 0);
@@ -94,7 +98,22 @@ public class ProductServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String pathInfo = request.getPathInfo();
+        
+        if (pathInfo != null && pathInfo.endsWith("/addtocart")) {
+            
+            
+            if (request.getParameter("productId") != null) {
+                try {
+                    this.initShoppingCart(request);
+                    List<Product> userShoppingCart = (ArrayList<Product>) request.getSession().getAttribute("shoppingCart");
+                     userShoppingCart.add(this.db.getProduct(Integer.parseInt(request.getParameter("productId"))));
+                } catch (Exception e) {
+                    throw new ServletException(e.getMessage());
+                }
+            }
+            response.sendRedirect(request.getContextPath() + "/shop");
+        }
     }
 
     /**
@@ -106,5 +125,13 @@ public class ProductServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    
+    private void initShoppingCart(HttpServletRequest request) {
+        List<Product> userShoppingCart = (ArrayList<Product>) request.getSession().getAttribute("shoppingCart");
+        if (userShoppingCart == null) {
+            userShoppingCart = new ArrayList<Product>();
+            request.getSession().setAttribute("shoppingCart", userShoppingCart);
+        }
+    }
 
 }
