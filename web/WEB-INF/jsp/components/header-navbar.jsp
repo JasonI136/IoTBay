@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -19,10 +20,13 @@
             </div>
 
             <div class="right-top-bar flex-w h-full">
-                <a href="#" class="flex-c-m trans-04 p-lr-25">
-                    My Account
-                </a>
-
+            
+                
+                <c:if test = "${sessionScope.user != null}">
+                    <a href="#" class="flex-c-m trans-04 p-lr-25">
+                           ${sessionScope.user.firstName} ${sessionScope.user.lastName}
+                    </a>
+                 </c:if>
                 <a href="${pageContext.request.contextPath}/login" class="flex-c-m trans-04 p-lr-25">
                     Login
                 </a>
