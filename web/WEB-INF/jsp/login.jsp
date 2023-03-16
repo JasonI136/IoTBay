@@ -22,7 +22,10 @@
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/public/images/icons/favicon.png"/>
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/bootstrap/css/bootstrap.min.css">
 
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/fonts/iconic/css/material-design-iconic-font.min.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/fonts/linearicons-v1.0.0/icon-font.min.css">
+
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/animate/animate.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/css-hamburgers/hamburgers.min.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/animsition/css/animsition.min.css">
@@ -31,10 +34,9 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/slick/slick.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/MagnificPopup/magnific-popup.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/fonts/linearicons-v1.0.0/icon-font.min.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/main.css">
+
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/main.css">
     </head>
     <body>
         <header class="header-v4">
@@ -131,13 +133,11 @@
                             <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/lock.svg" alt="ICON">
                         </div>
 
-                        <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
-                            Submit
+                        <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer js-successful-login">
+                            Login
                         </button>
-                    </form>
+                    </form>                       
                 </div>
-
-
             </div>
         </section>	
 
@@ -311,27 +311,38 @@
                                 });
                             })
         </script>
+        
+        
+        <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script>
+           
+            $('.js-successful-login').each(function () {
+                $(this).on('click', function () {
+                    swal("Welcome!", "You have successfully logged in", "success");
+                });
+            });
 
+        </script>
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script>
-                            $('.js-pscroll').each(function () {
-                                $(this).css('position', 'relative');
-                                $(this).css('overflow', 'hidden');
-                                var ps = new PerfectScrollbar(this, {
-                                    wheelSpeed: 1,
-                                    scrollingThreshold: 1000,
-                                    wheelPropagation: false,
-                                });
+            $('.js-pscroll').each(function () {
+                $(this).css('position', 'relative');
+                $(this).css('overflow', 'hidden');
+                var ps = new PerfectScrollbar(this, {
+                    wheelSpeed: 1,
+                    scrollingThreshold: 1000,
+                    wheelPropagation: false,
+                });
 
-                                $(window).on('resize', function () {
-                                    ps.update();
-                                })
-                            });
+                $(window).on('resize', function () {
+                    ps.update();
+                })
+            });
         </script>
 
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKFWBqlKAGCeS1rMVoaNlwyayu0e0YRes"></script>
         <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>
