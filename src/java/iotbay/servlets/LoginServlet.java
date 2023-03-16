@@ -82,7 +82,9 @@ public class LoginServlet extends HttpServlet {
             User user = userManager.authenticateUser(username, password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
-                response.sendRedirect(request.getContextPath() + "/user");
+                request.setAttribute("success", "Login successful");
+                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+//                response.sendRedirect(request.getContextPath() + "/user");
             } else {
                 response.setStatus(401);
                 request.setAttribute("error", "The username or password was incorrect.");

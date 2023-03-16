@@ -37,6 +37,7 @@
 
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/main.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
     <body>
         <header class="header-v4">
@@ -73,8 +74,8 @@
                             <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="password" name="password" id="form3Example4" placeholder="Your Password">
                             <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/lock.svg" alt="ICON">
                         </div>
-
-                        <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer js-successful-login">
+                       
+                        <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
                             Login
                         </button>
                     </form>                       
@@ -84,147 +85,7 @@
 
         <!-- Footer -->
         <footer class="bg3 p-t-75 p-b-32">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-6 col-lg-3 p-b-50">
-                        <h4 class="stext-301 cl0 p-b-30">
-                            Categories
-                        </h4>
-
-                        <ul>
-                            <li class="p-b-10">
-                                <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                    Women
-                                </a>
-                            </li>
-
-                            <li class="p-b-10">
-                                <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                    Men
-                                </a>
-                            </li>
-
-                            <li class="p-b-10">
-                                <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                    Shoes
-                                </a>
-                            </li>
-
-                            <li class="p-b-10">
-                                <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                    Watches
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-3 p-b-50">
-                        <h4 class="stext-301 cl0 p-b-30">
-                            Help
-                        </h4>
-
-                        <ul>
-                            <li class="p-b-10">
-                                <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                    Track Order
-                                </a>
-                            </li>
-
-                            <li class="p-b-10">
-                                <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                    Returns 
-                                </a>
-                            </li>
-
-                            <li class="p-b-10">
-                                <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                    Shipping
-                                </a>
-                            </li>
-
-                            <li class="p-b-10">
-                                <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                    FAQs
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-3 p-b-50">
-                        <h4 class="stext-301 cl0 p-b-30">
-                            GET IN TOUCH
-                        </h4>
-
-                        <p class="stext-107 cl7 size-201">
-                            Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
-                        </p>
-
-                        <div class="p-t-27">
-                            <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                                <i class="fa fa-facebook"></i>
-                            </a>
-
-                            <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                                <i class="fa fa-instagram"></i>
-                            </a>
-
-                            <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                                <i class="fa fa-pinterest-p"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-3 p-b-50">
-                        <h4 class="stext-301 cl0 p-b-30">
-                            Newsletter
-                        </h4>
-
-                        <form>
-                            <div class="wrap-input1 w-full p-b-4">
-                                <input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
-                                <div class="focus-input1 trans-04"></div>
-                            </div>
-
-                            <div class="p-t-18">
-                                <button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-                                    Subscribe
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="p-t-40">
-                    <div class="flex-c-m flex-w p-b-18">
-                        <a href="#" class="m-all-1">
-                            <img src="${pageContext.request.contextPath}/public/images/icons/icon-pay-01.png" alt="ICON-PAY">
-                        </a>
-
-                        <a href="#" class="m-all-1">
-                            <img src="${pageContext.request.contextPath}/public/images/icons/icon-pay-02.png" alt="ICON-PAY">
-                        </a>
-
-                        <a href="#" class="m-all-1">
-                            <img src="${pageContext.request.contextPath}/public/images/icons/icon-pay-03.png" alt="ICON-PAY">
-                        </a>
-
-                        <a href="#" class="m-all-1">
-                            <img src="${pageContext.request.contextPath}/public/images/icons/icon-pay-04.png" alt="ICON-PAY">
-                        </a>
-
-                        <a href="#" class="m-all-1">
-                            <img src="${pageContext.request.contextPath}/public/images/icons/icon-pay-05.png" alt="ICON-PAY">
-                        </a>
-                    </div>
-
-                    <p class="stext-107 cl6 txt-center">
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-
-                    </p>
-                </div>
-            </div>
+            <jsp:include page="components/footer.jsp" />
         </footer>
 
 
@@ -255,16 +116,7 @@
 
 
         <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
-        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-        <script>
 
-                            $('.js-successful-login').each(function () {
-                                $(this).on('click', function () {
-                                    swal("Welcome!", "You have successfully logged in", "success");
-                                });
-                            });
-
-        </script>
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -282,6 +134,38 @@
                                     ps.update();
                                 })
                             });
+        </script>
+        
+      <script>
+        var success = "${success}";
+        var error = "${error}";
+        
+        if (success) {
+            swal.fire({
+                title: 'Welcome!',
+                icon: 'success',
+                text: 'Login successful!',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "${pageContext.request.contextPath}/user";
+                }
+            });
+            
+        }
+                
+        if (error) {
+            swal.fire({
+                title: 'Error',
+                icon: 'error',
+                text: '${error}',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        }
         </script>
 
         <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
