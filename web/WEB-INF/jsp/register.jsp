@@ -34,7 +34,7 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
     </head>
     <body>
-        <header>
+        <header class="header-v4">
             <div class="container-menu-desktop">
                 <jsp:include page="components/header-navbar.jsp" />
 
@@ -100,7 +100,7 @@
         </header>
 
         <!-- Title page -->
-        <div style="padding-top: 6%;">
+        <div>
             <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('${pageContext.request.contextPath}/public/images/bg-02.jpg');">
                 <h2 class="ltext-105 cl0 txt-center">
                     Sign up for IoTBay
