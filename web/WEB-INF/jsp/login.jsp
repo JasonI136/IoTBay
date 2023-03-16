@@ -37,6 +37,7 @@
 
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/main.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
     <body>
         <header class="header-v4">
@@ -132,8 +133,8 @@
                             <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="password" name="password" id="form3Example4" placeholder="Your Password">
                             <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/lock.svg" alt="ICON">
                         </div>
-
-                        <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer js-successful-login">
+                       
+                        <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
                             Login
                         </button>
                     </form>                       
@@ -174,16 +175,7 @@
         
         
         <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
-        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-        <script>
-           
-            $('.js-successful-login').each(function () {
-                $(this).on('click', function () {
-                    swal("Welcome!", "You have successfully logged in", "success");
-                });
-            });
-
-        </script>
+        
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -201,6 +193,38 @@
                     ps.update();
                 })
             });
+        </script>
+        
+      <script>
+        var success = "${success}";
+        var error = "${error}";
+        
+        if (success) {
+            swal.fire({
+                title: 'Welcome!',
+                icon: 'success',
+                text: 'Login successful!',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "${pageContext.request.contextPath}/user";
+                }
+            });
+            
+        }
+                
+        if (error) {
+            swal.fire({
+                title: 'Error',
+                icon: 'error',
+                text: '${error}',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        }
         </script>
 
         <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
