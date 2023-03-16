@@ -48,15 +48,8 @@
                 <jsp:include page="components/header-navbar.jsp" />
                 <jsp:include page="components/main-navbar.jsp" />
             </div>
-        </header>
-        <div>
-
-            <a href="<%=request.getContextPath()%>/logout">Logout</a>
-            <a href="<%=request.getContextPath()%>/logout" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
-                Logout
-            </a>
-        </div>                        
-
+        </header>                        
+            
         <!-- Title page -->
         <div>
             <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('${pageContext.request.contextPath}/public/images/bg-02.jpg');">

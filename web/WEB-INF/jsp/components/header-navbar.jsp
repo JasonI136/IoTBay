@@ -20,20 +20,28 @@
             </div>
 
             <div class="right-top-bar flex-w h-full">
-            
-                
+
+
                 <c:if test = "${sessionScope.user != null}">
                     <a href="#" class="flex-c-m trans-04 p-lr-25">
-                           ${sessionScope.user.firstName} ${sessionScope.user.lastName}
+                        ${sessionScope.user.firstName} ${sessionScope.user.lastName}
                     </a>
-                 </c:if>
-                <a href="${pageContext.request.contextPath}/login" class="flex-c-m trans-04 p-lr-25">
-                    Login
-                </a>
+                     <a href="<%=request.getContextPath()%>/logout" class="flex-c-m trans-04 p-lr-25">
+                        Logout
+                    </a>
+                </c:if>
 
-                <a href="${pageContext.request.contextPath}/register" class="flex-c-m trans-04 p-lr-25">
-                    Register
-                </a>
+
+
+                <c:if test = "${sessionScope.user == null}">
+                    <a href="${pageContext.request.contextPath}/login" class="flex-c-m trans-04 p-lr-25">
+                        Login
+                    </a>
+                    <a href="${pageContext.request.contextPath}/register" class="flex-c-m trans-04 p-lr-25">
+                        Register
+                    </a>
+                </c:if>
+                
             </div>
         </div>
     </div>
