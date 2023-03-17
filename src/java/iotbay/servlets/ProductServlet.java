@@ -6,6 +6,7 @@ package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
 import iotbay.exceptions.ProductNotFoundException;
+import iotbay.models.Category;
 import iotbay.models.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -75,13 +76,21 @@ public class ProductServlet extends HttpServlet {
         
         List<Product> products;
         try {
-            products = db.getProducts(10, 0);
+            products = db.getProducts(100, 0);
+        } catch (SQLException e) {
+            throw new ServletException("Failed to query database: " + e.getMessage());
+        }
+        
+        List<Category> categories;
+        try {
+            categories = db.getCategories();
         } catch (SQLException e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }
         
         
         request.setAttribute("products", products);
+        request.setAttribute("categories", categories);
         request.getRequestDispatcher("/WEB-INF/jsp/products.jsp").forward(request, response);
     }
 

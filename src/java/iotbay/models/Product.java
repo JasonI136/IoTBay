@@ -12,6 +12,18 @@ import java.io.Serializable;
  */
 public class Product implements Serializable{
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+    
+    public String getCategoryNameNoSpace() {
+        return this.getCategoryName().replaceAll("\\s", "").replaceAll("/", "");
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     public String getImageURL() {
         return imageURL;
     }
@@ -74,6 +86,7 @@ public class Product implements Serializable{
     private int price;
     private int quantity;
     private int categoryId;
+    private String categoryName;
 
     public Product() {
         // Empty constructor
