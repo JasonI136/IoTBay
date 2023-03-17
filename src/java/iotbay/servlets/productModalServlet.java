@@ -4,31 +4,34 @@
  */
 package iotbay.servlets;
 
+import com.google.gson.Gson;
 import iotbay.database.DatabaseManager;
 import iotbay.models.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.rmi.ServerException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
 
 /**
  *
- * @author jasonmba
+ * @author cmesina
  */
-public class CartServlet extends HttpServlet {
-
+public class productModalServlet extends HttpServlet {
+    
     DatabaseManager db;
+    
 
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
     }
+    
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -47,10 +50,10 @@ public class CartServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CartServlet</title>");
+            out.println("<title>Servlet productModal</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CartServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet productModal at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -68,7 +71,28 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/jsp/cart.jsp").forward(request, response);
+            int productId = Integer.parseInt(request.getParameter("productId"));
+
+    try {
+        Product product = this.db.getProduct(productId);
+
+        // Use Gson to serialize the product to JSON
+        Gson gson = new Gson();
+        String json = gson.toJson(product);
+
+        // Set the response content type to JSON
+        response.setContentType("application/json");
+
+        // Write the JSON to the response output stream
+        PrintWriter out = response.getWriter();
+        out.print(json);
+        out.flush();
+    } catch (Exception e) {
+        throw new ServerException("Failed to get product: " + e.getMessage());
+    }
+        
+        
+       
     }
 
     /**
@@ -82,25 +106,7 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String path = request.getPathInfo();
-
-        if (path != null && path.equals("/updateCart")) {
-               
-        } else {
-            if (request.getParameter("productId") != null) {
-                try {
-                    this.initShoppingCart(request);
-                    List<Product> userShoppingCart = (ArrayList<Product>) request.getSession().getAttribute("shoppingCart");
-                    userShoppingCart.add(this.db.getProduct(Integer.parseInt(request.getParameter("productId"))));
-                    response.setStatus(200);
-                } catch (Exception e) {
-                    throw new ServletException(e.getMessage());
-                }
-            }
-            //response.sendRedirect(request.getHeader("referer"));
-        }
-
+        processRequest(request, response);
     }
 
     /**
@@ -112,13 +118,5 @@ public class CartServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    private void initShoppingCart(HttpServletRequest request) {
-        List<Product> userShoppingCart = (ArrayList<Product>) request.getSession().getAttribute("shoppingCart");
-        if (userShoppingCart == null) {
-            userShoppingCart = new ArrayList<Product>();
-            request.getSession().setAttribute("shoppingCart", userShoppingCart);
-        }
-    }
 
 }

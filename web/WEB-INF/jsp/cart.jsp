@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -67,54 +68,33 @@
                                         <th class="column-4">Quantity</th>
                                         <th class="column-5">Total</th>
                                     </tr>
-
-                                    <tr class="table_row">
-                                        <td class="column-1">
-                                            <div class="how-itemcart1">
-                                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG">
-                                            </div>
-                                        </td>
-                                        <td class="column-2">Fresh Strawberries</td>
-                                        <td class="column-3">$ 36.00</td>
-                                        <td class="column-4">
-                                            <div class="wrap-num-product flex-w m-l-auto m-r-0">
-                                                <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                                    <i class="fs-16 zmdi zmdi-minus"></i>
+                                    
+                                    <c:forEach var="product" items="${sessionScope.shoppingCart}">
+                                            <tr class="table_row">
+                                            <td class="column-1">
+                                                <div class="how-itemcart1">
+                                                    <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG">
                                                 </div>
+                                            </td>
+                                            <td class="column-2">${product.name}</td>
+                                            <td class="column-3">$ ${product.price}</td>
+                                            <td class="column-4">
+                                                <div class="wrap-num-product flex-w m-l-auto m-r-0">
+                                                    <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                                                        <i class="fs-16 zmdi zmdi-minus"></i>
+                                                    </div>
 
-                                                <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value="1">
+                                                    <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value="1">
 
-                                                <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                                    <i class="fs-16 zmdi zmdi-plus"></i>
+                                                    <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                                                        <i class="fs-16 zmdi zmdi-plus"></i>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="column-5">$ 36.00</td>
-                                    </tr>
+                                            </td>
+                                            <td class="column-5">$ ${product.price}</td>
+                                        </tr>
+                                    </c:forEach>
 
-                                    <tr class="table_row">
-                                        <td class="column-1">
-                                            <div class="how-itemcart1">
-                                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG">
-                                            </div>
-                                        </td>
-                                        <td class="column-2">Lightweight Jacket</td>
-                                        <td class="column-3">$ 16.00</td>
-                                        <td class="column-4">
-                                            <div class="wrap-num-product flex-w m-l-auto m-r-0">
-                                                <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                                    <i class="fs-16 zmdi zmdi-minus"></i>
-                                                </div>
-
-                                                <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product2" value="1">
-
-                                                <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                                    <i class="fs-16 zmdi zmdi-plus"></i>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="column-5">$ 16.00</td>
-                                    </tr>
                                 </table>
                             </div>
 

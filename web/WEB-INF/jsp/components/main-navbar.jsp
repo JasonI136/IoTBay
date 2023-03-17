@@ -5,6 +5,10 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+    
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,15 +26,15 @@
             <!-- Menu desktop -->
             <div class="menu-desktop">
                 <ul class="main-menu">
-                    <li class="active-menu">
+                    <li class="${(requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat("/") || requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath) ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/">Home</a>
                     </li>
 
-                    <li>
+                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/shop') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/shop">Shop</a>
                     </li>
 
-                    <li class='label1' data-label1='NA'>
+<!--                    <li class='label1' data-label1='NA'>
                         <a href="${pageContext.request.contextPath}/">Track Order</a>
                     </li>
 
@@ -40,7 +44,7 @@
 
                     <li class='label1' data-label1='NA'>
                         <a href="cart.html">Contact</a>
-                    </li>
+                    </li>-->
                 </ul>
             </div>	
 
@@ -50,7 +54,7 @@
                     <i class="zmdi zmdi-search"></i>
                 </div>
 
-                <a href="${pageContext.request.contextPath}/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+                <a href="${pageContext.request.contextPath}/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="${fn:length(sessionScope.shoppingCart)}">
                     <i class="zmdi zmdi-shopping-cart"></i>
                 </a>
 
