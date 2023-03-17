@@ -5,6 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+    
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,15 +24,15 @@
             <!-- Menu desktop -->
             <div class="menu-desktop">
                 <ul class="main-menu">
-                    <li class="active-menu">
+                    <li class="${(requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat("/") || requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath) ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/">Home</a>
                     </li>
 
-                    <li>
+                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/shop') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/shop">Shop</a>
                     </li>
 
-                    <li class='label1' data-label1='NA'>
+<!--                    <li class='label1' data-label1='NA'>
                         <a href="${pageContext.request.contextPath}/">Track Order</a>
                     </li>
 
@@ -40,7 +42,7 @@
 
                     <li class='label1' data-label1='NA'>
                         <a href="cart.html">Contact</a>
-                    </li>
+                    </li>-->
                 </ul>
             </div>	
 
