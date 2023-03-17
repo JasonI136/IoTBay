@@ -26,7 +26,7 @@
                     <a href="${pageContext.request.contextPath}/user" class="flex-c-m trans-04 p-lr-25">
                         ${sessionScope.user.firstName} ${sessionScope.user.lastName}
                     </a>
-                    <a href="<%=request.getContextPath()%>/logout" class="flex-c-m trans-04 p-lr-25 js-logout">
+                    <a onClick="logoutFunction()" href="#" class="flex-c-m trans-04 p-lr-25 js-logout">
                         Logout
                     </a>
                 </c:if>
@@ -45,6 +45,17 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function logoutFunction() {
+            var confirmation = confirm("Are you sure you would like to Logout?");
+            if (confirmation == true) {
+                window.location.href = "<%=request.getContextPath()%>/logout";
+            } else {
+                return;
+            }
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
