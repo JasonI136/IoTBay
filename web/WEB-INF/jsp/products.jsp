@@ -298,7 +298,7 @@
                             <!-- Block2 -->
                             <div class="block2">
                                 <div class="block2-pic hov-img0">
-                                    <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
+                                    <img src="${product.imageURL}" alt="IMG-PRODUCT">
 
                                     <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" onClick="openProductModal(${product.productId})">
                                         Quick View
@@ -357,7 +357,7 @@
                                     <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
                                     <div class="slick3 gallery-lb">
-                                        <div class="item-slick3" data-thumb="${pageContext.request.contextPath}/public/images/product-detail-01.png">
+                                        <div class="item-slick3" data-thumb="product-image">
                                             <div class="wrap-pic-w pos-relative">
                                                 <img src="${pageContext.request.contextPath}/public/images/product-detail-01.png" alt="IMG-PRODUCT">
 
@@ -367,25 +367,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="item-slick3" data-thumb="${pageContext.request.contextPath}/public/images/product-detail-01.png">
-                                            <div class="wrap-pic-w pos-relative">
-                                                <img src="${pageContext.request.contextPath}/public/images/product-detail-01.png" alt="IMG-PRODUCT">
 
-                                                <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${pageContext.request.contextPath}/public/images/product-detail-01.jpg">
-                                                    <i class="fa fa-expand"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        <div class="item-slick3" data-thumb="${pageContext.request.contextPath}/public/images/product-detail-01.png">
-                                            <div class="wrap-pic-w pos-relative">
-                                                <img src="${pageContext.request.contextPath}/public/images/product-detail-01.png" alt="IMG-PRODUCT">
-
-                                                <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${pageContext.request.contextPath}/public/images/product-detail-01.jpg">
-                                                    <i class="fa fa-expand"></i>
-                                                </a>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -622,6 +604,7 @@
                     .then(response => response.json())
                     .then(json => {
                         document.querySelector('#product-name').innerHTML = json.name;
+                        document.querySelector('#product-imageURL').innerHTML = json.imageURL;
                         document.querySelector('#product-description').innerHTML = json.description;
                         document.querySelector('#product-price').innerHTML = json.price;
                         document.querySelector('#add-to-cart').value = json.productId;
