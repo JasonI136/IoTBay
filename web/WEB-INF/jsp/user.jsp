@@ -49,7 +49,7 @@
                 <jsp:include page="components/main-navbar.jsp" />
             </div>
         </header>                        
-            
+
         <!-- Title page -->
         <div>
             <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('${pageContext.request.contextPath}/public/images/bg-02.jpg');">
@@ -62,53 +62,41 @@
         <!-- Content page -->
         <section class="bg0 p-t-104 p-b-116">
             <div class="container">
+                <div class="flex-w flex-tr">
+                    <div class="size-210 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
 
-                <div class=" bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
-                    <form method="POST" action="register">
                         <h4 class="mtext-105 cl2 txt-center p-b-30">
-                            Register
+                            Your Account Details
                         </h4>
                         <div class="row">
                             <div class="bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username" name="username" required placeholder="Your User Name">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username" name="username" required placeholder="Your User Name" value='<%=user.getUsername()%>' disabled>
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
                         </div>
 
-
-
-
-
                         <div class="row">
                             <div class="bor8 m-b-20 how-pos4-parent col-sm">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="firstName" name="firstName" required placeholder="Your First Name">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="firstName" name="firstName" required placeholder="Your First Name" value='<%=user.getFirstName()%>' disabled>
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
                             <div class="bor8 m-b-20 how-pos4-parent col-sm">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="lastName" name="lastName" required placeholder="Your Last Name">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="lastName" name="lastName" required placeholder="Your Last Name" value='<%=user.getLastName()%>' disabled>
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="email" id="email" name="email" required placeholder="Your Email">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="email" id="email" name="email" required placeholder="Your Email" value='<%=user.getEmail()%>' disabled>
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/at-sign.svg" alt="ICON">
                             </div>
                         </div>
 
 
                         <div class="row">
-                            <div class="bor8 m-b-30 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="password" id="password" name="password" required placeholder="Your Password">
-                                <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/lock.svg" alt="ICON">
-                            </div>
-                        </div>
-
-
-                        <div class="row">
                             <div class="bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="address" name="address" required placeholder="Your Address">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="address" name="address" required placeholder="Your Address" value='<%=user.getAddress()%>' disabled>
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/map-pin.svg" alt="ICON">
                             </div>
                         </div>
@@ -116,18 +104,35 @@
 
                         <div class="row">
                             <div class="bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="tel" id="phone" name="phone" required placeholder="Your Phone Number">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="tel" id="phone" name="phone" required placeholder="Your Phone Number" value='<%=user.getPhoneNumber()%>' disabled>
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/phone.svg" alt="ICON">
                             </div>
                         </div>
+                    </div>
 
-                        <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
-                            Create an Account
-                        </button>
-                    </form>
+                    <div class="size-210 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
+                        <h4 class="mtext-105 cl2 txt-center p-b-30">
+                            Your Orders
+                        </h4>
+                        
+                        
+                        <div class="row">
+                            <button class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
+                                Order ID | DATE | ITEM #
+                            </button>
+                        </div>
+                        <div class="row">
+                            <button class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
+                                Order ID | DATE | ITEM #
+                            </button>
+                        </div>
+                        <div class="row">
+                            <button class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
+                                Order ID | DATE | ITEM #
+                            </button>
+                        </div>
+                    </div>
                 </div>
-
-
             </div>
         </section>	
 
@@ -154,31 +159,31 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
         <script>
-                            $(".js-select2").each(function () {
-                                $(this).select2({
-                                    minimumResultsForSearch: 20,
-                                    dropdownParent: $(this).next('.dropDownSelect2')
-                                });
-                            })
+            $(".js-select2").each(function () {
+                $(this).select2({
+                    minimumResultsForSearch: 20,
+                    dropdownParent: $(this).next('.dropDownSelect2')
+                });
+            })
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script>
-                            $('.js-pscroll').each(function () {
-                                $(this).css('position', 'relative');
-                                $(this).css('overflow', 'hidden');
-                                var ps = new PerfectScrollbar(this, {
-                                    wheelSpeed: 1,
-                                    scrollingThreshold: 1000,
-                                    wheelPropagation: false,
-                                });
+            $('.js-pscroll').each(function () {
+                $(this).css('position', 'relative');
+                $(this).css('overflow', 'hidden');
+                var ps = new PerfectScrollbar(this, {
+                    wheelSpeed: 1,
+                    scrollingThreshold: 1000,
+                    wheelPropagation: false,
+                });
 
-                                $(window).on('resize', function () {
-                                    ps.update();
-                                })
-                            });
+                $(window).on('resize', function () {
+                    ps.update();
+                })
+            });
         </script>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKFWBqlKAGCeS1rMVoaNlwyayu0e0YRes"></script>

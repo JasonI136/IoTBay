@@ -23,10 +23,10 @@
 
 
                 <c:if test = "${sessionScope.user != null}">
-                    <a href="#" class="flex-c-m trans-04 p-lr-25">
+                    <a href="${pageContext.request.contextPath}/user" class="flex-c-m trans-04 p-lr-25">
                         ${sessionScope.user.firstName} ${sessionScope.user.lastName}
                     </a>
-                     <a href="<%=request.getContextPath()%>/logout" class="flex-c-m trans-04 p-lr-25">
+                    <a href="<%=request.getContextPath()%>/logout" class="flex-c-m trans-04 p-lr-25 js-logout">
                         Logout
                     </a>
                 </c:if>
@@ -41,8 +41,19 @@
                         Register
                     </a>
                 </c:if>
-                
+
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+        $('.js-logout').each(function () {
+            $(this).on('click', function () {
+                swal("Welcome!", "You have successfully logged in", "success");
+            });
+        });
+
+    </script>
 </html>
