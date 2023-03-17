@@ -290,262 +290,43 @@
                 </div>
 
                 <div class="row isotope-grid">
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item shoes">
-                        <!-- Block2 -->
-                        <div class="block2">
-                            <div class="block2-pic hov-img0">
-                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
 
-                                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                    Quick View
-                                </a>
-                            </div>
+                    <c:forEach items="${products}" var="product" >
+                        <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item shoes">
+                            <!-- Block2 -->
+                            <div class="block2">
+                                <div class="block2-pic hov-img0">
+                                    <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
 
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        Converse All Star Hi Plimsolls
-                                    </a>
-
-                                    <span class="stext-105 cl3">
-                                        $75.00
-                                    </span>
-                                </div>
-
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png" alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png" alt="ICON">
+                                    <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+                                        Quick View
                                     </a>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                        <!-- Block2 -->
-                        <div class="block2">
-                            <div class="block2-pic hov-img0">
-                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
+                                <div class="block2-txt flex-w flex-t p-t-14">
+                                    <div class="block2-txt-child1 flex-col-l ">
+                                        <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                            ${product.name}
+                                        </a>
 
-                                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                    Quick View
-                                </a>
-                            </div>
+                                        <span class="stext-105 cl3">
+                                            $${product.price}
+                                        </span>
+                                    </div>
 
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        Femme T-Shirt In Stripe
-                                    </a>
-
-                                    <span class="stext-105 cl3">
-                                        $25.85
-                                    </span>
-                                </div>
-
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png" alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png" alt="ICON">
-                                    </a>
+                                    <div class="block2-txt-child2 flex-r p-t-3">
+                                        <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+                                            <img class="icon-heart1 dis-block trans-04" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png" alt="ICON">
+                                            <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png" alt="ICON">
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </c:forEach>
+                    
+                </div> 
 
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
-                        <!-- Block2 -->
-                        <div class="block2">
-                            <div class="block2-pic hov-img0">
-                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
-
-                                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                    Quick View
-                                </a>
-                            </div>
-
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        Herschel supply 
-                                    </a>
-
-                                    <span class="stext-105 cl3">
-                                        $63.16
-                                    </span>
-                                </div>
-
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png" alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png" alt="ICON">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
-                        <!-- Block2 -->
-                        <div class="block2">
-                            <div class="block2-pic hov-img0">
-                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
-
-                                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                    Quick View
-                                </a>
-                            </div>
-
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        Herschel supply
-                                    </a>
-
-                                    <span class="stext-105 cl3">
-                                        $63.15
-                                    </span>
-                                </div>
-
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png" alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png" alt="ICON">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                        <!-- Block2 -->
-                        <div class="block2">
-                            <div class="block2-pic hov-img0">
-                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
-
-                                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                    Quick View
-                                </a>
-                            </div>
-
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        T-Shirt with Sleeve
-                                    </a>
-
-                                    <span class="stext-105 cl3">
-                                        $18.49
-                                    </span>
-                                </div>
-
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png" alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png" alt="ICON">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                        <!-- Block2 -->
-                        <div class="block2">
-                            <div class="block2-pic hov-img0">
-                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
-
-                                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                    Quick View
-                                </a>
-                            </div>
-
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        Pretty Little Thing
-                                    </a>
-
-                                    <span class="stext-105 cl3">
-                                        $54.79
-                                    </span>
-                                </div>
-
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png" alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png" alt="ICON">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
-                        <!-- Block2 -->
-                        <div class="block2">
-                            <div class="block2-pic hov-img0">
-                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
-
-                                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                    Quick View
-                                </a>
-                            </div>
-
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        Mini Silver Mesh Watch
-                                    </a>
-
-                                    <span class="stext-105 cl3">
-                                        $86.85
-                                    </span>
-                                </div>
-
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png" alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png" alt="ICON">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                        <!-- Block2 -->
-                        <div class="block2">
-                            <div class="block2-pic hov-img0">
-                                <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG-PRODUCT">
-
-                                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                    Quick View
-                                </a>
-                            </div>
-
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        Square Neck Back
-                                    </a>
-
-                                    <span class="stext-105 cl3">
-                                        $29.64
-                                    </span>
-                                </div>
-
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png" alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png" alt="ICON">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Load more -->
                 <div class="flex-c-m flex-w w-full p-t-45">
@@ -710,29 +491,6 @@
             </div>
         </div>                            
 
-        <div>
-            <h1>Shop</h1>
-            <h2>Shopping Cart</h2>
-            <ul>
-                <c:forEach items="${sessionScope.shoppingCart}" var="product" >
-                    <li>${product.name}, ${product.description}, Price: AUD$${product.price}     
-                    </li>
-                </c:forEach>
-            </ul>
-            <h1>Items for sale</h1>
-            <ul>
-                <c:forEach items="${products}" var="product" >
-                    <li>${product.name}, ${product.description}, Price: AUD$${product.price}
-                        <form method="POST" action="shop/addtocart">
-                            <button type="submit" name="productId" value="${product.productId}">
-                                Add to cart.
-                            </button>
-                        </form>
-                    </li>
-                </c:forEach>
-            </ul>
-        </div>
-
         <footer class="bg3 p-t-75 p-b-32">
             <jsp:include page="components/footer.jsp" />
         </footer>
@@ -746,12 +504,12 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
         <script>
-                            $(".js-select2").each(function () {
-                                $(this).select2({
-                                    minimumResultsForSearch: 20,
-                                    dropdownParent: $(this).next('.dropDownSelect2')
-                                });
-                            })
+            $(".js-select2").each(function () {
+                $(this).select2({
+                    minimumResultsForSearch: 20,
+                    dropdownParent: $(this).next('.dropDownSelect2')
+                });
+            })
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
@@ -762,21 +520,21 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/parallax100/parallax100.js"></script>
         <script>
-                            $('.parallax100').parallax100();
+            $('.parallax100').parallax100();
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
         <script>
-                            $('.gallery-lb').each(function () { // the containers for all your galleries
-                                $(this).magnificPopup({
-                                    delegate: 'a', // the selector for gallery item
-                                    type: 'image',
-                                    gallery: {
-                                        enabled: true
-                                    },
-                                    mainClass: 'mfp-fade'
-                                });
-                            });
+            $('.gallery-lb').each(function () { // the containers for all your galleries
+                $(this).magnificPopup({
+                    delegate: 'a', // the selector for gallery item
+                    type: 'image',
+                    gallery: {
+                        enabled: true
+                    },
+                    mainClass: 'mfp-fade'
+                });
+            });
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
@@ -784,57 +542,57 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/sweetalert/sweetalert.min.js"></script>
         <script>
-                            $('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
-                                e.preventDefault();
-                            });
+            $('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
+                e.preventDefault();
+            });
 
-                            $('.js-addwish-b2').each(function () {
-                                var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-                                $(this).on('click', function () {
-                                    swal(nameProduct, "is added to wishlist !", "success");
+            $('.js-addwish-b2').each(function () {
+                var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+                $(this).on('click', function () {
+                    swal(nameProduct, "is added to wishlist !", "success");
 
-                                    $(this).addClass('js-addedwish-b2');
-                                    $(this).off('click');
-                                });
-                            });
+                    $(this).addClass('js-addedwish-b2');
+                    $(this).off('click');
+                });
+            });
 
-                            $('.js-addwish-detail').each(function () {
-                                var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+            $('.js-addwish-detail').each(function () {
+                var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
 
-                                $(this).on('click', function () {
-                                    swal(nameProduct, "is added to wishlist !", "success");
+                $(this).on('click', function () {
+                    swal(nameProduct, "is added to wishlist !", "success");
 
-                                    $(this).addClass('js-addedwish-detail');
-                                    $(this).off('click');
-                                });
-                            });
+                    $(this).addClass('js-addedwish-detail');
+                    $(this).off('click');
+                });
+            });
 
-                            /*---------------------------------------------*/
+            /*---------------------------------------------*/
 
-                            $('.js-addcart-detail').each(function () {
-                                var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-                                $(this).on('click', function () {
-                                    swal(nameProduct, "is added to cart !", "success");
-                                });
-                            });
+            $('.js-addcart-detail').each(function () {
+                var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
+                $(this).on('click', function () {
+                    swal(nameProduct, "is added to cart !", "success");
+                });
+            });
 
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script>
-                            $('.js-pscroll').each(function () {
-                                $(this).css('position', 'relative');
-                                $(this).css('overflow', 'hidden');
-                                var ps = new PerfectScrollbar(this, {
-                                    wheelSpeed: 1,
-                                    scrollingThreshold: 1000,
-                                    wheelPropagation: false,
-                                });
+            $('.js-pscroll').each(function () {
+                $(this).css('position', 'relative');
+                $(this).css('overflow', 'hidden');
+                var ps = new PerfectScrollbar(this, {
+                    wheelSpeed: 1,
+                    scrollingThreshold: 1000,
+                    wheelPropagation: false,
+                });
 
-                                $(window).on('resize', function () {
-                                    ps.update();
-                                })
-                            });
+                $(window).on('resize', function () {
+                    ps.update();
+                })
+            });
         </script>
 
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>

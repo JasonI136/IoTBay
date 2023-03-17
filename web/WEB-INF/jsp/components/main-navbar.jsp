@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
     
 <!DOCTYPE html>
 <html>
@@ -52,7 +54,7 @@
                     <i class="zmdi zmdi-search"></i>
                 </div>
 
-                <a href="${pageContext.request.contextPath}/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+                <a href="${pageContext.request.contextPath}/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="${fn:length(sessionScope.shoppingCart)}">
                     <i class="zmdi zmdi-shopping-cart"></i>
                 </a>
 
