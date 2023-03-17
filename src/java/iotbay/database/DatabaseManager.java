@@ -54,14 +54,30 @@ public class DatabaseManager {
             conn.commit();
         }
         
+        if (!this.tableExists("CATEGORIES")) {
+            String createTableQuery = "CREATE TABLE CATEGORIES ("
+                    + "categoryId INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+                    + "name VARCHAR(256),"
+                    + "PRIMARY KEY (categoryId)"
+                    + ")";
+            
+            Statement stmt = this.conn.createStatement();
+            stmt.execute(createTableQuery);
+            conn.commit();
+                    
+        }
+        
         if (!this.tableExists("PRODUCTS")) {
             String createTableQuery = "CREATE TABLE PRODUCTS (" 
                 + "productId INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," 
                 + "name VARCHAR(256)," 
-                + "description CLOB," 
-                + "price INT," 
-                + "quantity INT," 
-                + "PRIMARY KEY (productId)"
+                + "description CLOB,"
+                + "imageURL CLOB,"
+                + "price FLOAT," 
+                + "quantity INT,"
+                + "categoryId INT,"
+                + "PRIMARY KEY (productId),"
+                + "CONSTRAINT categoryIdRef FOREIGN KEY (categoryId) REFERENCES CATEGORIES(categoryId)"
                 + ")";
             
             Statement stmt = this.conn.createStatement();
@@ -91,6 +107,8 @@ public class DatabaseManager {
                     product.setDescription(rs.getString("description"));
                     product.setPrice(rs.getInt("price"));
                     product.setQuantity(rs.getInt("quantity"));
+                    product.setCategoryId(rs.getInt("categoryId"));
+                    product.setImageURL(rs.getString("imageURL"));
                     productList.add(product);
                 }
             }
@@ -139,6 +157,10 @@ public class DatabaseManager {
        product.setDescription(rs.getString("description"));
        product.setPrice(rs.getInt("price"));
        product.setQuantity(rs.getInt("quantity"));
+       product.setCategoryId(rs.getInt("categoryId"));
+       product.setImageURL(rs.getString("imageURL"));
+        
+        
         
         
        

@@ -12,6 +12,22 @@ import java.io.Serializable;
  */
 public class Product implements Serializable{
 
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public int getProductId() {
         return productId;
     }
@@ -54,8 +70,10 @@ public class Product implements Serializable{
     private int productId;
     private String name;
     private String description;
+    private String imageURL;
     private int price;
     private int quantity;
+    private int categoryId;
 
     public Product() {
         // Empty constructor
