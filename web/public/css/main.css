@@ -1789,7 +1789,8 @@ button.mfp-close {
 }
 
 .btn-num-product-up,
-.btn-num-product-down {
+.btn-num-product-down,
+.btn-num-product-down-modal {
   width: 45px;
   height: 100%;
   cursor: pointer;

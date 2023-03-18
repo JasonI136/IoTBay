@@ -4,12 +4,18 @@
  */
 package iotbay.servlets;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import iotbay.database.DatabaseManager;
 import iotbay.models.Product;
+import iotbay.models.cart.Cart;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -86,13 +92,30 @@ public class CartServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path != null && path.equals("/updateCart")) {
-               
+            try {
+                Gson gson = new Gson();
+                String json = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+                JsonObject payload = gson.fromJson(json, JsonObject.class);
+
+                this.initShoppingCart(request);
+                Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
+
+                for (Map.Entry<String, JsonElement> cartItem : payload.entrySet()) {
+                    int productId = Integer.parseInt(cartItem.getKey());
+                    int quantity = cartItem.getValue().getAsInt();
+                    userShoppingCart.updateCartItem(this.db.getProduct(productId), quantity);
+                }
+
+                response.setStatus(200);
+            } catch (Exception e) {
+                throw new ServletException(e.getMessage());
+            }
         } else {
             if (request.getParameter("productId") != null) {
                 try {
                     this.initShoppingCart(request);
-                    List<Product> userShoppingCart = (ArrayList<Product>) request.getSession().getAttribute("shoppingCart");
-                    userShoppingCart.add(this.db.getProduct(Integer.parseInt(request.getParameter("productId"))));
+                    Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
+                    userShoppingCart.addCartItem(this.db.getProduct(Integer.parseInt(request.getParameter("productId"))), Integer.parseInt(request.getParameter("quantity")));
                     response.setStatus(200);
                 } catch (Exception e) {
                     throw new ServletException(e.getMessage());
@@ -114,9 +137,9 @@ public class CartServlet extends HttpServlet {
     }// </editor-fold>
 
     private void initShoppingCart(HttpServletRequest request) {
-        List<Product> userShoppingCart = (ArrayList<Product>) request.getSession().getAttribute("shoppingCart");
+        Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
         if (userShoppingCart == null) {
-            userShoppingCart = new ArrayList<Product>();
+            userShoppingCart = new Cart();
             request.getSession().setAttribute("shoppingCart", userShoppingCart);
         }
     }

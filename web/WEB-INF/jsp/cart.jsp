@@ -68,30 +68,30 @@
                                         <th class="column-4">Quantity</th>
                                         <th class="column-5">Total</th>
                                     </tr>
-                                    
-                                    <c:forEach var="product" items="${sessionScope.shoppingCart}">
-                                            <tr class="table_row">
+
+                                    <c:forEach var="cartItem" items="${sessionScope.shoppingCart.cartItems}">
+                                        <tr class="table_row">
                                             <td class="column-1">
                                                 <div class="how-itemcart1">
                                                     <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG">
                                                 </div>
                                             </td>
-                                            <td class="column-2">${product.name}</td>
-                                            <td class="column-3">$ ${product.price}</td>
+                                            <td class="column-2">${cartItem.product.name}</td>
+                                            <td class="column-3">$ ${cartItem.product.price}</td>
                                             <td class="column-4">
                                                 <div class="wrap-num-product flex-w m-l-auto m-r-0">
                                                     <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
                                                         <i class="fs-16 zmdi zmdi-minus"></i>
                                                     </div>
 
-                                                    <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value="1">
+                                                    <input class="mtext-104 cl3 txt-center num-product" id="cartItem-product-quantity" type="number" name="${cartItem.product.productId}" value="${cartItem.cartQuantity}">
 
                                                     <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
                                                         <i class="fs-16 zmdi zmdi-plus"></i>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="column-5">$ ${product.price}</td>
+                                            <td class="column-5">$ ${cartItem.totalPrice}</td>
                                         </tr>
                                     </c:forEach>
 
@@ -99,15 +99,15 @@
                             </div>
 
                             <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-                                <div class="flex-w flex-m m-r-20 m-tb-5">
+<!--                                <div class="flex-w flex-m m-r-20 m-tb-5">
                                     <input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon" placeholder="Coupon Code">
 
                                     <div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
                                         Apply coupon
                                     </div>
-                                </div>
+                                </div>-->
 
-                                <div class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
+                                <div class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10" onclick="updateCart()">
                                     Update Cart
                                 </div>
                             </div>
@@ -129,7 +129,7 @@
 
                                 <div class="size-209">
                                     <span class="mtext-110 cl2">
-                                        $79.65
+                                        $${sessionScope.shoppingCart.totalPrice}
                                     </span>
                                 </div>
                             </div>
@@ -187,7 +187,7 @@
 
                                 <div class="size-209 p-t-1">
                                     <span class="mtext-110 cl2">
-                                        $79.65
+                                        $${sessionScope.shoppingCart.totalPrice}
                                     </span>
                                 </div>
                             </div>
@@ -214,12 +214,12 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
         <script>
-                            $(".js-select2").each(function () {
-                                $(this).select2({
-                                    minimumResultsForSearch: 20,
-                                    dropdownParent: $(this).next('.dropDownSelect2')
-                                });
-                            })
+            $(".js-select2").each(function () {
+                $(this).select2({
+                    minimumResultsForSearch: 20,
+                    dropdownParent: $(this).next('.dropDownSelect2')
+                });
+            })
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
@@ -230,78 +230,107 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/parallax100/parallax100.js"></script>
         <script>
-                            $('.parallax100').parallax100();
+            $('.parallax100').parallax100();
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
         <script>
-                            $('.gallery-lb').each(function () { // the containers for all your galleries
-                                $(this).magnificPopup({
-                                    delegate: 'a', // the selector for gallery item
-                                    type: 'image',
-                                    gallery: {
-                                        enabled: true
-                                    },
-                                    mainClass: 'mfp-fade'
-                                });
-                            });
+            $('.gallery-lb').each(function () { // the containers for all your galleries
+                $(this).magnificPopup({
+                    delegate: 'a', // the selector for gallery item
+                    type: 'image',
+                    gallery: {
+                        enabled: true
+                    },
+                    mainClass: 'mfp-fade'
+                });
+            });
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/sweetalert/sweetalert.min.js"></script>
         <script>
-                            $('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
-                                e.preventDefault();
-                            });
+            $('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
+                e.preventDefault();
+            });
 
-                            $('.js-addwish-b2').each(function () {
-                                var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-                                $(this).on('click', function () {
-                                    swal(nameProduct, "is added to wishlist !", "success");
+            $('.js-addwish-b2').each(function () {
+                var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+                $(this).on('click', function () {
+                    swal(nameProduct, "is added to wishlist !", "success");
 
-                                    $(this).addClass('js-addedwish-b2');
-                                    $(this).off('click');
-                                });
-                            });
+                    $(this).addClass('js-addedwish-b2');
+                    $(this).off('click');
+                });
+            });
 
-                            $('.js-addwish-detail').each(function () {
-                                var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+            $('.js-addwish-detail').each(function () {
+                var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
 
-                                $(this).on('click', function () {
-                                    swal(nameProduct, "is added to wishlist !", "success");
+                $(this).on('click', function () {
+                    swal(nameProduct, "is added to wishlist !", "success");
 
-                                    $(this).addClass('js-addedwish-detail');
-                                    $(this).off('click');
-                                });
-                            });
+                    $(this).addClass('js-addedwish-detail');
+                    $(this).off('click');
+                });
+            });
 
-                            /*---------------------------------------------*/
+            /*---------------------------------------------*/
 
-                            $('.js-addcart-detail').each(function () {
-                                var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-                                $(this).on('click', function () {
-                                    swal(nameProduct, "is added to cart !", "success");
-                                });
-                            });
+            $('.js-addcart-detail').each(function () {
+                var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
+                $(this).on('click', function () {
+                    swal(nameProduct, "is added to cart !", "success");
+                });
+            });
 
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script>
-                            $('.js-pscroll').each(function () {
-                                $(this).css('position', 'relative');
-                                $(this).css('overflow', 'hidden');
-                                var ps = new PerfectScrollbar(this, {
-                                    wheelSpeed: 1,
-                                    scrollingThreshold: 1000,
-                                    wheelPropagation: false,
-                                });
+            $('.js-pscroll').each(function () {
+                $(this).css('position', 'relative');
+                $(this).css('overflow', 'hidden');
+                var ps = new PerfectScrollbar(this, {
+                    wheelSpeed: 1,
+                    scrollingThreshold: 1000,
+                    wheelPropagation: false,
+                });
 
-                                $(window).on('resize', function () {
-                                    ps.update();
-                                })
-                            });
+                $(window).on('resize', function () {
+                    ps.update();
+                })
+            });
+        </script>
+
+        <script>
+
+            function updateCart() {
+                const quantityInputs = document.querySelectorAll("#cartItem-product-quantity");
+
+                const payload = {};
+
+                quantityInputs.forEach(input => {
+                    const productId = input.getAttribute("name");
+                    const quantity = input.value;
+                    payload[productId] = quantity;
+                });
+
+                fetch("${pageContext.request.contextPath}/cart/updateCart", {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }).then(response => {
+                    if (response.status == 200) {
+                        location.reload();
+                    }
+                })
+            }
+
+
         </script>
 
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>

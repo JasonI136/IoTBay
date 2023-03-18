@@ -54,7 +54,7 @@
                     <i class="zmdi zmdi-search"></i>
                 </div>
 
-                <a href="${pageContext.request.contextPath}/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="${fn:length(sessionScope.shoppingCart)}">
+                <a href="${pageContext.request.contextPath}/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="${(sessionScope.shoppingCart.totalQuantity == null) ? 0 : sessionScope.shoppingCart.totalQuantity}">
                     <i class="zmdi zmdi-shopping-cart"></i>
                 </a>
 
