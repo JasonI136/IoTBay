@@ -8,19 +8,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import iotbay.database.DatabaseManager;
-import iotbay.models.Product;
 import iotbay.models.cart.Cart;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *

@@ -6,18 +6,13 @@ package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
 import iotbay.database.UserManager;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.HashSet;
-import java.util.Properties;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.Properties;
 
 /**
  *

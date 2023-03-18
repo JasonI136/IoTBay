@@ -10,13 +10,8 @@ import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.Category;
 import iotbay.models.Product;
 import iotbay.models.User;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,9 +85,13 @@ public class DatabaseManager {
 
     }
 
-    public List<Product> getProducts(int limit, int offset) throws SQLException {
+    public List<Product> getProducts(int limit, int offset, boolean description) throws SQLException {
         List<Product> productList = new ArrayList<>();
-        String query = "SELECT PRODUCTS.PRODUCTID, PRODUCTS.NAME, PRODUCTS.DESCRIPTION, "
+
+        String query;
+
+        if (description) {
+            query = "SELECT PRODUCTS.PRODUCTID, PRODUCTS.NAME, PRODUCTS.DESCRIPTION, "
                 + "PRODUCTS.IMAGEURL, PRODUCTS.PRICE, PRODUCTS.QUANTITY, PRODUCTS.CATEGORYID, "
                 + "CATEGORIES.NAME AS CATEGORYNAME "
                 + "FROM PRODUCTS "
@@ -101,6 +100,19 @@ public class DatabaseManager {
                 + "ORDER BY PRODUCTS.PRODUCTID "
                 + "OFFSET ? ROWS "
                 + "FETCH NEXT ? ROWS ONLY";
+        } else {
+            query = "SELECT PRODUCTS.PRODUCTID, PRODUCTS.NAME, "
+                + "PRODUCTS.IMAGEURL, PRODUCTS.PRICE, PRODUCTS.QUANTITY, PRODUCTS.CATEGORYID, "
+                + "CATEGORIES.NAME AS CATEGORYNAME "
+                + "FROM PRODUCTS "
+                + "INNER JOIN CATEGORIES "
+                + "ON PRODUCTS.CATEGORYID = CATEGORIES.CATEGORYID "
+                + "ORDER BY PRODUCTS.PRODUCTID "
+                + "OFFSET ? ROWS "
+                + "FETCH NEXT ? ROWS ONLY";
+        }
+
+
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, offset);
@@ -111,7 +123,10 @@ public class DatabaseManager {
                     Product product = new Product();
                     product.setProductId(rs.getInt("productId"));
                     product.setName(rs.getString("name"));
-                    product.setDescription(rs.getString("description"));
+                    if (description) {
+                        product.setDescription(rs.getString("description"));
+                    }
+
                     product.setPrice(rs.getInt("price"));
                     product.setQuantity(rs.getInt("quantity"));
                     product.setCategoryId(rs.getInt("categoryId"));
