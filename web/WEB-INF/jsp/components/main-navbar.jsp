@@ -34,17 +34,13 @@
                         <a href="${pageContext.request.contextPath}/shop">Shop</a>
                     </li>
 
-<!--                    <li class='label1' data-label1='NA'>
-                        <a href="${pageContext.request.contextPath}/">Track Order</a>
-                    </li>
-
-                    <li class='label1' data-label1='NA'>
-                        <a href="blog.html">My Orders</a>
+                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/orderTracking') ? 'active-menu' : ''}">
+                        <a href="${pageContext.request.contextPath}/orderTracking">Track Order</a>
                     </li>
 
                     <li class='label1' data-label1='NA'>
                         <a href="cart.html">Contact</a>
-                    </li>-->
+                    </li>
                 </ul>
             </div>	
 
