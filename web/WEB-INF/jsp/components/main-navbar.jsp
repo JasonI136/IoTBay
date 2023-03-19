@@ -39,24 +39,28 @@
                     </li>
 
                     <li class='label1' data-label1='NA'>
-                        <a href="cart.html">Contact</a>
+                        <a href="#">Contact</a>
+                    </li>
+                    
+                     <li class='label1' data-label1='NA'>
+                        <a href="#">About Us</a>
                     </li>
                 </ul>
             </div>	
 
             <!-- Icon header -->
             <div class="wrap-icon-header flex-w flex-r-m">
-                <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+<!--                <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
                     <i class="zmdi zmdi-search"></i>
-                </div>
+                </div>-->
 
                 <a href="${pageContext.request.contextPath}/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="${(sessionScope.shoppingCart.totalQuantity == null) ? 0 : sessionScope.shoppingCart.totalQuantity}">
                     <i class="zmdi zmdi-shopping-cart"></i>
                 </a>
 
-                <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+<!--                <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
                     <i class="zmdi zmdi-favorite-outline"></i>
-                </a>
+                </a>-->
             </div>
         </nav>
     </div>	
