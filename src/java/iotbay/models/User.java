@@ -5,6 +5,8 @@
 package iotbay.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -12,6 +14,8 @@ import java.io.Serializable;
  */
 public class User implements Serializable {
     private int userId;
+
+    private String stripeCustomerId;
     private String username;
     private String password;
     private String passwordSalt;
@@ -21,8 +25,15 @@ public class User implements Serializable {
     private String address;
     private int phoneNumber;
     private boolean isStaff;
+    private List<PaymentMethod> paymentMethods;
     
-    public User() { }
+    public User() {
+        this.paymentMethods = new ArrayList<>();
+    }
+
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
+    }
 
     public int getUserId() {
         return userId;
@@ -103,8 +114,29 @@ public class User implements Serializable {
     public void setIsStaff(boolean isStaff) {
         this.isStaff = isStaff;
     }
-    
-    
 
 
+    public List<PaymentMethod> getPaymentMethods() {
+        return paymentMethods;
+    }
+
+    public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
+        this.paymentMethods = paymentMethods;
+    }
+
+    public String getStripeCustomerId() {
+        return stripeCustomerId;
+    }
+
+    public void setStripeCustomerId(String stripeCustomerId) {
+        this.stripeCustomerId = stripeCustomerId;
+    }
+
+    public boolean isStaff() {
+        return isStaff;
+    }
+
+    public void setStaff(boolean staff) {
+        isStaff = staff;
+    }
 }

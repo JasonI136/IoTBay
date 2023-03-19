@@ -2,15 +2,16 @@
   <artifact type="exploded-war" name="IoTBay:Web exploded">
     <output-path>$PROJECT_DIR$/out/artifacts/IoTBay_Web_exploded</output-path>
     <root id="root">
-      <element id="javaee-facet-resources" facet="IoTBay/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="IoTBay" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="gson-2.8.0" />
+          <element id="library" level="project" name="stripe-java-22.13.0" />
+          <element id="library" level="project" name="gson-2.10.1" />
         </element>
       </element>
+      <element id="javaee-facet-resources" facet="IoTBay/web/Web" />
     </root>
   </artifact>
 </component>

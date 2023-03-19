@@ -4,8 +4,8 @@
  */
 package iotbay.servlets;
 
-import com.google.gson.Gson;
 import iotbay.database.DatabaseManager;
+import iotbay.models.Category;
 import iotbay.models.Product;
 
 import javax.servlet.ServletException;
@@ -14,16 +14,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.rmi.ServerException;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
  * @author cmesina
  */
-public class productModalServlet extends HttpServlet {
+public class ShopServlet extends HttpServlet {
     
     DatabaseManager db;
-    
 
     @Override
     public void init() throws ServletException {
@@ -51,10 +51,10 @@ public class productModalServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet productModal</title>");            
+            out.println("<title>Servlet ProductServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet productModal at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ProductServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -72,28 +72,24 @@ public class productModalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            int productId = Integer.parseInt(request.getParameter("productId"));
-
-    try {
-        Product product = this.db.getProduct(productId);
-
-        // Use Gson to serialize the product to JSON
-        Gson gson = new Gson();
-        String json = gson.toJson(product);
-
-        // Set the response content type to JSON
-        response.setContentType("application/json");
-
-        // Write the JSON to the response output stream
-        PrintWriter out = response.getWriter();
-        out.print(json);
-        out.flush();
-    } catch (Exception e) {
-        throw new ServerException("Failed to get product: " + e.getMessage());
-    }
+        List<Product> products;
+        try {
+            products = db.getProducts(100, 0, false);
+        } catch (SQLException e) {
+            throw new ServletException("Failed to query database: " + e.getMessage());
+        }
+        
+        List<Category> categories;
+        try {
+            categories = db.getCategories();
+        } catch (SQLException e) {
+            throw new ServletException("Failed to query database: " + e.getMessage());
+        }
         
         
-       
+        request.setAttribute("products", products);
+        request.setAttribute("categories", categories);
+        request.getRequestDispatcher("/WEB-INF/jsp/products.jsp").forward(request, response);
     }
 
     /**
@@ -107,7 +103,6 @@ public class productModalServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
     }
 
     /**
@@ -119,5 +114,6 @@ public class productModalServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    
 
 }

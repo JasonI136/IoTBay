@@ -8,6 +8,7 @@ import iotbay.exceptions.ProductNotFoundException;
 import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.Category;
+import iotbay.models.PaymentMethod;
 import iotbay.models.Product;
 import iotbay.models.User;
 
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author cmesina
  */
 public class DatabaseManager {
@@ -42,7 +42,22 @@ public class DatabaseManager {
                     + "address VARCHAR(256),"
                     + "phoneNumber INT,"
                     + "isStaff BOOLEAN,"
+                    + "stripeCustomerId VARCHAR(256),"
                     + "PRIMARY KEY (userId)"
+                    + ")";
+
+            Statement stmt = this.conn.createStatement();
+            stmt.execute(createTableQuery);
+            conn.commit();
+        }
+
+        if (!this.tableExists("PAYMENT_METHODS")) {
+            String createTableQuery = "CREATE TABLE PAYMENT_METHODS ("
+                    + "paymentMethodId INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+                    + "userId INT,"
+                    + "stripePaymentMethodId VARCHAR(256),"
+                    + "PRIMARY KEY (paymentMethodId),"
+                    + "CONSTRAINT userIdRef FOREIGN KEY (userId) REFERENCES USERS(userId)"
                     + ")";
 
             Statement stmt = this.conn.createStatement();
@@ -92,26 +107,25 @@ public class DatabaseManager {
 
         if (description) {
             query = "SELECT PRODUCTS.PRODUCTID, PRODUCTS.NAME, PRODUCTS.DESCRIPTION, "
-                + "PRODUCTS.IMAGEURL, PRODUCTS.PRICE, PRODUCTS.QUANTITY, PRODUCTS.CATEGORYID, "
-                + "CATEGORIES.NAME AS CATEGORYNAME "
-                + "FROM PRODUCTS "
-                + "INNER JOIN CATEGORIES "
-                + "ON PRODUCTS.CATEGORYID = CATEGORIES.CATEGORYID "
-                + "ORDER BY PRODUCTS.PRODUCTID "
-                + "OFFSET ? ROWS "
-                + "FETCH NEXT ? ROWS ONLY";
+                    + "PRODUCTS.IMAGEURL, PRODUCTS.PRICE, PRODUCTS.QUANTITY, PRODUCTS.CATEGORYID, "
+                    + "CATEGORIES.NAME AS CATEGORYNAME "
+                    + "FROM PRODUCTS "
+                    + "INNER JOIN CATEGORIES "
+                    + "ON PRODUCTS.CATEGORYID = CATEGORIES.CATEGORYID "
+                    + "ORDER BY PRODUCTS.PRODUCTID "
+                    + "OFFSET ? ROWS "
+                    + "FETCH NEXT ? ROWS ONLY";
         } else {
             query = "SELECT PRODUCTS.PRODUCTID, PRODUCTS.NAME, "
-                + "PRODUCTS.IMAGEURL, PRODUCTS.PRICE, PRODUCTS.QUANTITY, PRODUCTS.CATEGORYID, "
-                + "CATEGORIES.NAME AS CATEGORYNAME "
-                + "FROM PRODUCTS "
-                + "INNER JOIN CATEGORIES "
-                + "ON PRODUCTS.CATEGORYID = CATEGORIES.CATEGORYID "
-                + "ORDER BY PRODUCTS.PRODUCTID "
-                + "OFFSET ? ROWS "
-                + "FETCH NEXT ? ROWS ONLY";
+                    + "PRODUCTS.IMAGEURL, PRODUCTS.PRICE, PRODUCTS.QUANTITY, PRODUCTS.CATEGORYID, "
+                    + "CATEGORIES.NAME AS CATEGORYNAME "
+                    + "FROM PRODUCTS "
+                    + "INNER JOIN CATEGORIES "
+                    + "ON PRODUCTS.CATEGORYID = CATEGORIES.CATEGORYID "
+                    + "ORDER BY PRODUCTS.PRODUCTID "
+                    + "OFFSET ? ROWS "
+                    + "FETCH NEXT ? ROWS ONLY";
         }
-
 
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -138,13 +152,13 @@ public class DatabaseManager {
         }
         return productList;
     }
-    
+
     public List<Category> getCategories() throws SQLException {
         List<Category> categoryList = new ArrayList<Category>();
-       
+
         String query = "SELECT * FROM CATEGORIES";
-        
-       try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -156,19 +170,34 @@ public class DatabaseManager {
             }
         }
         return categoryList;
-        
-        
+
+
     }
 
     public User getUser(String username) throws SQLException, UserNotFoundException {
         PreparedStatement userQuery = this.conn.prepareStatement("SELECT * FROM USERS WHERE username = ?");
+
         userQuery.setString(1, username);
+
 
         ResultSet rs = userQuery.executeQuery();
 
         if (!rs.next()) {
             throw new UserNotFoundException("The user with username " + username + " does not exist.");
         }
+        PreparedStatement userPaymentMethodsQuery = this.conn.prepareStatement("SELECT * FROM PAYMENT_METHODS WHERE userid = ?");
+        userPaymentMethodsQuery.setInt(1, rs.getInt("userId"));
+
+        List<PaymentMethod> paymentMethods = new ArrayList<>();
+        ResultSet paymentMethodsRs = userPaymentMethodsQuery.executeQuery();
+        while (paymentMethodsRs.next()) {
+            PaymentMethod paymentMethod = new PaymentMethod();
+            paymentMethod.setPaymentMethodId(paymentMethodsRs.getInt("paymentMethodId"));
+            paymentMethod.setUserId(paymentMethodsRs.getInt("userId"));
+            paymentMethod.setStripePaymentMethodId(paymentMethodsRs.getString("stripePaymentMethodId"));
+            paymentMethods.add(paymentMethod);
+        }
+
 
         User user = new User();
         user.setUserId(rs.getInt("userId"));
@@ -181,6 +210,8 @@ public class DatabaseManager {
         user.setAddress(rs.getString("address"));
         user.setPhoneNumber(rs.getInt("phoneNumber"));
         user.setIsStaff(rs.getBoolean("isStaff"));
+        user.setStripeCustomerId(rs.getString("stripeCustomerId"));
+        user.setPaymentMethods(paymentMethods);
 
         return user;
     }
@@ -248,8 +279,8 @@ public class DatabaseManager {
         }
 
         PreparedStatement addUserQuery = this.conn.prepareStatement(
-                "INSERT INTO USERS (username, password, passwordSalt, firstName, lastName, email, address, phoneNumber) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                "INSERT INTO USERS (username, password, passwordSalt, firstName, lastName, email, address, phoneNumber, stripeCustomerId) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
         addUserQuery.setString(1, user.getUsername());
@@ -260,6 +291,7 @@ public class DatabaseManager {
         addUserQuery.setString(6, user.getEmail());
         addUserQuery.setString(7, user.getAddress());
         addUserQuery.setInt(8, user.getPhoneNumber());
+        addUserQuery.setString(9, user.getStripeCustomerId());
 
         int affectedRows = addUserQuery.executeUpdate();
 
@@ -269,6 +301,24 @@ public class DatabaseManager {
         }
 
     }
+
+    public void addPaymentMethod(User user, String paymentMethodId) throws SQLException {
+        PreparedStatement addPaymentMethodQuery = this.conn.prepareStatement(
+                "INSERT INTO PAYMENT_METHODS (userId, stripePaymentMethodId) "
+                        + "VALUES (?, ?)"
+        );
+
+        addPaymentMethodQuery.setInt(1, user.getUserId());
+        addPaymentMethodQuery.setString(2, paymentMethodId);
+
+        int affectedRows = addPaymentMethodQuery.executeUpdate();
+
+        if (affectedRows == 1) {
+            System.out.println("Payment method " + paymentMethodId + " was added to the database.");
+            this.conn.commit();
+        }
+    }
+
 
     private boolean tableExists(String tableName) throws SQLException {
         DatabaseMetaData dbMeta = this.conn.getMetaData();
@@ -281,6 +331,6 @@ public class DatabaseManager {
     }
 }/***
  * Hello word
- * 
- * 
+ *
+ *
  */
