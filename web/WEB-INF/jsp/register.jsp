@@ -111,10 +111,20 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
-                            Create an Account
-                        </button>
+
+
+
+                        <div class="row">
+                            <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+                                Create an Account
+                            </button>
+                        </div>
+
                     </form>
+                            
+<!--                    <div class="row">
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAADUHrspn0fJpmst"></div>
+                    </div>-->
                 </div>
 
 
@@ -144,31 +154,31 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
         <script>
-                            $(".js-select2").each(function () {
-                                $(this).select2({
-                                    minimumResultsForSearch: 20,
-                                    dropdownParent: $(this).next('.dropDownSelect2')
-                                });
-                            })
+            $(".js-select2").each(function () {
+                $(this).select2({
+                    minimumResultsForSearch: 20,
+                    dropdownParent: $(this).next('.dropDownSelect2')
+                });
+            })
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script>
-                            $('.js-pscroll').each(function () {
-                                $(this).css('position', 'relative');
-                                $(this).css('overflow', 'hidden');
-                                var ps = new PerfectScrollbar(this, {
-                                    wheelSpeed: 1,
-                                    scrollingThreshold: 1000,
-                                    wheelPropagation: false,
-                                });
+            $('.js-pscroll').each(function () {
+                $(this).css('position', 'relative');
+                $(this).css('overflow', 'hidden');
+                var ps = new PerfectScrollbar(this, {
+                    wheelSpeed: 1,
+                    scrollingThreshold: 1000,
+                    wheelPropagation: false,
+                });
 
-                                $(window).on('resize', function () {
-                                    ps.update();
-                                })
-                            });
+                $(window).on('resize', function () {
+                    ps.update();
+                })
+            });
         </script>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKFWBqlKAGCeS1rMVoaNlwyayu0e0YRes"></script>
@@ -176,5 +186,17 @@
 
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>
 
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        <script>
+            window.turnstileCallbackFunction = function () {
+                const turnstileOptions = {
+                    sitekey: '0x4AAAAAAADUHrspn0fJpmst',
+                    callback: function (token) {
+                        console.log(`Challenge Success: ${token}`);
+                    }
+                };
+                turnstile.render('#container', turnstileOptions);
+            };
+        </script>
     </body>
 </html>
