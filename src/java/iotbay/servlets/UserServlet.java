@@ -75,7 +75,8 @@ public class UserServlet extends HttpServlet {
         try {
             request.getSession().setAttribute("user", this.db.getUser(((User) request.getSession().getAttribute("user")).getUsername()));
         } catch (Exception e) {
-            throw new ServletException("Unable to refresh user: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
         }
 
 
