@@ -39,11 +39,11 @@
                     </li>
 
                     <li class='label1' data-label1='NA'>
-                        <a href="#">Contact</a>
+                        <a href="${pageContext.request.contextPath}/contactUs">Contact</a>
                     </li>
                     
                      <li class='label1' data-label1='NA'>
-                        <a href="#">About Us</a>
+                        <a href="${pageContext.request.contextPath}/aboutUs">About Us</a>
                     </li>
                 </ul>
             </div>	
