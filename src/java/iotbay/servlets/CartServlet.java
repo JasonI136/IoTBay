@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import iotbay.database.DatabaseManager;
+import iotbay.models.Products;
 import iotbay.models.cart.Cart;
 
 import javax.servlet.ServletException;
@@ -27,41 +28,23 @@ public class CartServlet extends HttpServlet {
 
     DatabaseManager db;
 
+    Products products;
+
+    /**
+     * Initalises the servlet. Gets the database manager from the servlet context.
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
+        this.products = (Products) getServletContext().getAttribute("products");
     }
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet CartServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet CartServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP <code>GET</code> method.
+     * HTTP GET /cart
+     * Displays the cart page.
      *
      * @param request servlet request
      * @param response servlet response
@@ -75,12 +58,16 @@ public class CartServlet extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * This post method is used to add or update items in the cart.
+     * / -> adds the item to the cart.
+     * /updateCart -> updates the cart.
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * METHOD: POST
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -100,7 +87,7 @@ public class CartServlet extends HttpServlet {
                 for (Map.Entry<String, JsonElement> cartItem : payload.entrySet()) {
                     int productId = Integer.parseInt(cartItem.getKey());
                     int quantity = cartItem.getValue().getAsInt();
-                    userShoppingCart.updateCartItem(this.db.getProduct(productId), quantity);
+                    userShoppingCart.updateCartItem(this.products.getProduct(productId), quantity);
                 }
 
                 response.setStatus(200);
@@ -112,7 +99,7 @@ public class CartServlet extends HttpServlet {
                 try {
                     this.initShoppingCart(request);
                     Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
-                    userShoppingCart.addCartItem(this.db.getProduct(Integer.parseInt(request.getParameter("productId"))), Integer.parseInt(request.getParameter("quantity")));
+                    userShoppingCart.addCartItem(this.products.getProduct(Integer.parseInt(request.getParameter("productId"))), Integer.parseInt(request.getParameter("quantity")));
                     response.setStatus(200);
                 } catch (Exception e) {
                     throw new ServletException(e.getMessage());
@@ -124,15 +111,9 @@ public class CartServlet extends HttpServlet {
     }
 
     /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
+     * Initialises the shopping cart if it does not exist.
+     * @param request
      */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
     private void initShoppingCart(HttpServletRequest request) {
         Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
         if (userShoppingCart == null) {
