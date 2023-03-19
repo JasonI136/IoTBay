@@ -7,6 +7,8 @@ package iotbay.servlets;
 import com.stripe.Stripe;
 import iotbay.database.DatabaseManager;
 import iotbay.models.Categories;
+import iotbay.models.Category;
+import iotbay.models.Product;
 import iotbay.models.Products;
 import iotbay.models.Users;
 
@@ -15,6 +17,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -24,8 +28,9 @@ import java.util.Properties;
 public class MainServlet extends HttpServlet {
 
     private Properties appConfig;
-
     private Properties secrets;
+    private Products products;
+    private Categories categories;
 
     @Override
     public void init() throws ServletException {
@@ -38,6 +43,7 @@ public class MainServlet extends HttpServlet {
 
         appConfig = new Properties();
         secrets = new Properties();
+        
         
         try {
             appConfig.load(inputStream);
@@ -60,8 +66,8 @@ public class MainServlet extends HttpServlet {
         }
         
         Users users = new Users(db);
-        Products products = new Products(db);
-        Categories categories = new Categories(db);
+        this.products = new Products(db);
+        this.categories = new Categories(db);
         
         // Make the db object accessible from other servlets.
         getServletContext().setAttribute("db", db);
@@ -129,6 +135,18 @@ public class MainServlet extends HttpServlet {
             }
     } else {
         // Forward the request to the JSP page
+        List<Category> categories;
+        List<Product> products;
+        try {
+            products = this.products.getProducts(100, 0, false);
+            categories = this.categories.getCategories();
+        } catch (SQLException e) {
+            throw new ServletException("Failed to query database: " + e.getMessage());
+        }
+        
+        
+        request.setAttribute("products", products);
+        request.setAttribute("categories", categories);
         request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
     }
     }
