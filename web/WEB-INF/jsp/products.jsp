@@ -83,7 +83,7 @@
                                 <i class="zmdi zmdi-search"></i>
                             </button>
 
-                            <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+                            <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" id="searchInput" placeholder="Search products...">
                         </div>	
                     </div>
 
@@ -277,7 +277,7 @@
                     </div>
                 </div>
 
-                <div class="row isotope-grid">
+                <div class="row isotope-grid" id="productList">
 
                     <c:forEach items="${products}" var="product" >
                         <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${product.categoryNameNoSpace}">
@@ -407,6 +407,25 @@
         <jsp:include page="components/footer.jsp" />
     </footer>
 
+    <!-- SEARCH FUNCTIONALITY -->
+    <script>
+      const searchInput = document.getElementById('searchInput');
+      const productList = document.getElementById('productList');
+
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
+
+        for (const product of productList.children) {
+          const name = product.innerText.toLowerCase();
+          if (name.includes(query)) {
+            product.style.display = 'block';
+          } else {
+            product.style.display = 'none';
+          }
+        }
+      });
+    </script>
+    
     <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
 
     <script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
