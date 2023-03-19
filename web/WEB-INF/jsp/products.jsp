@@ -358,7 +358,7 @@
     <script>
 
         function fetchProductDetails(productId) {
-            fetch('${pageContext.request.contextPath}/productModal?productId=' + productId)
+            fetch('${pageContext.request.contextPath}/product/' + productId)
                     .then(response => response.json())
                     .then(json => {
                         document.querySelector('#product-name').innerHTML = json.name;

@@ -4,18 +4,32 @@
  */
 package iotbay.servlets;
 
+import com.stripe.model.SetupIntent;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
+import iotbay.database.DatabaseManager;
+import iotbay.models.User;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 /**
  *
  * @author cmesina
  */
 public class UserServlet extends HttpServlet {
+
+    DatabaseManager db;
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -55,6 +69,41 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String pathInfo = request.getPathInfo();
+
+                //refresh the user
+        try {
+            request.getSession().setAttribute("user", this.db.getUser(((User) request.getSession().getAttribute("user")).getUsername()));
+        } catch (Exception e) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+
+        if (pathInfo != null) {
+            if (pathInfo.startsWith("/addpaymentmethod/success")) {
+            String sessionId = request.getParameter("session_id");
+            try {
+                Session session = Session.retrieve(sessionId);
+                SetupIntent setupIntent = SetupIntent.retrieve(session.getSetupIntent());
+                try {
+                    this.db.addPaymentMethod((User) request.getSession().getAttribute("user"), setupIntent.getPaymentMethod());
+
+                    // refresh user as payment methods have changed
+                    request.getSession().setAttribute("user", this.db.getUser(((User) request.getSession().getAttribute("user")).getUsername()));
+
+                    response.sendRedirect(request.getContextPath() + "/user");
+                    return;
+                } catch (Exception e) {
+                    throw new ServletException(e);
+                }
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+        }
+        }
+
+
         request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
     }
 
@@ -69,7 +118,29 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String pathInfo = request.getPathInfo();
+
+        if (pathInfo.startsWith("/addpaymentmethod")) {
+            SessionCreateParams params =
+                    SessionCreateParams.builder()
+                            .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                            .setMode(SessionCreateParams.Mode.SETUP)
+                            .setCustomer(((User) request.getSession().getAttribute("user")).getStripeCustomerId())
+                            .setSuccessUrl("http://localhost:8080/IoTBay/user/addpaymentmethod/success?session_id={CHECKOUT_SESSION_ID}")
+                            .setCancelUrl("http://localhost:8080/IoTBay/user/addpaymentmethod/cancel")
+                            .build();
+
+            try{
+                Session session = Session.create(params);
+                response.sendRedirect(session.getUrl());
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+        }
+
+
+
+
     }
 
     /**

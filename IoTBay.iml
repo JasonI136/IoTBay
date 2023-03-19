@@ -19,7 +19,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="gson-2.8.0" level="project" />
     <orderEntry type="library" name="GlassFish 4.1.0" level="application_server_libraries" />
+    <orderEntry type="library" name="stripe-java-22.13.0" level="project" />
+    <orderEntry type="library" name="gson-2.10.1" level="project" />
   </component>
 </module>

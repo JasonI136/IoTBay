@@ -4,6 +4,7 @@
  */
 package iotbay.servlets;
 
+import com.stripe.Stripe;
 import iotbay.database.DatabaseManager;
 import iotbay.database.UserManager;
 
@@ -22,17 +23,23 @@ public class MainServlet extends HttpServlet {
     
     private Properties appConfig;
 
+    private Properties secrets;
+
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
         
         // Load the application configuration.
         InputStream inputStream = getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
+
+        InputStream inputStreamSecrets = getServletContext().getResourceAsStream("/WEB-INF/secrets.properties");
         
         appConfig = new Properties();
+        secrets = new Properties();
         
         try {
             appConfig.load(inputStream);
+            secrets.load(inputStreamSecrets);
         } catch (IOException err) {
             throw new ServletException("Application configuration failed to load.");
         }
@@ -56,12 +63,13 @@ public class MainServlet extends HttpServlet {
         getServletContext().setAttribute("db", db);
         // Make config accessible from other servlets.
         getServletContext().setAttribute("appConfig", appConfig);
+        // Make secrets accessible from other servlets.
+        getServletContext().setAttribute("secrets", secrets);
         // Make user manager accessible from other servlets.
         getServletContext().setAttribute("userManager", userManager);
-        
-        
-        
-        
+
+        Stripe.apiKey = secrets.getProperty("stripe.api.key");
+
     }
     
     
