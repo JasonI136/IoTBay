@@ -5,6 +5,7 @@
 package iotbay.models.cart;
 
 import iotbay.models.Product;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
