@@ -9,6 +9,7 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import iotbay.database.DatabaseManager;
 import iotbay.models.User;
+import iotbay.models.Users;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,10 +26,14 @@ import java.sql.SQLException;
 public class UserServlet extends HttpServlet {
 
     DatabaseManager db;
+
+    Users users;
+
     @Override
     public void init() throws ServletException {
         super.init();
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
+        this.users = (Users) getServletContext().getAttribute("users");
     }
 
     /**
@@ -73,7 +78,7 @@ public class UserServlet extends HttpServlet {
 
                 //refresh the user
         try {
-            request.getSession().setAttribute("user", this.db.getUser(((User) request.getSession().getAttribute("user")).getUsername()));
+            request.getSession().setAttribute("user", this.users.getUser(((User) request.getSession().getAttribute("user")).getUsername()));
         } catch (Exception e) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -87,10 +92,11 @@ public class UserServlet extends HttpServlet {
                 Session session = Session.retrieve(sessionId);
                 SetupIntent setupIntent = SetupIntent.retrieve(session.getSetupIntent());
                 try {
-                    this.db.addPaymentMethod((User) request.getSession().getAttribute("user"), setupIntent.getPaymentMethod());
+                    User user = (User) request.getSession().getAttribute("user");
+                    user.addPaymentMethod(setupIntent.getPaymentMethod());
 
                     // refresh user as payment methods have changed
-                    request.getSession().setAttribute("user", this.db.getUser(((User) request.getSession().getAttribute("user")).getUsername()));
+                    request.getSession().setAttribute("user", this.users.getUser(((User) request.getSession().getAttribute("user")).getUsername()));
 
                     response.sendRedirect(request.getContextPath() + "/user");
                     return;

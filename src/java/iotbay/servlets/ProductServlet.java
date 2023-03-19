@@ -7,6 +7,7 @@ package iotbay.servlets;
 import com.google.gson.Gson;
 import iotbay.database.DatabaseManager;
 import iotbay.models.Product;
+import iotbay.models.Products;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,12 +24,15 @@ public class ProductServlet extends HttpServlet {
 
     DatabaseManager db;
 
+    Products products;
+
 
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
 
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
+        this.products = (Products) getServletContext().getAttribute("products");
     }
 
 
@@ -83,7 +87,7 @@ public class ProductServlet extends HttpServlet {
             try {
                 int productId = Integer.parseInt(pathInfo.substring(1));
                 try {
-                    Product product = this.db.getProduct(productId);
+                    Product product = this.products.getProduct(productId);
 
                     // Use Gson to serialize the product to JSON
                     Gson gson = new Gson();

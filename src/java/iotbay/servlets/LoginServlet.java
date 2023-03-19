@@ -4,7 +4,7 @@
  */
 package iotbay.servlets;
 
-import iotbay.database.UserManager;
+import iotbay.models.Users;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.User;
 
@@ -74,13 +74,13 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        UserManager userManager = (UserManager) getServletContext().getAttribute("userManager");
+        Users users = (Users) getServletContext().getAttribute("users");
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
         try {
-            User user = userManager.authenticateUser(username, password);
+            User user = users.authenticateUser(username, password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
                 request.setAttribute("success", "Login successful");

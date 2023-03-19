@@ -4,7 +4,11 @@
  */
 package iotbay.models;
 
+import iotbay.database.DatabaseManager;
+
 import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +17,10 @@ import java.util.List;
  * @author cmesina
  */
 public class User implements Serializable {
+
+    // The database manager for the user. This is transient because it is not serializable.
+    private final transient DatabaseManager db;
+
     private int userId;
 
     private String stripeCustomerId;
@@ -27,7 +35,8 @@ public class User implements Serializable {
     private boolean isStaff;
     private List<PaymentMethod> paymentMethods;
     
-    public User() {
+    public User(DatabaseManager db) {
+        this.db = db;
         this.paymentMethods = new ArrayList<>();
     }
 
@@ -138,5 +147,28 @@ public class User implements Serializable {
 
     public void setStaff(boolean staff) {
         isStaff = staff;
+    }
+
+
+    /**
+     * Adds a payment method associated with the user.
+     * @param paymentMethodId the id of the payment method to add.
+     * @throws SQLException if there is an error adding the payment method
+     */
+    public void addPaymentMethod(String paymentMethodId) throws SQLException {
+        PreparedStatement addPaymentMethodQuery = this.db.getDbConnection().prepareStatement(
+                "INSERT INTO PAYMENT_METHOD (user_id, stripe_payment_method_id) "
+                        + "VALUES (?, ?)"
+        );
+
+        addPaymentMethodQuery.setInt(1, this.getUserId());
+        addPaymentMethodQuery.setString(2, paymentMethodId);
+
+        int affectedRows = addPaymentMethodQuery.executeUpdate();
+
+        if (affectedRows == 1) {
+            System.out.println("Payment method " + paymentMethodId + " was added to the database.");
+            this.db.getDbConnection().commit();
+        }
     }
 }

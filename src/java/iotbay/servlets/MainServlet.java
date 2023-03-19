@@ -6,7 +6,9 @@ package iotbay.servlets;
 
 import com.stripe.Stripe;
 import iotbay.database.DatabaseManager;
-import iotbay.database.UserManager;
+import iotbay.models.Categories;
+import iotbay.models.Products;
+import iotbay.models.Users;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +22,7 @@ import java.util.Properties;
  * @author cmesina
  */
 public class MainServlet extends HttpServlet {
-    
+
     private Properties appConfig;
 
     private Properties secrets;
@@ -33,7 +35,7 @@ public class MainServlet extends HttpServlet {
         InputStream inputStream = getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
 
         InputStream inputStreamSecrets = getServletContext().getResourceAsStream("/WEB-INF/secrets.properties");
-        
+
         appConfig = new Properties();
         secrets = new Properties();
         
@@ -57,7 +59,9 @@ public class MainServlet extends HttpServlet {
             throw new ServletException("An error occurred whilst intialising the database: " + e.getMessage());
         }
         
-        UserManager userManager = new UserManager(db, Integer.parseInt(appConfig.getProperty("auth.saltLength")), Integer.parseInt(appConfig.getProperty("auth.encryptionIterations")));
+        Users users = new Users(db);
+        Products products = new Products(db);
+        Categories categories = new Categories(db);
         
         // Make the db object accessible from other servlets.
         getServletContext().setAttribute("db", db);
@@ -66,7 +70,11 @@ public class MainServlet extends HttpServlet {
         // Make secrets accessible from other servlets.
         getServletContext().setAttribute("secrets", secrets);
         // Make user manager accessible from other servlets.
-        getServletContext().setAttribute("userManager", userManager);
+        getServletContext().setAttribute("users", users);
+
+        getServletContext().setAttribute("products", products);
+
+        getServletContext().setAttribute("categories", categories);
 
         Stripe.apiKey = secrets.getProperty("stripe.api.key");
 

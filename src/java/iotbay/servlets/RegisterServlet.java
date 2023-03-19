@@ -4,7 +4,8 @@
  */
 package iotbay.servlets;
 
-import iotbay.database.UserManager;
+import iotbay.database.DatabaseManager;
+import iotbay.models.Users;
 import iotbay.exceptions.UserExistsException;
 import iotbay.models.User;
 
@@ -22,7 +23,7 @@ import java.util.Properties;
  */
 public class RegisterServlet extends HttpServlet {
     
-    UserManager userManager;
+    Users users;
 
     @Override
     public void init() throws ServletException {
@@ -30,7 +31,7 @@ public class RegisterServlet extends HttpServlet {
         
         Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
         
-        this.userManager = (UserManager) getServletContext().getAttribute("userManager");
+        this.users = (Users) getServletContext().getAttribute("users");
     }
 
     /**
@@ -100,7 +101,7 @@ public class RegisterServlet extends HttpServlet {
             throw new ServletException("Unable to parse phone number: " + e.getMessage());
         } 
         
-        User newUser = new User();
+        User newUser = new User((DatabaseManager) getServletContext().getAttribute("db"));
         newUser.setUsername(username);
         newUser.setPassword(password);
         newUser.setFirstName(firstName);
@@ -110,7 +111,7 @@ public class RegisterServlet extends HttpServlet {
         newUser.setPhoneNumber(phoneNumber);
         
         try {
-            this.userManager.registerUser(newUser);
+            this.users.registerUser(newUser);
         } catch (Exception e) {
             if (e instanceof UserExistsException) {
                 request.setAttribute("error", "A user with the same username or email already exists.");
