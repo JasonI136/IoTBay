@@ -83,7 +83,7 @@
                                                 <tr class="table_row">
                                                     <td class="column-1">
                                                         <div class="how-itemcart1">
-                                                            <img src="${pageContext.request.contextPath}/public/images/product-16.png" alt="IMG">
+                                                            <img src="${cartItem.product.imageURL}" alt="IMG">
                                                         </div>
                                                     </td>
                                                     <td class="column-2">${cartItem.product.name}</td>

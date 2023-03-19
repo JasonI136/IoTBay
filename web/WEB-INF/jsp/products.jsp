@@ -40,6 +40,20 @@
                 <jsp:include page="components/main-navbar.jsp" />           
             </div>
         </header>
+
+        <!-- breadcrumb -->
+        <div class="container">
+            <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+                <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
+                    Home
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+
+                <span class="stext-109 cl4">
+                    Shop
+                </span>
+            </div>
+        </div>
         <!-- Product -->
         <section class="bg0 p-t-23 p-b-140">
             <div class="container">
@@ -94,7 +108,7 @@
                                     <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" onClick="fetchProductDetails(${product.productId})">
                                         Quick View
                                     </a>
-                            </div>
+                                </div>
 
                                 <div class="block2-txt flex-w flex-t p-t-14">
                                     <div class="block2-txt-child1 flex-col-l ">
@@ -121,12 +135,7 @@
                 </div> 
 
 
-                <!-- Load more -->
-                <div class="flex-c-m flex-w w-full p-t-45">
-                    <a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-                        Load More
-                    </a>
-                </div>
+                
             </div>
         </section>  
 

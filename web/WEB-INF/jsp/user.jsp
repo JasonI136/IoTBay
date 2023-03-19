@@ -73,7 +73,19 @@
                 </h2>
             </section>
         </div>
+        <!-- breadcrumb -->
+        <div class="container">
+            <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+                <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
+                    Home
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
 
+                <span class="stext-109 cl4">
+                    User Management
+                </span>
+            </div>
+        </div>
         <!-- Content page -->
         <section class="bg0 p-t-104 p-b-116">
             <div class="container">
@@ -139,10 +151,13 @@
                             </div>
                         </div>
 
-                            
-                        <button href="" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer" onclick="toggleEdit()">
-                            Edit Account Details
-                        </button>
+                        <div class="row">
+                            <button href="" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer" onclick="toggleEdit()">
+                                Edit Account Details
+                            </button>
+                        </div>
+
+
 
                     </div>
 
@@ -216,47 +231,47 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
         <script>
-                            $(".js-select2").each(function () {
-                                $(this).select2({
-                                    minimumResultsForSearch: 20,
-                                    dropdownParent: $(this).next('.dropDownSelect2')
-                                });
-                            })
+                                $(".js-select2").each(function () {
+                                    $(this).select2({
+                                        minimumResultsForSearch: 20,
+                                        dropdownParent: $(this).next('.dropDownSelect2')
+                                    });
+                                })
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script>
-                            $('.js-pscroll').each(function () {
-                                $(this).css('position', 'relative');
-                                $(this).css('overflow', 'hidden');
-                                var ps = new PerfectScrollbar(this, {
-                                    wheelSpeed: 1,
-                                    scrollingThreshold: 1000,
-                                    wheelPropagation: false,
-                                });
+                                $('.js-pscroll').each(function () {
+                                    $(this).css('position', 'relative');
+                                    $(this).css('overflow', 'hidden');
+                                    var ps = new PerfectScrollbar(this, {
+                                        wheelSpeed: 1,
+                                        scrollingThreshold: 1000,
+                                        wheelPropagation: false,
+                                    });
 
-                                $(window).on('resize', function () {
-                                    ps.update();
-                                })
-                            });
+                                    $(window).on('resize', function () {
+                                        ps.update();
+                                    })
+                                });
         </script>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKFWBqlKAGCeS1rMVoaNlwyayu0e0YRes"></script>
         <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
 
         <script>
-                            function toggleEdit() {
-                                var inputs = document.getElementsByTagName("input");
-                                for (var i = 0; i < inputs.length; i++) {
-                                    if (inputs[i].getAttribute("disabled")) {
-                                        inputs[i].removeAttribute("disabled");
-                                    } else {
-                                        inputs[i].setAttribute("disabled", "disabled");
+                                function toggleEdit() {
+                                    var inputs = document.getElementsByTagName("input");
+                                    for (var i = 0; i < inputs.length; i++) {
+                                        if (inputs[i].getAttribute("disabled")) {
+                                            inputs[i].removeAttribute("disabled");
+                                        } else {
+                                            inputs[i].setAttribute("disabled", "disabled");
+                                        }
                                     }
                                 }
-                            }
         </script>
 
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>

@@ -38,11 +38,11 @@
                         <a href="${pageContext.request.contextPath}/orderTracking">Track Order</a>
                     </li>
 
-                    <li class='label1' data-label1='NA'>
+                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/contactUs') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/contactUs">Contact</a>
                     </li>
                     
-                     <li class='label1' data-label1='NA'>
+                     <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/aboutUs') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/aboutUs">About Us</a>
                     </li>
                 </ul>

@@ -43,6 +43,7 @@
                 <jsp:include page="components/main-navbar.jsp" />
             </div>
         </header>
+        
         <section class="section-slide">
             <div class="wrap-slick1">
                 <div class="slick1">

@@ -43,6 +43,7 @@
                 <jsp:include page="components/main-navbar.jsp" />
             </div>
         </header>
+
         <!-- Title page -->
         <div >
             <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('${pageContext.request.contextPath}/public/images/bg-orders.jpg');">
@@ -52,6 +53,19 @@
             </section>
         </div>
 
+        <!-- breadcrumb -->
+        <div class="container">
+            <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+                <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
+                    Home
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+
+                <span class="stext-109 cl4">
+                    Track Order
+                </span>
+            </div>
+        </div>
         <!-- Content page -->
         <section class="bg0 p-t-104 p-b-116">
             <div class="container">
@@ -110,8 +124,8 @@
                                 <span class="mtext-110 cl2">
                                     Get the Status of your Order
                                 </span>
-                                
-                               
+
+
                             </div>
                         </div>
 
