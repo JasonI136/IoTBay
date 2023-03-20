@@ -5,9 +5,9 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.Users;
+import iotbay.models.collections.Users;
 import iotbay.exceptions.UserExistsException;
-import iotbay.models.User;
+import iotbay.models.entities.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

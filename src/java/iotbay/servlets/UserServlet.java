@@ -4,23 +4,24 @@
  */
 package iotbay.servlets;
 
+import com.stripe.model.PaymentMethod;
 import com.stripe.model.SetupIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import iotbay.database.DatabaseManager;
-import iotbay.models.User;
-import iotbay.models.Users;
+import iotbay.exceptions.UserNotFoundException;
+import iotbay.exceptions.UserNotLoggedInException;
+import iotbay.models.entities.User;
+import iotbay.models.collections.Users;
+import iotbay.util.Misc;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
 
 /**
- *
  * @author cmesina
  */
 public class UserServlet extends HttpServlet {
@@ -37,116 +38,174 @@ public class UserServlet extends HttpServlet {
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UserServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UserServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String pathInfo = request.getPathInfo();
-
-                //refresh the user
+        String path = request.getPathInfo();
+        // refresh the user
         try {
-            request.getSession().setAttribute("user", this.users.getUser(((User) request.getSession().getAttribute("user")).getUsername()));
-        } catch (Exception e) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            Misc.refreshUser(request, users);
+        } catch (UserNotLoggedInException | UserNotFoundException e) {
+            response.sendRedirect(getServletContext().getContextPath() + "/login");
             return;
+        } catch (Exception e) {
+            throw new ServletException(e);
         }
 
-
-        if (pathInfo != null) {
-            if (pathInfo.startsWith("/addpaymentmethod/success")) {
-            String sessionId = request.getParameter("session_id");
-            try {
-                Session session = Session.retrieve(sessionId);
-                SetupIntent setupIntent = SetupIntent.retrieve(session.getSetupIntent());
-                try {
-                    User user = (User) request.getSession().getAttribute("user");
-                    user.addPaymentMethod(setupIntent.getPaymentMethod());
-
-                    // refresh user as payment methods have changed
-                    request.getSession().setAttribute("user", this.users.getUser(((User) request.getSession().getAttribute("user")).getUsername()));
-
-                    response.sendRedirect(request.getContextPath() + "/user");
-                    return;
-                } catch (Exception e) {
-                    throw new ServletException(e);
-                }
-            } catch (Exception e) {
-                throw new ServletException(e);
+        if (path != null) {
+            if (path.equals("/payments/add/success")) {
+                addPaymentMethodSuccess(request, response);
+                return;
+            } else {
+                response.sendError(400);
             }
-        }
+        } else {
+            request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
         }
 
 
-        request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String pathInfo = request.getPathInfo();
 
-        if (pathInfo.startsWith("/addpaymentmethod")) {
-            SessionCreateParams params =
-                    SessionCreateParams.builder()
-                            .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-                            .setMode(SessionCreateParams.Mode.SETUP)
-                            .setCustomer(((User) request.getSession().getAttribute("user")).getStripeCustomerId())
-                            .setSuccessUrl("http://localhost:8080/IoTBay/user/addpaymentmethod/success?session_id={CHECKOUT_SESSION_ID}")
-                            .setCancelUrl("http://localhost:8080/IoTBay/user/addpaymentmethod/cancel")
-                            .build();
+        try {
+            Misc.refreshUser(request, users);
+        } catch (UserNotLoggedInException | UserNotFoundException e) {
+            response.sendRedirect(getServletContext().getContextPath() + "/login");
+            return;
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
 
-            try{
-                Session session = Session.create(params);
-                response.sendRedirect(session.getUrl());
-            } catch (Exception e) {
-                throw new ServletException(e);
+        String path = request.getPathInfo();
+
+        if (path != null) {
+            switch (request.getPathInfo()) {
+                case "/payments/add":
+                    addPaymentMethod(request, response);
+                    return;
+                case "/payments/remove":
+                    removePaymentMethod(request, response);
+                    return;
+                default:
+                    response.sendError(404);
             }
         }
 
 
+    }
+
+    private void removePaymentMethod(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        // detach payment method from stripe customer and remove from database
+        int paymentMethodId = Integer.parseInt(request.getParameter("paymentMethodId"));
+        User user = (User) request.getSession().getAttribute("user");
+
+        iotbay.models.entities.PaymentMethod paymentMethod;
+
+        try {
+            paymentMethod = user.getPaymentMethod(paymentMethodId);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
 
 
+        // the payment method not found
+        if (paymentMethod == null) {
+            try {
+                response.sendError(404);
+                return;
+            } catch (IOException e) {
+                throw new ServletException(e);
+            }
+        }
+
+        try {
+            PaymentMethod stripePaymentMethod = PaymentMethod.retrieve(paymentMethod.getStripePaymentMethodId());
+            stripePaymentMethod.detach();
+            user.deletePaymentMethod(paymentMethod);
+
+            // refresh user as payment methods have changed
+            try {
+                Misc.refreshUser(request, users);
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+
+            response.sendRedirect(request.getContextPath() + "/user");
+
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+
+    }
+
+    private static void addPaymentMethod(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        SessionCreateParams params =
+                SessionCreateParams.builder()
+                        .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                        .setMode(SessionCreateParams.Mode.SETUP)
+                        .setCustomer(((User) request.getSession().getAttribute("user")).getStripeCustomerId())
+                        .setSuccessUrl("http://localhost:8080/IoTBay/user/payments/add/success?session_id={CHECKOUT_SESSION_ID}")
+                        .setCancelUrl("http://localhost:8080/IoTBay/user/payments/add/cancel")
+                        .build();
+
+        try {
+            Session session = Session.create(params);
+            response.sendRedirect(session.getUrl());
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
+
+    private void addPaymentMethodSuccess(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        String sessionId = request.getParameter("session_id");
+        try {
+            Session session = Session.retrieve(sessionId);
+            SetupIntent setupIntent = SetupIntent.retrieve(session.getSetupIntent());
+            try {
+                User user = (User) request.getSession().getAttribute("user");
+                iotbay.models.entities.PaymentMethod paymentMethod = new iotbay.models.entities.PaymentMethod();
+                paymentMethod.setStripePaymentMethodId(setupIntent.getPaymentMethod());
+                paymentMethod.setUserId(user.getId());
+
+                // retrieve the payment method from stripe
+                PaymentMethod stripePaymentMethod = PaymentMethod.retrieve(setupIntent.getPaymentMethod());
+
+                paymentMethod.setPaymentMethodType(stripePaymentMethod.getCard().getBrand());
+                paymentMethod.setCardLast4(Integer.parseInt(stripePaymentMethod.getCard().getLast4()));
+                user.addPaymentMethod(paymentMethod);
+
+                // refresh user as payment methods have changed
+                try {
+                    Misc.refreshUser(request, users);
+                } catch (Exception e) {
+                    throw new ServletException(e);
+                }
+
+                response.sendRedirect(request.getContextPath() + "/user");
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
 
     /**

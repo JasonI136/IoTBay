@@ -8,20 +8,19 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import iotbay.database.DatabaseManager;
-import iotbay.models.Products;
-import iotbay.models.cart.Cart;
+import iotbay.models.collections.Products;
+import iotbay.models.entities.Cart;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author jasonmba
  */
 public class CartServlet extends HttpServlet {
@@ -32,6 +31,7 @@ public class CartServlet extends HttpServlet {
 
     /**
      * Initalises the servlet. Gets the database manager from the servlet context.
+     *
      * @throws ServletException
      */
     @Override
@@ -46,10 +46,10 @@ public class CartServlet extends HttpServlet {
      * HTTP GET /cart
      * Displays the cart page.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -61,7 +61,7 @@ public class CartServlet extends HttpServlet {
      * This post method is used to add or update items in the cart.
      * / -> adds the item to the cart.
      * /updateCart -> updates the cart.
-     *
+     * <p>
      * METHOD: POST
      *
      * @param request
@@ -75,43 +75,83 @@ public class CartServlet extends HttpServlet {
 
         String path = request.getPathInfo();
 
-        if (path != null && path.equals("/updateCart")) {
-            try {
-                Gson gson = new Gson();
-                String json = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-                JsonObject payload = gson.fromJson(json, JsonObject.class);
-
-                this.initShoppingCart(request);
-                Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
-
-                for (Map.Entry<String, JsonElement> cartItem : payload.entrySet()) {
-                    int productId = Integer.parseInt(cartItem.getKey());
-                    int quantity = cartItem.getValue().getAsInt();
-                    userShoppingCart.updateCartItem(this.products.getProduct(productId), quantity);
-                }
-
-                response.setStatus(200);
-            } catch (Exception e) {
-                throw new ServletException(e.getMessage());
+        if (path != null) {
+            switch (path) {
+                case "/update":
+                    this.updateCart(request, response);
+                    break;
+                case "/checkout":
+                    this.checkOut(request, response);
+                    break;
+                default:
+                    response.sendError(400);
+                    break;
             }
         } else {
-            if (request.getParameter("productId") != null) {
-                try {
-                    this.initShoppingCart(request);
-                    Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
-                    userShoppingCart.addCartItem(this.products.getProduct(Integer.parseInt(request.getParameter("productId"))), Integer.parseInt(request.getParameter("quantity")));
-                    response.setStatus(200);
-                } catch (Exception e) {
-                    throw new ServletException(e.getMessage());
-                }
-            }
-            //response.sendRedirect(request.getHeader("referer"));
+            this.addCartItem(request, response);
         }
 
     }
 
+    private void checkOut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        throw new NotImplementedException();
+//        try {
+//            this.initShoppingCart(request);
+//            Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
+//            User user = (User) request.getSession().getAttribute("user");
+//
+//            // create stripe payment intent
+//            Map<String, Object> params = new HashMap<>();
+//            params.put("amount", userShoppingCart.getTotalPrice());
+//            params.put("currency", "aud");
+//            params.put("payment_method",user.getPaymentMethod(2).getStripePaymentMethodId());
+//
+//            PaymentIntent paymentIntent = PaymentIntent.create(params);
+//
+//
+//            response.setStatus(200);
+//        } catch (Exception e) {
+//            throw new ServletException(e.getMessage());
+//        }
+    }
+
+    private void addCartItem(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        if (request.getParameter("productId") != null) {
+            try {
+                this.initShoppingCart(request);
+                Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
+                userShoppingCart.addCartItem(this.products.getProduct(Integer.parseInt(request.getParameter("productId"))), Integer.parseInt(request.getParameter("quantity")));
+                response.setStatus(200);
+            } catch (Exception e) {
+                throw new ServletException(e.getMessage());
+            }
+        }
+    }
+
+    private void updateCart(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        try {
+            Gson gson = new Gson();
+            String json = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            JsonObject payload = gson.fromJson(json, JsonObject.class);
+
+            this.initShoppingCart(request);
+            Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
+
+            for (Map.Entry<String, JsonElement> cartItem : payload.entrySet()) {
+                int productId = Integer.parseInt(cartItem.getKey());
+                int quantity = cartItem.getValue().getAsInt();
+                userShoppingCart.updateCartItem(this.products.getProduct(productId), quantity);
+            }
+
+            response.setStatus(200);
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
     /**
      * Initialises the shopping cart if it does not exist.
+     *
      * @param request
      */
     private void initShoppingCart(HttpServletRequest request) {

@@ -93,7 +93,7 @@
                                                             <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
                                                                 <i class="fs-16 zmdi zmdi-minus"></i>
                                                             </div>
-                                                            <input class="mtext-104 cl3 txt-center num-product" id="cartItem-product-quantity" type="number" name="${cartItem.product.productId}" value="${cartItem.cartQuantity}">
+                                                            <input class="mtext-104 cl3 txt-center num-product" id="cartItem-product-quantity" type="number" name="${cartItem.product.id}" value="${cartItem.cartQuantity}">
                                                             <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
                                                                 <i class="fs-16 zmdi zmdi-plus"></i>
                                                             </div>
@@ -287,7 +287,7 @@
                     payload[productId] = quantity;
                 });
 
-                fetch("${pageContext.request.contextPath}/cart/updateCart", {
+                fetch("${pageContext.request.contextPath}/cart/update", {
                     method: "POST",
                     body: JSON.stringify(payload),
                     headers: {

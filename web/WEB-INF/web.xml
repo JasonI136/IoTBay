@@ -34,8 +34,8 @@
         <servlet-class>iotbay.servlets.ProductServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>orderTrackingServlet</servlet-name>
-        <servlet-class>iotbay.servlets.orderTrackingServlet</servlet-class>
+        <servlet-name>OrderTrackingServlet</servlet-name>
+        <servlet-class>iotbay.servlets.OrderTrackingServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ContactServlet</servlet-name>
@@ -82,7 +82,7 @@
         <url-pattern>/product/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>orderTrackingServlet</servlet-name>
+        <servlet-name>OrderTrackingServlet</servlet-name>
         <url-pattern>/orderTracking</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
