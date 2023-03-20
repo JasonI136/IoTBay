@@ -26,6 +26,7 @@ import java.util.*;
  * @author cmesina
  */
 public class Users {
+
     private static final int saltLength = 16;
     private static final int iterations = 10000;
     private final DatabaseManager db;
@@ -41,9 +42,7 @@ public class Users {
         newUser.setPassword(Base64.getEncoder().encodeToString(passwordHash));
         newUser.setPasswordSalt(Base64.getEncoder().encodeToString(salt));
 
-
         createStripeCustomer(newUser);
-
 
         this.addUser(newUser);
     }
@@ -70,6 +69,9 @@ public class Users {
         byte[] encryptedPassword = encryptPassword(password, salt);
 
         if (MessageDigest.isEqual(encryptedPassword, Base64.getDecoder().decode(user.getPassword()))) {
+            if (user.isStaff()) {
+                System.out.println("THIS IS AN ADMIN"); // print to console if user is staff
+            }
             return user;
         } else {
             return null;
@@ -81,14 +83,13 @@ public class Users {
      *
      * @param username the username of the user to retrieve
      * @return the user as a User object
-     * @throws SQLException          if there is an error retrieving the user
+     * @throws SQLException if there is an error retrieving the user
      * @throws UserNotFoundException if the user does not exist
      */
     public User getUser(String username) throws SQLException, UserNotFoundException {
         PreparedStatement userQuery = this.db.getDbConnection().prepareStatement("SELECT * FROM USER_ACCOUNT WHERE username = ?");
 
         userQuery.setString(1, username);
-
 
         ResultSet rs = userQuery.executeQuery();
 
@@ -107,7 +108,6 @@ public class Users {
             paymentMethod.setStripePaymentMethodId(paymentMethodsRs.getString("stripe_payment_method_id"));
             paymentMethods.add(paymentMethod);
         }
-
 
         User user = new User(this.db);
         user.setUserId(rs.getInt("id"));
@@ -130,7 +130,7 @@ public class Users {
      * Adds a user to the database.
      *
      * @param user the user to add as a User object
-     * @throws SQLException        if there is an error adding the user
+     * @throws SQLException if there is an error adding the user
      * @throws UserExistsException if the user already exists
      */
     private void addUser(User user) throws SQLException, UserExistsException {
@@ -150,7 +150,7 @@ public class Users {
 
         PreparedStatement addUserQuery = this.db.getDbConnection().prepareStatement(
                 "INSERT INTO USER_ACCOUNT (username, password, password_salt, first_name, last_name, email, address, phone_number, stripe_customer_id) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
         addUserQuery.setString(1, user.getUsername());
