@@ -109,7 +109,7 @@ public class Users {
         byte[] encryptedPassword = encryptPassword(password, salt);
 
         if (MessageDigest.isEqual(encryptedPassword, Base64.getDecoder().decode(user.getPassword()))) {
-            if (user.isStaff()) {
+            if (user.getIsStaff()) {
                 System.out.println("THIS IS AN ADMIN"); // print to console if user is staff
             }
             return user;
