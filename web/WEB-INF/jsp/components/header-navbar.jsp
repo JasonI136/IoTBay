@@ -52,7 +52,7 @@
             if (confirmation == true) {
                 window.location.href = "<%=request.getContextPath()%>/logout";
             } else {
-                return;
+
             }
         }
     </script>

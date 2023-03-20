@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author jasonmba
  */
-public class orderTrackingServlet extends HttpServlet {
+public class OrderTrackingServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

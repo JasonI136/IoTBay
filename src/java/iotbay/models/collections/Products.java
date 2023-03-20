@@ -1,7 +1,8 @@
-package iotbay.models;
+package iotbay.models.collections;
 
 import iotbay.database.DatabaseManager;
 import iotbay.exceptions.ProductNotFoundException;
+import iotbay.models.entities.Product;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,17 +10,32 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a collection of products
+ *
+ * @author cmesina
+ */
 public class Products {
+
+    /**
+     * An instance of the database manager
+     */
     private final DatabaseManager db;
 
+    /**
+     * Initializes the products collection with the database manager
+     *
+     * @param db
+     */
     public Products(DatabaseManager db) {
         this.db = db;
     }
 
     /**
      * Retrieves an ArrayList of products from the database depending on the limit and offset.
-     * @param limit the number of products to retrieve
-     * @param offset the offset to start retrieving products from
+     *
+     * @param limit       the number of products to retrieve
+     * @param offset      the offset to start retrieving products from
      * @param description whether to include the product description in the results
      * @return an ArrayList of products
      * @throws SQLException if there is an error retrieving the products
@@ -51,24 +67,15 @@ public class Products {
         }
 
 
-        try (PreparedStatement pstmt = this.db.getDbConnection().prepareStatement(query)) {
-            pstmt.setInt(1, offset);
-            pstmt.setInt(2, limit);
+        try (PreparedStatement pstmt = this.db.prepareStatement(
+                query,
+                offset,
+                limit
+        )) {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    Product product = new Product();
-                    product.setProductId(rs.getInt("id"));
-                    product.setName(rs.getString("name"));
-                    if (description) {
-                        product.setDescription(rs.getString("description"));
-                    }
-
-                    product.setPrice(rs.getInt("price"));
-                    product.setQuantity(rs.getInt("quantity"));
-                    product.setCategoryId(rs.getInt("category_id"));
-                    product.setCategoryName(rs.getString("category_name"));
-                    product.setImageURL(rs.getString("image_url"));
+                    Product product = new Product(rs);
                     productList.add(product);
                 }
             }
@@ -78,30 +85,35 @@ public class Products {
 
     /**
      * Retrieves a product from the database.
+     *
      * @param productId the id of the product to retrieve
      * @return the product as a Product object
-     * @throws SQLException if there is an error retrieving the product
+     * @throws SQLException             if there is an error retrieving the product
      * @throws ProductNotFoundException if the product does not exist
      */
     public Product getProduct(int productId) throws SQLException, ProductNotFoundException {
-        PreparedStatement productQuery = this.db.getDbConnection().prepareStatement("SELECT * FROM PRODUCT WHERE id = ?");
-        productQuery.setInt(1, productId);
+        ResultSet rs;
+        try (PreparedStatement productQuery = this.db.prepareStatement(
+                "SELECT PRODUCT.id, PRODUCT.name, PRODUCT.description, "
+                        + "PRODUCT.image_url, PRODUCT.price, PRODUCT.quantity, PRODUCT.category_id, "
+                        + "category.name AS category_name "
+                        + "FROM PRODUCT "
+                        + "INNER JOIN CATEGORY "
+                        + "ON PRODUCT.category_id = CATEGORY.id "
+                        + "WHERE PRODUCT.id = ?"
+                        + "ORDER BY PRODUCT.id "
+                ,
+                productId
+        )) {
+            rs = productQuery.executeQuery();
 
-        ResultSet rs = productQuery.executeQuery();
+            if (!rs.next()) {
+                throw new ProductNotFoundException("The product with id " + productId + " does not exist.");
+            }
 
-        if (!rs.next()) {
-            throw new ProductNotFoundException("The product with id " + productId + " does not exist.");
+            return new Product(rs);
         }
 
-        Product product = new Product();
-        product.setProductId(rs.getInt("id"));
-        product.setName(rs.getString("name"));
-        product.setDescription(rs.getString("description"));
-        product.setPrice(rs.getInt("price"));
-        product.setQuantity(rs.getInt("quantity"));
-        product.setCategoryId(rs.getInt("category_id"));
-        product.setImageURL(rs.getString("image_url"));
 
-        return product;
     }
 }

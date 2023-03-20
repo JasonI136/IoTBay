@@ -4,17 +4,7 @@
  */
 package iotbay.database;
 
-import iotbay.exceptions.ProductNotFoundException;
-import iotbay.exceptions.UserExistsException;
-import iotbay.exceptions.UserNotFoundException;
-import iotbay.models.Category;
-import iotbay.models.PaymentMethod;
-import iotbay.models.Product;
-import iotbay.models.User;
-
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author cmesina
@@ -73,6 +63,8 @@ public class DatabaseManager {
                     + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
                     + "user_id                          INT,"
                     + "stripe_payment_method_id         VARCHAR(256),"
+                    + "payment_method_type              VARCHAR(256),"
+                    + "card_last_4                      INT,"
                     + "PRIMARY KEY (id),"
                     + "CONSTRAINT user_id_ref FOREIGN KEY (user_id) REFERENCES USER_ACCOUNT(id)"
                     + ")";
@@ -135,5 +127,15 @@ public class DatabaseManager {
         DatabaseMetaData dbMeta = this.conn.getMetaData();
         ResultSet rs = dbMeta.getTables(null, null, tableName, null);
         return rs.next();
+    }
+
+    public PreparedStatement prepareStatement(String sql, Object... params) throws SQLException {
+        PreparedStatement statement = this.getDbConnection().prepareStatement(sql);
+
+        for (int i = 0; i < params.length; i++) {
+            statement.setObject(i + 1, params[i]);
+        }
+
+        return statement;
     }
 }

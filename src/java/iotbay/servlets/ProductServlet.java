@@ -6,8 +6,8 @@ package iotbay.servlets;
 
 import com.google.gson.Gson;
 import iotbay.database.DatabaseManager;
-import iotbay.models.Product;
-import iotbay.models.Products;
+import iotbay.models.entities.Product;
+import iotbay.models.collections.Products;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.rmi.ServerException;
 
 /**
  * @author cmesina

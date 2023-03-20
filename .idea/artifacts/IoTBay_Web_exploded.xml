@@ -7,8 +7,8 @@
           <element id="module-output" name="IoTBay" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="stripe-java-22.13.0" />
-          <element id="library" level="project" name="gson-2.10.1" />
+          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.10.1" />
+          <element id="library" level="project" name="Maven: com.stripe:stripe-java:22.13.0" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="IoTBay/web/Web" />

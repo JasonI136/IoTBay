@@ -5,10 +5,10 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.Categories;
-import iotbay.models.Category;
-import iotbay.models.Product;
-import iotbay.models.Products;
+import iotbay.models.collections.Categories;
+import iotbay.models.entities.Category;
+import iotbay.models.entities.Product;
+import iotbay.models.collections.Products;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -90,7 +90,7 @@ public class ShopServlet extends HttpServlet {
         List<Category> categories;
         try {
             categories = this.categories.getCategories();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }
         
