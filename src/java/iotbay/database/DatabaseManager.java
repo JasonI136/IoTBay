@@ -109,6 +109,22 @@ public class DatabaseManager {
             conn.commit();
         }
 
+        if (!this.tableExists("CUSTOMER_ORDER")) {
+            String createTableQuery =
+                    "CREATE TABLE CUSTOMER_ORDER ("
+                    + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+                    + "user_id                          INT,"
+                    + "order_date                       DATE,"
+                    + "order_status                     VARCHAR(256),"
+                    + "PRIMARY KEY (id),"
+                    + "CONSTRAINT customer_order_user_id_ref FOREIGN KEY (user_id) REFERENCES USER_ACCOUNT(id)"
+                    + ")";
+
+            Statement stmt = this.conn.createStatement();
+            stmt.execute(createTableQuery);
+            conn.commit();
+        }
+
         System.out.println("Database initalised successfully.");
 
     }
