@@ -30,6 +30,7 @@
 
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/main.css">
+
     </head>
     <body class="animsition">
         <header class="header-v4">
@@ -162,10 +163,15 @@
                                 </div>
                             </div>
 
-                            <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+                            <div class="spinner-border" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+
+                            <a class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" onclick="location.href = '${pageContext.request.contextPath}/cart/checkout'">
                                 Proceed to Checkout
-                            </button>
+                            </a>
                         </div>
+
                     </div>
                 </div>
             </div>
