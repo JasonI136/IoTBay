@@ -125,6 +125,57 @@ public class DatabaseManager {
             conn.commit();
         }
 
+        if (!this.tableExists("ORDER_LINE_ITEM")) {
+              String createTableQuery =
+                            "CREATE TABLE ORDER_LINE_ITEM ("
+                            + "order_id                         INT,"
+                            + "product_id                       INT,"
+                            + "quantity                         INT,"
+                            + "PRIMARY KEY (order_id, product_id),"
+                            + "CONSTRAINT order_line_item_order_id_ref FOREIGN KEY (order_id) REFERENCES CUSTOMER_ORDER(id),"
+                            + "CONSTRAINT order_line_item_product_id_ref FOREIGN KEY (product_id) REFERENCES PRODUCT(id)"
+                            + ")";
+
+                Statement stmt = this.conn.createStatement();
+                stmt.execute(createTableQuery);
+                conn.commit();
+        }
+
+        if (!this.tableExists("INVOICE")) {
+            String createTableQuery =
+                            "CREATE TABLE INVOICE ("
+                            + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+                            + "order_id                         INT,"
+                            + "invoice_date                     DATE,"
+                            + "amount                           FLOAT,"
+                            + "PRIMARY KEY (id),"
+                            + "CONSTRAINT invoice_order_id_ref FOREIGN KEY (order_id) REFERENCES CUSTOMER_ORDER(id)"
+                            + ")";
+
+            Statement stmt = this.conn.createStatement();
+            stmt.execute(createTableQuery);
+            conn.commit();
+        }
+
+        if (!this.tableExists("PAYMENT")) {
+            String createTableQuery =
+                            "CREATE TABLE PAYMENT ("
+                            + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+                            + "invoice_id                       INT,"
+                            + "date                             DATE,"
+                            + "payment_method_id                INT,"
+                            + "amount                           FLOAT,"
+                            + "PRIMARY KEY (id),"
+                            + "CONSTRAINT payment_invoice_id_ref FOREIGN KEY (invoice_id) REFERENCES INVOICE(id),"
+                            + "CONSTRAINT payment_payment_method_id_ref FOREIGN KEY (payment_method_id) REFERENCES PAYMENT_METHOD(id)"
+                            + ")";
+
+            Statement stmt = this.conn.createStatement();
+            stmt.execute(createTableQuery);
+            conn.commit();
+        }
+
+
         System.out.println("Database initalised successfully.");
 
     }

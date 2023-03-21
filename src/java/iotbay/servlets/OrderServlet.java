@@ -69,7 +69,28 @@ public class OrderServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String path = request.getPathInfo();
+
+        if (path != null) {
+            switch(path) {
+                case "/confirm":
+                    confirmOrder(request, response);
+                    break;
+                default:
+                    response.sendError(404);
+                    return;
+            }
+        }
+
+        response.sendError(404);
+    }
+
+    private void confirmOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // get the stripe payment intent id from the request parameter and verify it with the stripe api.
+// if the payment intent is valid, then create the order and redirect to the order confirmation page.
+// if the payment intent is invalid, then redirect to the order page with an error message.
+
+
     }
 
     /**
