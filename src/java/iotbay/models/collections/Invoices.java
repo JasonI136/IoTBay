@@ -1,9 +1,9 @@
 package iotbay.models.collections;
 
 import iotbay.database.DatabaseManager;
+import iotbay.models.entities.Invoice;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Invoices {
 
@@ -46,19 +46,38 @@ public class Invoices {
         this.db = db;
     }
 
-    public void addInvoice(int orderId, String invoiceDate, float amount) throws Exception {
-        try (PreparedStatement pstmt = db.prepareStatement(
+    public Invoice addInvoice(int orderId, Timestamp invoiceDate, float amount) throws Exception {
+        Invoice invoice = new Invoice();
+        invoice.setOrderId(orderId);
+        invoice.setInvoiceDate(invoiceDate);
+        invoice.setAmount(amount);
+
+        try (PreparedStatement pstmt = db.getDbConnection().prepareStatement(
                 "INSERT INTO INVOICE (order_id, invoice_date, amount) VALUES (?, ?, ?)",
-                orderId,
-                invoiceDate,
-                amount
-        )) {
+                Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setInt(1, invoice.getOrderId());
+            pstmt.setTimestamp(2, invoice.getInvoiceDate());
+            pstmt.setFloat(3, invoice.getAmount());
+
             int affectedRows = pstmt.executeUpdate();
+
 
             if (affectedRows == 0) {
                 throw new Exception("Creating invoice failed, no rows affected.");
             }
+
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    invoice.setId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating order failed, no ID obtained.");
+                }
+            }
+
         }
+
+        return invoice;
     }
 
     public void getInvoice(int id) throws Exception {
@@ -74,14 +93,15 @@ public class Invoices {
         }
     }
 
-    public void updateInvoice(int id, int orderId, String invoiceDate, float amount) throws Exception {
-        try (PreparedStatement pstmt = db.prepareStatement(
-                "UPDATE INVOICE SET order_id = ?, invoice_date = ?, amount = ? WHERE id = ?",
-                orderId,
-                invoiceDate,
-                amount,
-                id
-        )) {
+    public void updateInvoice(int id, int orderId, Timestamp invoiceDate, float amount) throws Exception {
+        try (PreparedStatement pstmt = db.getDbConnection().prepareStatement(
+                "UPDATE INVOICE SET order_id = ?, invoice_date = ?, amount = ? WHERE id = ?")) {
+
+            pstmt.setInt(1, orderId);
+            pstmt.setTimestamp(2, invoiceDate);
+            pstmt.setFloat(3, amount);
+            pstmt.setInt(4, id);
+
             int affectedRows = pstmt.executeUpdate();
 
             if (affectedRows == 0) {

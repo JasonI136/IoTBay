@@ -35,60 +35,85 @@
 </button>
 
 </body>
- <script>
-        function checkOut() {
-            fetch("${pageContext.request.contextPath}/cart/checkout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(response => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-            }).then(json => {
-                var stripe = Stripe('pk_test_51Mn84VBy1COsuBfJE5pCaFGN2dfkJem1F99HjxWRjlKd7TtIP5GRdRpOxEo4FPXaWTkFEVNIklWt9cwQkWpYvutk00lSMgFuPC');
-                stripe.confirmCardPayment(json.client_secret, {
-                    payment_method: document.getElementById("payment_method").value
-                }).then(function (result) {
-                    if (result.error) {
-                        // Show error to your customer (e.g., insufficient funds)
-                        Swal.fire({
-                                title: 'Payment Failed!',
-                                icon: 'error',
-                                text: result.error.message,
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = "${pageContext.request.contextPath}/user";
-                                }
-                            });
-                    } else {
-                        // The payment has been processed!
-                        if (result.paymentIntent.status === 'succeeded') {
-                            // Show a success message to your customer
-                            // There's a risk of the customer closing the window before callback
-                            // execution. Set up a webhook or plugin to listen for the
-                            // payment_intent.succeeded event that handles any business critical
-                            // post-payment actions.
-                            Swal.fire({
-                                title: 'Payment Successful!',
-                                icon: 'success',
-                                text: 'Your payment was successful.',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = "${pageContext.request.contextPath}/user";
-                                }
-                            });
+<script>
+    function checkOut() {
+        let paymentMethodId = document.getElementById("payment_method").value;
+        fetch("${pageContext.request.contextPath}/cart/checkout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            if (response.status === 200) {
+                return response.json();
+            }
+        }).then(json => {
+            var stripe = Stripe('pk_test_51Mn84VBy1COsuBfJE5pCaFGN2dfkJem1F99HjxWRjlKd7TtIP5GRdRpOxEo4FPXaWTkFEVNIklWt9cwQkWpYvutk00lSMgFuPC');
+            stripe.confirmCardPayment(json.client_secret, {
+                payment_method: paymentMethodId
+            }).then(function (result) {
+                if (result.error) {
+                    // Show error to your customer (e.g., insufficient funds)
+                    Swal.fire({
+                        title: 'Payment Failed!',
+                        icon: 'error',
+                        text: result.error.message,
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "${pageContext.request.contextPath}/user";
                         }
+                    });
+                } else {
+                    // The payment has been processed!
+                    if (result.paymentIntent.status === 'succeeded') {
+                        fetch(`${pageContext.request.contextPath}/order/confirm?paymentIntentId=\${result.paymentIntent.id}`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(response => {
+                            if (response.status === 200) {
+                                // Show a success message to your customer
+                                // There's a risk of the customer closing the window before callback
+                                // execution. Set up a webhook or plugin to listen for the
+                                // payment_intent.succeeded event that handles any business critical
+                                // post-payment actions.
+                                Swal.fire({
+                                    title: 'Payment Successful!',
+                                    icon: 'success',
+                                    text: 'Your payment was successful.',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'OK',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "${pageContext.request.contextPath}/user";
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Payment Failed!',
+                                    icon: 'error',
+                                    text: "There was an error processing your order.",
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'OK',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "${pageContext.request.contextPath}/user";
+                                    }
+                                });
+                            }
+                        })
+
+
                     }
-                });
-            })
-        }
-    </script>
+                }
+            });
+        })
+    }
+</script>
 </html>

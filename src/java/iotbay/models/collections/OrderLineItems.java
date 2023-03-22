@@ -1,6 +1,7 @@
 package iotbay.models.collections;
 
 import iotbay.database.DatabaseManager;
+import iotbay.models.entities.OrderLineItem;
 
 import java.sql.PreparedStatement;
 
@@ -44,7 +45,12 @@ public class OrderLineItems {
         this.db = db;
     }
 
-    public void addOrderLineItem(int orderId, int productId, int quantity) throws Exception {
+    public OrderLineItem addOrderLineItem(int orderId, int productId, int quantity) throws Exception {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setProductId(productId);
+        orderLineItem.setQuantity(quantity);
+
         try (PreparedStatement pstmt = db.prepareStatement(
                 "INSERT INTO ORDER_LINE_ITEM (order_id, product_id, quantity) VALUES (?, ?, ?)",
                 orderId,
@@ -56,7 +62,11 @@ public class OrderLineItems {
             if (affectedRows == 0) {
                 throw new Exception("Creating order line item failed, no rows affected.");
             }
+
+
         }
+
+        return orderLineItem;
     }
 
     public void getOrderLineItem(int orderId, int productId) throws Exception {

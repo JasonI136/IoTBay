@@ -6,11 +6,10 @@ package iotbay.servlets;
 
 import com.stripe.Stripe;
 import iotbay.database.DatabaseManager;
-import iotbay.models.collections.Categories;
+import iotbay.models.collections.*;
 import iotbay.models.entities.Category;
+import iotbay.models.entities.OrderLineItem;
 import iotbay.models.entities.Product;
-import iotbay.models.collections.Products;
-import iotbay.models.collections.Users;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -69,6 +68,10 @@ public class MainServlet extends HttpServlet {
         Users users = new Users(db);
         this.products = new Products(db);
         this.categories = new Categories(db);
+        Orders orders = new Orders(db);
+        OrderLineItems orderLineItems = new OrderLineItems(db);
+        Payments payments = new Payments(db);
+        Invoices invoices = new Invoices(db);
         
         // Make the db object accessible from other servlets.
         getServletContext().setAttribute("db", db);
@@ -82,6 +85,16 @@ public class MainServlet extends HttpServlet {
         getServletContext().setAttribute("products", products);
 
         getServletContext().setAttribute("categories", categories);
+
+        getServletContext().setAttribute("orders", orders);
+
+        getServletContext().setAttribute("orderLineItems", orderLineItems);
+
+        getServletContext().setAttribute("payments", payments);
+
+        getServletContext().setAttribute("invoices", invoices);
+
+
 
         Stripe.apiKey = secrets.getProperty("stripe.api.key");
 

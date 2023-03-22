@@ -55,7 +55,7 @@
 
 
         <!-- Shoping Cart -->
-        <form class="bg0 p-t-75 p-b-85">
+        <div class="bg0 p-t-75 p-b-85">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
@@ -167,15 +167,15 @@
   <span class="sr-only">Loading...</span>
 </div>
 
-                            <a class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" onclick="location.href = '${pageContext.request.contextPath}/cart/checkout'">
+                            <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" onclick="location.href = '${pageContext.request.contextPath}/cart/checkout'">
                                 Proceed to Checkout
-                            </a>
+                            </button>
                         </div>
 
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
 
         <footer class="bg3 p-t-75 p-b-32">
             <jsp:include page="components/footer.jsp" />

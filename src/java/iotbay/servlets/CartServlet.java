@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -118,12 +119,20 @@ public class CartServlet extends HttpServlet {
             Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
             User user = (User) request.getSession().getAttribute("user");
 
+            // generate a random order session id
+            String orderSessionId = UUID.randomUUID().toString();
+            request.getSession().setAttribute("orderSessionId", orderSessionId);
+            // refresh the user
+
             // create stripe payment intent
             Map<String, Object> params = new HashMap<>();
             params.put("amount", (int) userShoppingCart.getTotalPrice() * 100);
             params.put("currency", "aud");
-            params.put("payment_method",user.getPaymentMethod(9).getStripePaymentMethodId());
             params.put("customer", user.getStripeCustomerId());
+            // add metadata
+            Map<String, String> metadata = new HashMap<>();
+            metadata.put("orderSessionId", orderSessionId);
+            params.put("metadata", metadata);
 
             PaymentIntent paymentIntent = PaymentIntent.create(params);
 

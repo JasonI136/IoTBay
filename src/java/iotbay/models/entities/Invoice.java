@@ -1,8 +1,10 @@
 package iotbay.models.entities;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 
 public class Invoice implements Serializable {
 
@@ -25,7 +27,7 @@ public class Invoice implements Serializable {
 
     private int id;
     private int orderId;
-    private String invoiceDate;
+    private Timestamp invoiceDate;
     private float amount;
 
     public Invoice() {};
@@ -33,7 +35,7 @@ public class Invoice implements Serializable {
     public Invoice(ResultSet rs) throws Exception {
         this.id = rs.getInt("id");
         this.orderId = rs.getInt("order_id");
-        this.invoiceDate = rs.getString("invoice_date");
+        this.invoiceDate = rs.getTimestamp("invoice_date");
         this.amount = rs.getFloat("amount");
     }
 
@@ -53,11 +55,11 @@ public class Invoice implements Serializable {
         this.orderId = orderId;
     }
 
-    public String getInvoiceDate() {
+    public Timestamp getInvoiceDate() {
         return invoiceDate;
     }
 
-    public void setInvoiceDate(String invoiceDate) {
+    public void setInvoiceDate(Timestamp invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
 
