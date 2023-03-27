@@ -48,7 +48,7 @@
                 return response.json();
             }
         }).then(json => {
-            var stripe = Stripe('pk_test_51Mn84VBy1COsuBfJE5pCaFGN2dfkJem1F99HjxWRjlKd7TtIP5GRdRpOxEo4FPXaWTkFEVNIklWt9cwQkWpYvutk00lSMgFuPC');
+            var stripe = Stripe('${stripe_pk}');
             stripe.confirmCardPayment(json.client_secret, {
                 payment_method: paymentMethodId
             }).then(function (result) {

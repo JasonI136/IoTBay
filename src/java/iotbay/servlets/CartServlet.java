@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -64,6 +65,7 @@ public class CartServlet extends HttpServlet {
         if (path != null) {
             switch (path) {
                 case "/checkout":
+                    request.setAttribute("stripe_pk", ((Properties) getServletContext().getAttribute("secrets")).getProperty("stripe.api.publishable.key"));
                     request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
                     break;
                 default:
