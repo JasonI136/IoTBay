@@ -3662,3 +3662,7 @@ input.num-product::-webkit-inner-spin-button {
     }
 
 }
+
+.footer-sec-ul {
+    padding-left: 0px;
+}
