@@ -21,28 +21,17 @@
 
                 <ul>
                     <li class="p-b-10">
-                        <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                            Women
+                        <a href="${pageContext.request.contextPath}/index" class="stext-107 cl7 hov-cl1 trans-04">
+                            Home
                         </a>
                     </li>
 
                     <li class="p-b-10">
-                        <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                            Men
+                        <a href="${pageContext.request.contextPath}/shop" class="stext-107 cl7 hov-cl1 trans-04">
+                            Shop
                         </a>
                     </li>
 
-                    <li class="p-b-10">
-                        <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                            Shoes
-                        </a>
-                    </li>
-
-                    <li class="p-b-10">
-                        <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                            Watches
-                        </a>
-                    </li>
                 </ul>
             </div>
 
@@ -53,26 +42,14 @@
 
                 <ul>
                     <li class="p-b-10">
-                        <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                        <a href="${pageContext.request.contextPath}/orderTracking" class="stext-107 cl7 hov-cl1 trans-04">
                             Track Order
                         </a>
                     </li>
-
-                    <li class="p-b-10">
-                        <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                            Returns 
-                        </a>
-                    </li>
-
-                    <li class="p-b-10">
-                        <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                            Shipping
-                        </a>
-                    </li>
-
-                    <li class="p-b-10">
-                        <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                            FAQs
+		    
+		    <li class="p-b-10">
+                        <a href="${pageContext.request.contextPath}/contactUs" class="stext-107 cl7 hov-cl1 trans-04">
+                            Contact
                         </a>
                     </li>
                 </ul>
@@ -84,7 +61,7 @@
                 </h4>
 
                 <p class="stext-107 cl7 size-201">
-                    Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
+                    Any questions? Let us know in store, by email at iotbay@sales.com or phone +61 861 654 222
                 </p>
 
                 <div class="p-t-27">
