@@ -30,6 +30,7 @@
 
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/main.css">
+
     </head>
     <body class="animsition">
         <header class="header-v4">
@@ -54,7 +55,7 @@
 
 
         <!-- Shoping Cart -->
-        <form class="bg0 p-t-75 p-b-85">
+        <div class="bg0 p-t-75 p-b-85">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
@@ -162,14 +163,19 @@
                                 </div>
                             </div>
 
-                            <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+                            <div class="spinner-border" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+
+                            <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" onclick="location.href = '${pageContext.request.contextPath}/cart/checkout'">
                                 Proceed to Checkout
                             </button>
                         </div>
+
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
 
         <footer class="bg3 p-t-75 p-b-32">
             <jsp:include page="components/footer.jsp" />

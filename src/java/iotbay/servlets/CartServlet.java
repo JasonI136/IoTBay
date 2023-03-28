@@ -7,9 +7,11 @@ package iotbay.servlets;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
 import iotbay.models.collections.Products;
 import iotbay.models.entities.Cart;
+import iotbay.models.entities.User;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.servlet.ServletException;
@@ -17,7 +19,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +59,24 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/jsp/cart.jsp").forward(request, response);
+
+        String path = request.getPathInfo();
+
+        if (path != null) {
+            switch (path) {
+                case "/checkout":
+                    request.setAttribute("stripe_pk", ((Properties) getServletContext().getAttribute("secrets")).getProperty("stripe.api.publishable.key"));
+                    request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
+                    break;
+                default:
+                    response.sendError(404);
+                    break;
+            }
+        } else {
+            request.getRequestDispatcher("/WEB-INF/jsp/cart.jsp").forward(request, response);
+        }
+
+
     }
 
     /**
@@ -94,25 +116,35 @@ public class CartServlet extends HttpServlet {
     }
 
     private void checkOut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        throw new NotImplementedException();
-//        try {
-//            this.initShoppingCart(request);
-//            Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
-//            User user = (User) request.getSession().getAttribute("user");
-//
-//            // create stripe payment intent
-//            Map<String, Object> params = new HashMap<>();
-//            params.put("amount", userShoppingCart.getTotalPrice());
-//            params.put("currency", "aud");
-//            params.put("payment_method",user.getPaymentMethod(2).getStripePaymentMethodId());
-//
-//            PaymentIntent paymentIntent = PaymentIntent.create(params);
-//
-//
-//            response.setStatus(200);
-//        } catch (Exception e) {
-//            throw new ServletException(e.getMessage());
-//        }
+        try {
+            this.initShoppingCart(request);
+            Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
+            User user = (User) request.getSession().getAttribute("user");
+
+            // generate a random order session id
+            String orderSessionId = UUID.randomUUID().toString();
+            request.getSession().setAttribute("orderSessionId", orderSessionId);
+            // refresh the user
+
+            // create stripe payment intent
+            Map<String, Object> params = new HashMap<>();
+            params.put("amount", (int) userShoppingCart.getTotalPrice() * 100);
+            params.put("currency", "aud");
+            params.put("customer", user.getStripeCustomerId());
+            // add metadata
+            Map<String, String> metadata = new HashMap<>();
+            metadata.put("orderSessionId", orderSessionId);
+            params.put("metadata", metadata);
+
+            PaymentIntent paymentIntent = PaymentIntent.create(params);
+
+            // send payment intent to client
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(new Gson().toJson(paymentIntent));
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
     }
 
     private void addCartItem(HttpServletRequest request, HttpServletResponse response) throws ServletException {

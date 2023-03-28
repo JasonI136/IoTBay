@@ -457,4 +457,28 @@ public class User implements Serializable {
         return null;
     }
 
+    /**
+     * Gets a payment method associated with the user by its stripe id.
+     * @param stripePaymentMethodId The stripe id of the payment method to get.
+     * @return The payment method as a PaymentMethod object.
+     * @throws Exception if there is an error getting the payment method
+     */
+    public PaymentMethod getPaymentMethodByStripeId(String stripePaymentMethodId) throws Exception {
+
+        try (PreparedStatement statement = this.db.prepareStatement(
+                "SELECT * FROM PAYMENT_METHOD WHERE STRIPE_PAYMENT_METHOD_ID = ?",
+                stripePaymentMethodId
+        )) {
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                return new PaymentMethod(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 }
