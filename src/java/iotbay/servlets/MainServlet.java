@@ -39,7 +39,15 @@ public class MainServlet extends HttpServlet {
         // Load the application configuration.
         InputStream inputStream = getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
 
+        if (inputStream == null) {
+            throw new ServletException("app-config.properties not found.");
+        }
+
         InputStream inputStreamSecrets = getServletContext().getResourceAsStream("/WEB-INF/secrets.properties");
+
+        if (inputStreamSecrets == null) {
+            throw new ServletException("secrets.properties not found.");
+        }
 
         appConfig = new Properties();
         secrets = new Properties();
