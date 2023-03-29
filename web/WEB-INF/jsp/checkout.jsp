@@ -9,135 +9,139 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html>
-<head>
-    <title>Checkout</title>
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/public/images/icons/favicon.png"/>
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/vendor/bootstrap/css/bootstrap.min.css">
+    <head>
+        <title>Checkout</title>
+        <script src="https://js.stripe.com/v3/"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/public/images/icons/favicon.png"/>
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/vendor/bootstrap/css/bootstrap.min.css">
 
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/fonts/iconic/css/material-design-iconic-font.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/fonts/linearicons-v1.0.0/icon-font.min.css">
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/fonts/iconic/css/material-design-iconic-font.min.css">
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/fonts/linearicons-v1.0.0/icon-font.min.css">
 
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/animate/animate.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/vendor/css-hamburgers/hamburgers.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/vendor/animsition/css/animsition.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/vendor/select2/select2.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/vendor/daterangepicker/daterangepicker.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/slick/slick.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/vendor/MagnificPopup/magnific-popup.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/animate/animate.css">
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/vendor/css-hamburgers/hamburgers.min.css">
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/vendor/animsition/css/animsition.min.css">
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/vendor/select2/select2.min.css">
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/vendor/daterangepicker/daterangepicker.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/slick/slick.css">
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/vendor/MagnificPopup/magnific-popup.css">
+        <link rel="stylesheet" type="text/css"
+              href="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.css">
 
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/main.css">
-</head>
-<body>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/main.css">
+    </head>
+    <body class="stext-112 cl6 p-b-26">
 
 
-<header class="header-v4">
-    <div class="container-menu-desktop">
-        <jsp:include page="components/header-navbar.jsp"/>
-        <jsp:include page="components/main-navbar.jsp"/>
-    </div>
-</header>
-
-<div class="container mt-5">
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="p-b-10">
-                <h3 class="ltext-103 cl5">
-                    Order Summary
-                </h3>
+        <header class="header-v4">
+            <div class="container-menu-desktop">
+                <jsp:include page="components/header-navbar.jsp"/>
+                <jsp:include page="components/main-navbar.jsp"/>
             </div>
-            <div class="card">
-                <div class="card-body">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Item</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:set var="totalCost" value="0"/>
-                        <c:forEach var="cartItem" items="${sessionScope.shoppingCart.cartItems}">
-                            <tr>
-                                <td>${cartItem.product.name}</td>
-                                <td>${cartItem.cartQuantity}</td>
-                                <td>$${cartItem.totalPrice}</td>
-                            </tr>
-                            <c:set var="totalCost" value="${totalCost + cartItem.totalPrice}"/>
-                        </c:forEach>
-                        <tr>
-                            <td><b>Total</b></td>
-                            <td></td>
-                            <td><b>$${totalCost}</b></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="p-b-10">
-                <h3 class="ltext-103 cl5">
-                    Payment Information
-                </h3>
-            </div>
-            <form>
-                <div class="form-group">
-                    <label for="payment-method">Payment Method:</label>
+        </header>
 
-                    <select class="form-control" id="payment-method">
-                        <c:forEach items="${sessionScope.user.paymentMethods}" var="paymentmethod">
-                            <option value="${paymentmethod.stripePaymentMethodId}">${paymentmethod.paymentMethodType} ${paymentmethod.cardLast4}</option>
-                        </c:forEach>
+        <div class="container mt-5">
 
-                    </select>
-                </div>
-                <div id="credit-card-fields">
-                    <div class="form-group">
-                        <label for="card-number">Credit Card Number:</label>
-                        <input type="text" class="form-control" id="card-number"
-                               placeholder="Enter your credit card number" disabled>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="p-b-10">
+                        <h3 class="ltext-103 cl5">
+                            Order Summary
+                        </h3>
                     </div>
-                    <div class="form-row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="expiry">Expiration Date:</label>
-                                <input type="text" class="form-control" id="expiry" placeholder="MM/YY" disabled>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="cvv">CVV:</label>
-                                <input type="text" class="form-control" id="cvv" placeholder="Enter CVV" disabled>
-                            </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr >
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:set var="totalCost" value="0"/>
+                                    <c:forEach var="cartItem" items="${sessionScope.shoppingCart.cartItems}">
+                                        <tr>
+                                            <td>${cartItem.product.name}</td>
+                                            <td>${cartItem.cartQuantity}</td>
+                                            <td>$${cartItem.totalPrice}</td>
+                                        </tr>
+                                        <c:set var="totalCost" value="${totalCost + cartItem.totalPrice}"/>
+                                    </c:forEach>
+                                    <tr>
+                                        <td><b>Total</b></td>
+                                        <td></td>
+                                        <td><b>$${totalCost}</b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="p-b-10">
+                        <h3 class="ltext-103 cl5">
+                            Payment Information
+                        </h3>
+                    </div>
+                    <form>
+                        <div class="form-group">
+                            <label for="payment-method">Payment Method:</label>
 
-                <a type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" style="color: white;">
-                    Confirm Order
-                </a>
-            </form>
+                            <select class="form-control" id="payment-method" onchange="updateCardNumber()">
+                                <option value="" selected disabled>Pick a card</option>
+                                <c:forEach items="${sessionScope.user.paymentMethods}" var="paymentmethod">
+                                    <option value="${paymentmethod.stripePaymentMethodId}" data-last4="${paymentmethod.cardLast4}">
+                                        ${paymentmethod.paymentMethodType.toUpperCase()} ${paymentmethod.cardLast4}
+                                    </option>
+                                </c:forEach>
+                            </select>
+
+
+                        </div>
+                        <div id="credit-card-fields">
+                            <div class="form-group">
+                                <label for="card-number">Credit Card Number:</label>
+                                <input type="text" class="form-control" id="card-number" placeholder="Enter your credit card number" value="" disabled>
+
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="expiry">Expiration Date:</label>
+                                        <input type="text" class="form-control" id="expiry" placeholder="MM/YY" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="cvv">CVV:</label>
+                                        <input type="password" class="form-control" id="cvv" placeholder="Enter CVV" maxlength="3" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" style="color: white;">
+                            Confirm Order
+                        </a>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-</body>
+    </body>
 </html>
 
 
@@ -151,14 +155,23 @@
 
 <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
 <script>
-    $(".js-select2").each(function () {
-        $(this).select2({
-            minimumResultsForSearch: 20,
-            dropdownParent: $(this).next('.dropDownSelect2')
-        });
-    })
+                                $(".js-select2").each(function () {
+                                    $(this).select2({
+                                        minimumResultsForSearch: 20,
+                                        dropdownParent: $(this).next('.dropDownSelect2')
+                                    });
+                                })
 </script>
 
+<script>
+    function updateCardNumber() {
+        var paymentMethodSelect = document.getElementById("payment-method");
+        var cardNumberInput = document.getElementById("card-number");
+        var selectedOption = paymentMethodSelect.options[paymentMethodSelect.selectedIndex];
+        var last4 = selectedOption.getAttribute("data-last4");
+        cardNumberInput.value = last4;
+    }
+</script>
 
 <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
 
