@@ -163,6 +163,11 @@
                             Payment Methods
                         </h4>
 
+                        <c:if test="${empty sessionScope.user.paymentMethods}">
+                            <div class="row">
+                                <h2 class="mtext-105 cl2 p-b-30 txt-center">No available payments.</h2>
+                            </div>
+                        </c:if>
                         <c:forEach items="${sessionScope.user.paymentMethods}" var="paymentmethod">
                             <div class="row">
                                 <div class="col-md-6">

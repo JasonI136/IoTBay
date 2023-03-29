@@ -97,47 +97,58 @@
                             Payment Information
                         </h3>
                     </div>
-                    <form>
-                        <div class="form-group">
-                            <label for="payment-method">Payment Method:</label>
 
-                            <select class="form-control" id="payment-method" onchange="updateCardNumber()">
-                                <option value="" selected disabled>Pick a card</option>
-                                <c:forEach items="${sessionScope.user.paymentMethods}" var="paymentmethod">
-                                    <option value="${paymentmethod.stripePaymentMethodId}" data-last4="${paymentmethod.cardLast4}">
-                                        ${paymentmethod.paymentMethodType.toUpperCase()} ${paymentmethod.cardLast4}
-                                    </option>
-                                </c:forEach>
-                            </select>
-
-
+                    <c:if test="${empty sessionScope.user.paymentMethods}">
+                        <div class="p-t-50">
+                            <h2 class="mtext-105 cl2 p-b-30 txt-center">No available payments.</h2>
                         </div>
-                        <div id="credit-card-fields">
+                            
+                        
+                    </c:if>
+                    <c:if test="${not empty sessionScope.user.paymentMethods}">
+                        <form>
                             <div class="form-group">
-                                <label for="card-number">Credit Card Number:</label>
-                                <input type="text" class="form-control" id="card-number" placeholder="Enter your credit card number" value="" disabled>
+                                <label for="payment-method">Payment Method:</label>
+
+                                <select class="form-control" id="payment-method" onchange="updateCardNumber()">
+                                    <option value="" selected disabled>Pick a card</option>
+                                    <c:forEach items="${sessionScope.user.paymentMethods}" var="paymentmethod">
+                                        <option value="${paymentmethod.stripePaymentMethodId}" data-last4="${paymentmethod.cardLast4}">
+                                            ${paymentmethod.paymentMethodType.toUpperCase()} ${paymentmethod.cardLast4}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+
 
                             </div>
-                            <div class="form-row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="expiry">Expiration Date:</label>
-                                        <input type="text" class="form-control" id="expiry" placeholder="MM/YY" disabled>
-                                    </div>
+                            <div id="credit-card-fields">
+                                <div class="form-group">
+                                    <label for="card-number">Credit Card Number:</label>
+                                    <input type="text" class="form-control" id="card-number" placeholder="Enter your credit card number" value="" disabled>
+
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="cvv">CVV:</label>
-                                        <input type="password" class="form-control" id="cvv" placeholder="Enter CVV" maxlength="3" disabled>
+                                <div class="form-row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="expiry">Expiration Date:</label>
+                                            <input type="text" class="form-control" id="expiry" placeholder="MM/YY" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="cvv">CVV:</label>
+                                            <input type="password" class="form-control" id="cvv" placeholder="Enter CVV" maxlength="3" >
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <a type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" style="color: white;">
-                            Confirm Order
-                        </a>
-                    </form>
+
+                            <a type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" style="color: white;">
+                                Confirm Order
+                            </a>
+                        </form>
+                    </c:if>
                 </div>
             </div>
         </div>
@@ -155,12 +166,12 @@
 
 <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
 <script>
-                                $(".js-select2").each(function () {
-                                    $(this).select2({
-                                        minimumResultsForSearch: 20,
-                                        dropdownParent: $(this).next('.dropDownSelect2')
-                                    });
-                                })
+                                    $(".js-select2").each(function () {
+                                        $(this).select2({
+                                            minimumResultsForSearch: 20,
+                                            dropdownParent: $(this).next('.dropDownSelect2')
+                                        });
+                                    })
 </script>
 
 <script>
