@@ -4,8 +4,15 @@
  */
 package iotbay.servlets;
 
+import iotbay.database.DatabaseManager;
+import iotbay.models.collections.Categories;
+import iotbay.models.collections.Products;
+import iotbay.models.entities.Category;
+import iotbay.models.entities.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +23,21 @@ import javax.servlet.http.HttpServletResponse;
  * @author jasonmba
  */
 public class AdminInventoryServlet extends HttpServlet {
+
+    DatabaseManager db;
+
+    Products products;
+
+    Categories categories;
+
+    @Override
+    public void init() throws ServletException {
+        super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
+        this.products = (Products) getServletContext().getAttribute("products");
+        this.categories = (Categories) getServletContext().getAttribute("categories");
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,7 +56,7 @@ public class AdminInventoryServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AdminInventoryServlet</title>");            
+            out.println("<title>Servlet AdminInventoryServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet AdminInventoryServlet at " + request.getContextPath() + "</h1>");
@@ -55,6 +77,23 @@ public class AdminInventoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        List<Product> products;
+        try {
+            products = this.products.getProducts(100, 0, false);
+        } catch (SQLException e) {
+            throw new ServletException("Failed to query database: " + e.getMessage());
+        }
+
+        List<Category> categories;
+        try {
+            categories = this.categories.getCategories();
+        } catch (Exception e) {
+            throw new ServletException("Failed to query database: " + e.getMessage());
+        }
+
+        request.setAttribute("products", products);
+        request.setAttribute("categories", categories);
         request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-inventory.jsp").forward(request, response);
     }
 
