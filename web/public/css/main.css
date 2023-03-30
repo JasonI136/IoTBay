@@ -3539,11 +3539,16 @@ input.num-product::-webkit-inner-spin-button {
     font-size: 15px;
 }
 
+.admin-hr{
+    opacity: 0.75;
+}
+
 .hr-text {
     position: relative;
     border: none;
     height: 9px;
     background-color:red;
+    font-family: Poppins-regular;
 }
 .hr-text::before,
 .hr-text::after {
