@@ -52,7 +52,7 @@
         <header>
             <div class="container-menu-desktop">
                 <jsp:include page="components/header-navbar.jsp"/>
-                <jsp:include page="components/main-navbar.jsp"/>
+                <jsp:include page="components/admin-navbar.jsp"/>
             </div>
         </header>
 
