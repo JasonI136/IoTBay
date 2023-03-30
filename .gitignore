@@ -182,12 +182,4 @@ fabric.properties
 
 secrets.properties
 /target/
-nbproject/project.properties
-nbproject/genfiles.properties
-nbproject/build-impl.xml
-nbproject/project.properties
-nbproject/genfiles.properties
-nbproject/build-impl.xml
-/nbproject/genfiles.properties
-/nbproject/project.properties
-/nbproject/build-impl.xml
+
