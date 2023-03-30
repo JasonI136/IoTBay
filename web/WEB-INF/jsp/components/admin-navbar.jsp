@@ -43,8 +43,8 @@
                     <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/orders') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/admin/orders">Order Management</a>
                     </li>
-                    
-                     <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/users') ? 'active-menu' : ''}">
+
+                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/users') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/admin/users">User Management</a>
                     </li>
                 </ul>
@@ -52,17 +52,9 @@
 
             <!-- Icon header -->
             <div class="wrap-icon-header flex-w flex-r-m">
-                <!--                <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
-                                    <i class="zmdi zmdi-search"></i>
-                                </div>-->
-
-                <a href="${pageContext.request.contextPath}/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="${(sessionScope.shoppingCart.totalQuantity == null) ? 0 : sessionScope.shoppingCart.totalQuantity}">
-                    <i class="zmdi zmdi-shopping-cart"></i>
+                <a class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11" >
+                    <i class="zmdi zmdi-accounts-list-alt"></i>
                 </a>
-
-                <!--                <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
-                                    <i class="zmdi zmdi-favorite-outline"></i>
-                                </a>-->
             </div>
         </nav>
     </div>	

@@ -3543,7 +3543,7 @@ input.num-product::-webkit-inner-spin-button {
     position: relative;
     border: none;
     height: 9px;
-    background-color: #800000;
+    background-color:red;
 }
 .hr-text::before,
 .hr-text::after {

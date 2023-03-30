@@ -61,6 +61,10 @@
         <servlet-name>AdminOrdersServlet</servlet-name>
         <servlet-class>iotbay.servlets.AdminOrdersServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminUsersServlet</servlet-name>
+        <servlet-class>AdminUsersServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/</url-pattern>
@@ -124,6 +128,10 @@
     <servlet-mapping>
         <servlet-name>AdminOrdersServlet</servlet-name>
         <url-pattern>/admin/orders</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminUsersServlet</servlet-name>
+        <url-pattern>/admin/users</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
