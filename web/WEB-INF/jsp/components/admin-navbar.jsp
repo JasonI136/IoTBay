@@ -15,7 +15,7 @@
 
     <div class="fixed-bottom">
         <div class="container-fluid">
-            <hr class="hr-text admin-hr" data-content="Currently In Admin Panel">
+            <hr class="hr-text" data-content="Currently In Admin Panel">
         </div>
     </div>
     <div class="wrap-menu-desktop">
