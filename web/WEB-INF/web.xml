@@ -53,6 +53,10 @@
         <servlet-name>AdminIndexServlet</servlet-name>
         <servlet-class>iotbay.servlets.AdminIndexServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminInventoryServlet</servlet-name>
+        <servlet-class>iotbay.servlets.AdminInventoryServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/</url-pattern>
@@ -108,6 +112,10 @@
     <servlet-mapping>
         <servlet-name>AdminIndexServlet</servlet-name>
         <url-pattern>/admin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminInventoryServlet</servlet-name>
+        <url-pattern>/admin/inventory</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

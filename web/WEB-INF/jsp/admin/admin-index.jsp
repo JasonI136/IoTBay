@@ -51,8 +51,8 @@
 
         <header>
             <div class="container-menu-desktop">
-                <jsp:include page="components/header-navbar.jsp"/>
-                <jsp:include page="components/admin-navbar.jsp"/>
+                <jsp:include page="../components/header-navbar.jsp"/>
+                <jsp:include page="../components/admin-navbar.jsp"/>
             </div>
         </header>
 
@@ -61,20 +61,18 @@
             <div class="container">
 
                 <div class=" bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
-                    <h1>Hello World!</h1>
+                    <h1>Admin Dashboard</h1>
                 </div>
             </div>
         </section>	
 
     </body>
 
+    
     <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
-
     <script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
-
     <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/popper.js"></script>
     <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/bootstrap.min.js"></script>
-
     <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
     <script>
         $(".js-select2").each(function () {
@@ -84,25 +82,17 @@
             });
         })
     </script>
-
     <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
     <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/daterangepicker.js"></script>
-
     <script src="${pageContext.request.contextPath}/public/vendor/slick/slick.min.js"></script>
     <script src="${pageContext.request.contextPath}/public/js/slick-custom.js"></script>
-
     <script src="${pageContext.request.contextPath}/public/vendor/parallax100/parallax100.js"></script>
     <script>
         $('.parallax100').parallax100();
     </script>
-
     <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
-
     <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
-
     <script src="${pageContext.request.contextPath}/public/vendor/sweetalert/sweetalert.min.js"></script>
-
-
     <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script>
         $('.js-pscroll').each(function () {
@@ -119,8 +109,5 @@
             })
         });
     </script>
-
-
-
     <script src="${pageContext.request.contextPath}/public/js/main.js"></script>
 </html>
