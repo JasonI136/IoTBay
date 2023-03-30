@@ -36,7 +36,7 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
 
     </head>
-    <body class="animsition">
+    <body class="animsition stext-112 cl6 p-b-26">
 
         <header>
             <div class="container-menu-desktop">
@@ -47,17 +47,81 @@
 
 
         <section class="bg0 p-t-104 p-b-116">
-            <div class="container">
 
-                <div class=" bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
-                    <h1>Admin Users</h1>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card rounded-lg shadow admin-user-card">
+                            <div class="card-body pb-4">
+                                <h5 class="card-title">{firstname} {lastname}</h5>
+                                <p class="card-text"><b>Email:</b> {email}</p>
+                                <p class="card-text"><b>Location:</b> {location}</p>
+                                <p class="card-text"><b>Phone:</b> {phone}</p>
+                                <p class="card-text"><b>Orders:</b> {order amount}</p>
+                                <div class="d-flex justify-content-end">
+                                    <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer mt-3">
+                                        View Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card rounded-lg shadow admin-user-card">
+                            <div class="card-body pb-4">
+                                <h5 class="card-title">{firstname} {lastname}</h5>
+                                <p class="card-text"><b>Email:</b> {email}</p>
+                                <p class="card-text"><b>Location:</b> {location}</p>
+                                <p class="card-text"><b>Phone:</b> {phone}</p>
+                                <p class="card-text"><b>Orders:</b> {order amount}</p>
+                                <div class="d-flex justify-content-end">
+                                    <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer mt-3">
+                                        View Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card rounded-lg shadow admin-user-card">
+                            <div class="card-body pb-4">
+                                <h5 class="card-title">{firstname} {lastname}</h5>
+                                <p class="card-text"><b>Email:</b> {email}</p>
+                                <p class="card-text"><b>Location:</b> {location}</p>
+                                <p class="card-text"><b>Phone:</b> {phone}</p>
+                                <p class="card-text"><b>Orders:</b> {order amount}</p>
+                                <div class="d-flex justify-content-end">
+                                    <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer mt-3">
+                                        View Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card rounded-lg shadow admin-user-card">
+                            <div class="card-body pb-4">
+                                <h5 class="card-title">{firstname} {lastname}</h5>
+                                <p class="card-text"><b>Email:</b> {email}</p>
+                                <p class="card-text"><b>Location:</b> {location}</p>
+                                <p class="card-text"><b>Phone:</b> {phone}</p>
+                                <p class="card-text"><b>Orders:</b> {order amount}</p>
+                                <div class="d-flex justify-content-end">
+                                    <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer mt-3">
+                                        View Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>	
+        </section>
+
 
     </body>
 
-    
+
     <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
     <script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
     <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/popper.js"></script>
