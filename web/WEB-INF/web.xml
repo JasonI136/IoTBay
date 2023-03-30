@@ -107,7 +107,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AdminIndexServlet</servlet-name>
-        <url-pattern>/adminIndex</url-pattern>
+        <url-pattern>/admin</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
