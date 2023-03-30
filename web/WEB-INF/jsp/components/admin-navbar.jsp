@@ -32,16 +32,20 @@
             <!-- Menu desktop -->
             <div class="menu-desktop">
                 <ul class="main-menu">
-                    <li class="${(requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat("/") || requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath) ? 'active-menu' : ''}">
-                        <a href="${pageContext.request.contextPath}/">Home</a>
+                    <li class="${(requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat("/admin") || requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath) ? 'active-menu' : ''}">
+                        <a href="${pageContext.request.contextPath}/">Dashboard</a>
                     </li>
 
-                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/shop') ? 'active-menu' : ''}">
-                        <a href="${pageContext.request.contextPath}/shop">Shop</a>
+                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/inventory-management') ? 'active-menu' : ''}">
+                        <a href="${pageContext.request.contextPath}/shop">Inventory Management</a>
                     </li>
 
-                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/orderTracking') ? 'active-menu' : ''}">
-                        <a href="${pageContext.request.contextPath}/orderTracking">Track Order</a>
+                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/order-management') ? 'active-menu' : ''}">
+                        <a href="${pageContext.request.contextPath}/orderTracking">Order Management</a>
+                    </li>
+                    
+                     <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/user-management') ? 'active-menu' : ''}">
+                        <a href="${pageContext.request.contextPath}/orderTracking">User Management</a>
                     </li>
                 </ul>
             </div>	
