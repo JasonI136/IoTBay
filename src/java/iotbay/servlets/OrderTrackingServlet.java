@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import iotbay.models.entities.User;
 
 /**
  *
@@ -69,7 +70,10 @@ public class OrderTrackingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        //String lastname = request.getParameter("lastname");
+        String orderID = request.getParameter("orderid");
+        request.setAttribute("order_id", orderID);
+        request.getRequestDispatcher("/WEB-INF/jsp/order.jsp").forward(request, response);
     }
 
     /**

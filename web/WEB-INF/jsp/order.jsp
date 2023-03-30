@@ -3,7 +3,7 @@
     Created on : 20/03/2023, 12:27:31 PM
     Author     : jasonmba
 --%>
-
+<%--<%@page import="iotbay.models.entities.User" %>--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -12,8 +12,8 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <%
-            String orderId = request.getParameter("order_id");
+        <% 
+            String orderId = (String) request.getAttribute("order_id"); 
             if (orderId != null && !orderId.isEmpty()) {
         %>
         <h1>Order ID: <%= orderId %></h1>

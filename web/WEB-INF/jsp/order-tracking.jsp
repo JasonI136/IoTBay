@@ -76,18 +76,18 @@
                     <div class="size-210 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
 
 
-                        <form method="post" action="login">
+                        <form method="post" action="orderTracking">
                             <h4 class="mtext-105 cl2 txt-center p-b-30">
                                 Find your Order
                             </h4>
 
                             <div class="bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="username" id="form3Example3" placeholder="Your Last Name">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="lastname" id="form3Example3" placeholder="Your Last Name">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
 
                             <div class="bor8 m-b-30 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="password" name="password" id="form3Example4" placeholder="Your Order ID">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="orderid" id="form3Example4" placeholder="Your Order ID">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/package.svg" alt="ICON">
                             </div>
 
