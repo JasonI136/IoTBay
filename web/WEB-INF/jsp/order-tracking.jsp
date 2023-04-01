@@ -87,7 +87,7 @@
                             </div>
 
                             <div class="bor8 m-b-30 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="orderid" id="form3Example4" placeholder="Your Order ID">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="number" name="orderid" id="form3Example4" placeholder="Your Order ID Number">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/package.svg" alt="ICON">
                             </div>
 
