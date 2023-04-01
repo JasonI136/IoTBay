@@ -358,7 +358,7 @@
                             target: document.querySelector('#modal-content')
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "${pageContext.request.contextPath}/cart";
+                                window.location.href = "${pageContext.request.contextPath}/shop";
                             }
                         });
                     }
