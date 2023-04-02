@@ -3517,6 +3517,52 @@ input.num-product::-webkit-inner-spin-button {
 
 }
 
+.logo {
+    position: relative;
+}
+
+.notification-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.notification-text {
+    color: white;
+    font-size: 15px;
+}
+
+.hr-text {
+    position: relative;
+    border: none;
+    height: 9px;
+    background-color:red;
+}
+.hr-text::before,
+.hr-text::after {
+    content: attr(data-content);
+    position: absolute;
+    top: -0.5em;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 0 0.5em;
+    font-size: 0.8em;
+}
+.hr-text::before {
+    margin-right: 0.5em;
+}
+.hr-text::after {
+    margin-left: 0.5em;
+}
+
 
 /*//////////////////////////////////////////////////////////////////
 [ SM ]*/
@@ -3661,4 +3707,8 @@ input.num-product::-webkit-inner-spin-button {
         padding: 20px;
     }
 
+}
+
+.admin-user-card{
+    border-width: 3px;
 }
