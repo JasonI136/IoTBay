@@ -196,22 +196,16 @@
                             Your Orders
                         </h4>
 
+                        <c:forEach var="order" items="${sessionScope.user.orders}">
+                            <div class="row">
+                                <form method="post" action="orderTracking">
+                                    <button type="submit" name="orderid" value="${order.id}" class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
+                                    ${order.id} | ${order.orderDate} | ${order.orderStatus.toString()}
+                                    </button>
+                                </form>
 
-                        <div class="row">
-                            <button class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
-                                Order ID | DATE | ITEM #
-                            </button>
-                        </div>
-                        <div class="row">
-                            <button class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
-                                Order ID | DATE | ITEM #
-                            </button>
-                        </div>
-                        <div class="row">
-                            <button class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
-                                Order ID | DATE | ITEM #
-                            </button>
-                        </div>
+                            </div>
+                        </c:forEach>
                     </div>
                 </div>
             </div>

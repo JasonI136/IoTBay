@@ -107,9 +107,7 @@ public class OrderTrackingServlet extends HttpServlet {
         try {
             Order order = this.orders.getOrder(orderID);
             if (order != null) {
-                request.setAttribute("orderStatus", order.getOrderStatus().toString());
-                request.setAttribute("order_date", order.getOrderDate().toString());
-                request.setAttribute("user_id", order.getUserId());
+                request.setAttribute("order", order);
                 ArrayList<OrderLineItem> orderLineItemsList = this.orderLineItems.getOrderLineItems(orderID);
                 ArrayList<Product> productList = new ArrayList<>();
                 for (OrderLineItem lineItem : orderLineItemsList) {

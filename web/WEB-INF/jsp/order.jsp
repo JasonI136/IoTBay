@@ -70,37 +70,38 @@
         <section class="bg0 p-t-104 p-b-116">
             <div class="container">
                 <div class="d-flex justify-content-center align-items-center" style="padding-top:50px;padding-bottom: 50px;">
+                    Order ID: ${order.id}
                     <div class="d-flex flex-column justify-content-center align-items-center">
                         <c:choose>
-                            <c:when test="${requestScope.orderStatus eq 'PROCESSING'}">
+                            <c:when test="${order.orderStatus eq 'PROCESSING'}">
                                 <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order is currently being processed</h1>
                                 <div class="progress" style="height: 10px; width: 200%">
                                     <div class="progress-bar bg-info" role="progressbar" style="width: 40%; margin-right: -100%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
                                 </div>
                             </c:when>
 
-                            <c:when test="${requestScope.orderStatus eq 'PENDING'}">
+                            <c:when test="${order.orderStatus eq 'PENDING'}">
                                 <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order is pending</h1>
                                 <div class="progress" style="height: 10px; width: 200%">
                                     <div class="progress-bar bg-warning" role="progressbar" style="width: 10%; margin-right: -100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
                                 </div>
                             </c:when>
 
-                            <c:when test="${requestScope.orderStatus eq 'SHIPPED'}">
+                            <c:when test="${order.orderStatus eq 'SHIPPED'}">
                                 <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order is has been shipped</h1>
                                 <div class="progress" style="height: 10px; width: 200%">
                                     <div class="progress-bar bg-success" role="progressbar" style="width: 70%; margin-right: -100%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
                                 </div>
                             </c:when>
 
-                            <c:when test="${requestScope.orderStatus eq 'DELIVERED'}">
+                            <c:when test="${order.orderStatus eq 'DELIVERED'}">
                                 <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order is has been shipped</h1>
                                 <div class="progress" style="height: 10px; width: 200%">
                                     <div class="progress-bar bg-success" role="progressbar" style="width: 100%; margin-right: -100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
                                 </div>
                             </c:when>
 
-                            <c:when test="${requestScope.orderStatus eq 'CANCELLED'}">
+                            <c:when test="${order.orderStatus eq 'CANCELLED'}">
                                 <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order has been cancelled</h1>
                                 <div class="progress" style="height: 10px; width: 200%">
                                     <div class="progress-bar bg-warning" role="progressbar" style="width: 0; margin-right: -100%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
