@@ -9,6 +9,11 @@
         <webroots>
           <root url="file://$MODULE_DIR$/web" relative="/" />
         </webroots>
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/src/java" />
+          <root url="file://$MODULE_DIR$/src/main/java" />
+          <root url="file://$MODULE_DIR$/src/main/resources" />
+        </sourceRoots>
       </configuration>
     </facet>
   </component>
@@ -27,5 +32,6 @@
     <orderEntry type="library" name="GlassFish 4.1.0" level="application_server_libraries" />
     <orderEntry type="library" name="Maven: com.stripe:stripe-java:22.13.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.10.1" level="project" />
+    <orderEntry type="library" name="jstl" level="project" />
   </component>
 </module>

@@ -80,8 +80,8 @@ public class OrderLineItems {
             pstmt.executeQuery();
         }
     }
-    public LinkedList<OrderLineItem> getOrderLineItems(int orderId) throws Exception {
-    LinkedList<OrderLineItem> orderLineItems = new LinkedList<>();
+    public ArrayList<OrderLineItem> getOrderLineItems(int orderId) throws Exception {
+    ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
     try (PreparedStatement pstmt = db.prepareStatement(
             "SELECT * FROM ORDER_LINE_ITEM WHERE order_id = ?",
             orderId

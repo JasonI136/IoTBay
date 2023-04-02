@@ -67,61 +67,67 @@
                 </span>
             </div>
         </div>
-        <% 
-            String orderId = (String) request.getAttribute("order_id"); 
-            String orderStatus = (String) request.getAttribute("order_status"); 
-            String orderDate = (String) request.getAttribute("order_date");
-            String progressColor = "bg-danger";
-            int progress = 0;
-            if (orderStatus.equals("PROCESSING")) {
-                    orderStatus = "Your order is currently being processed";
-                    progressColor = "bg-info";
-                    progress = 40;
-                } else if (orderStatus.equals("PENDING")) {
-                    orderStatus = "Your order is pending";
-                    progressColor = "bg-warning";
-                    progress = 10;
-                } else if (orderStatus.equals("SHIPPED")) {
-                    orderStatus = "Your order is has been shipped";
-                    progressColor = "bg-sucess";
-                    progress = 70;
-                } else if (orderStatus.equals("DELIVERED")) {
-                    progressColor = "bg-success";
-                    progress = 100;
-                    orderStatus = "Your order has been delivered";
-                } else if (orderStatus.equals("CANCELLED")) {
-                    progress = 10;
-                    orderStatus = "Your order has been cancelled";
-                    progressColor = "bg-warning";
-                } else {
-                    progress = 0;
-                    orderStatus = "There seems to be a technical issue with your order";
-                }
-            if (orderId != null && !orderId.isEmpty()) {
-        %>
-        <div class="d-flex justify-content-center align-items-center" style="padding-top:50px;padding-bottom: 50px;">
-            <div class="d-flex flex-column justify-content-center align-items-center">
-                <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;"><%= orderStatus%></h1>
-                <div class="progress" style="height: 10px; width: 200%">
-                    <div class="progress-bar <%= progressColor%>" role="progressbar" style="width: <%=progress%>%; margin-right: -100%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+        <section class="bg0 p-t-104 p-b-116">
+            <div class="container">
+                <div class="d-flex justify-content-center align-items-center" style="padding-top:50px;padding-bottom: 50px;">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <c:choose>
+                            <c:when test="${requestScope.orderStatus eq 'PROCESSING'}">
+                                <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order is currently being processed</h1>
+                                <div class="progress" style="height: 10px; width: 200%">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: 40%; margin-right: -100%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </c:when>
+
+                            <c:when test="${requestScope.orderStatus eq 'PENDING'}">
+                                <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order is pending</h1>
+                                <div class="progress" style="height: 10px; width: 200%">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 10%; margin-right: -100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </c:when>
+
+                            <c:when test="${requestScope.orderStatus eq 'SHIPPED'}">
+                                <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order is has been shipped</h1>
+                                <div class="progress" style="height: 10px; width: 200%">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 70%; margin-right: -100%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </c:when>
+
+                            <c:when test="${requestScope.orderStatus eq 'DELIVERED'}">
+                                <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order is has been shipped</h1>
+                                <div class="progress" style="height: 10px; width: 200%">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%; margin-right: -100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </c:when>
+
+                            <c:when test="${requestScope.orderStatus eq 'CANCELLED'}">
+                                <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Your order has been cancelled</h1>
+                                <div class="progress" style="height: 10px; width: 200%">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 0; margin-right: -100%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </c:when>
+
+                            <c:otherwise>
+                                <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">There seems to be a technical issue with your order</h1>
+                                <div class="progress" style="height: 10px; width: 200%">
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 0; margin-right: -100%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
                 </div>
             </div>
-        </div>
-        <c:if test="${not empty product_list}">
-            <c:forEach var="product" items="${product_list}">
+        </section>
+
+        <c:if test="${not empty requestScope.productList}">
+            <c:forEach var="product" items="${requestScope.productList}">
                 <h1 class="ltext-105 txt-center mb-4">Product ID: ${product.getId()}</h1>
                 <h1 class="ltext-105 txt-center mb-4">Product Name: ${product.getName()}</h1>
                 <h1 class="ltext-105 txt-center mb-4">Product Price: ${product.getPrice()}</h1>
                 <img src="${product.getImageURL()}">
             </c:forEach>
         </c:if>
-        <%
-            } else {
-        %>
-        <p>No order ID specified. Make sure to have order_id param</p>
-        <%
-            }
-        %>
+
         <!-- Footer -->
         <footer class="bg3 p-t-75 p-b-32">
             <jsp:include page="components/footer.jsp" />
@@ -134,7 +140,7 @@
                 <i class="zmdi zmdi-chevron-up"></i>
             </span>
         </div>
-        
+
         <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
@@ -173,7 +179,7 @@
                 })
             });
         </script>
-        
+
          <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>

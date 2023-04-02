@@ -16,6 +16,8 @@ import iotbay.models.collections.OrderLineItems;
 import iotbay.models.entities.Order;
 import iotbay.models.entities.Product;
 import iotbay.models.collections.Products;
+
+import java.sql.Array;
 import java.util.*;
 
 
@@ -24,6 +26,21 @@ import java.util.*;
  * @author jasonmba
  */
 public class OrderTrackingServlet extends HttpServlet {
+
+    private Orders orders;
+
+    private OrderLineItems orderLineItems;
+
+    private Products products;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.orders = (Orders) getServletContext().getAttribute("orders");
+        this.orderLineItems = (OrderLineItems) getServletContext().getAttribute("orderLineItems");
+        this.products = (Products) getServletContext().getAttribute("products");
+    }
+
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,7 +59,7 @@ public class OrderTrackingServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet orderTrackingServlet</title>");            
+            out.println("<title>Servlet orderTrackingServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet orderTrackingServlet at " + request.getContextPath() + "</h1>");
@@ -50,8 +67,8 @@ public class OrderTrackingServlet extends HttpServlet {
             out.println("</html>");
         }
     }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -78,36 +95,36 @@ public class OrderTrackingServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Orders orders = new Orders((DatabaseManager) getServletContext().getAttribute("db"));
-        OrderLineItems orderlineitems = new OrderLineItems((DatabaseManager) getServletContext().getAttribute("db"));
-        Products products = new Products((DatabaseManager) getServletContext().getAttribute("db"));
-        LinkedList<OrderLineItem> orderlineitemslist = new LinkedList<OrderLineItem>();
-        LinkedList<Product> productlist = new LinkedList<Product>();
-        //String lastname = request.getParameter("lastname");
-        
         String orderIDString = request.getParameter("orderid");
-        int orderID = Integer.parseInt(orderIDString);
+        if (orderIDString.isEmpty()) {
+            request.setAttribute("error", "Please enter an order ID.");
+            request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
+            return;
+        }
         
+        int orderID = Integer.parseInt(orderIDString);
+
         try {
-            Order order = orders.getOrder(orderID);
+            Order order = this.orders.getOrder(orderID);
             if (order != null) {
-                request.setAttribute("order_status", order.getOrderStatus().toString());
+                request.setAttribute("orderStatus", order.getOrderStatus().toString());
                 request.setAttribute("order_date", order.getOrderDate().toString());
                 request.setAttribute("user_id", order.getUserId());
-                orderlineitemslist = orderlineitems.getOrderLineItems(orderID);
-                for (OrderLineItem lineitem : orderlineitemslist) {
-                    int productID = lineitem.getProductId();
-                    productlist.add(products.getProduct(productID));
+                ArrayList<OrderLineItem> orderLineItemsList = this.orderLineItems.getOrderLineItems(orderID);
+                ArrayList<Product> productList = new ArrayList<>();
+                for (OrderLineItem lineItem : orderLineItemsList) {
+                    int productID = lineItem.getProductId();
+                    productList.add(products.getProduct(productID));
                 }
-                request.setAttribute("product_list", productlist);
+                request.setAttribute("productList", productList);
                 request.setAttribute("order_id", orderIDString);
                 request.getRequestDispatcher("/WEB-INF/jsp/order.jsp").forward(request, response);
             } else {
-                request.setAttribute("found_id", "No ID found");
+                request.setAttribute("error", "Order could not be found.");
                 request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ServletException(e.getMessage());
         }
 
     }
