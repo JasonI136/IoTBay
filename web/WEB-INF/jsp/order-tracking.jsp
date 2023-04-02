@@ -76,18 +76,18 @@
                     <div class="size-210 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
 
 
-                        <form method="post" action="login">
+                        <form method="post" action="orderTracking">
                             <h4 class="mtext-105 cl2 txt-center p-b-30">
                                 Find your Order
                             </h4>
 
                             <div class="bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="username" id="form3Example3" placeholder="Your Last Name">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="lastname" id="form3Example3" placeholder="Your Last Name">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
 
                             <div class="bor8 m-b-30 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="password" name="password" id="form3Example4" placeholder="Your Order ID">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="number" name="orderid" id="form3Example4" placeholder="Your Order ID Number">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/package.svg" alt="ICON">
                             </div>
 
@@ -201,38 +201,58 @@
                 })
             });
         </script>
+<% 
+    String noID = (String) request.getAttribute("found_id"); 
+    if (noID != null && noID.equals("No ID found")) {
+%>
+    <script>
+        swal.fire({
+            title: 'Error',
+            icon: 'error',
+            text: 'No ID found',
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    </script>
+<%
+    } else {
+%>
+    <script>
+        var success = "${success}";
+        var error = "${error}";
 
-        <script>
-            var success = "${success}";
-            var error = "${error}";
+        if (success) {
+            swal.fire({
+                title: 'Welcome!',
+                icon: 'success',
+                text: 'Login successful!',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "${pageContext.request.contextPath}/user";
+                }
+            });
 
-            if (success) {
-                swal.fire({
-                    title: 'Welcome!',
-                    icon: 'success',
-                    text: 'Login successful!',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "${pageContext.request.contextPath}/user";
-                    }
-                });
+        }
+        if (error) {
+            swal.fire({
+                title: 'Error',
+                icon: 'error',
+                text: '${error}',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        }
 
-            }
+    </script>
+<%
+    }
+%>
 
-            if (error) {
-                swal.fire({
-                    title: 'Error',
-                    icon: 'error',
-                    text: '${error}',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'OK'
-                });
-            }
-        </script>
 
         <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
 

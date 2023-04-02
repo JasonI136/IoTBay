@@ -3,13 +3,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package iotbay.servlets;
-
+import iotbay.database.DatabaseManager;
+import iotbay.models.collections.Orders;
+import iotbay.models.entities.OrderLineItem;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import iotbay.models.collections.OrderLineItems;
+import iotbay.models.entities.Order;
+import iotbay.models.entities.Product;
+import iotbay.models.collections.Products;
+import java.util.*;
+
 
 /**
  *
@@ -69,7 +77,39 @@ public class OrderTrackingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        Orders orders = new Orders((DatabaseManager) getServletContext().getAttribute("db"));
+        OrderLineItems orderlineitems = new OrderLineItems((DatabaseManager) getServletContext().getAttribute("db"));
+        Products products = new Products((DatabaseManager) getServletContext().getAttribute("db"));
+        LinkedList<OrderLineItem> orderlineitemslist = new LinkedList<OrderLineItem>();
+        LinkedList<Product> productlist = new LinkedList<Product>();
+        //String lastname = request.getParameter("lastname");
+        
+        String orderIDString = request.getParameter("orderid");
+        int orderID = Integer.parseInt(orderIDString);
+        
+        try {
+            Order order = orders.getOrder(orderID);
+            if (order != null) {
+                request.setAttribute("order_status", order.getOrderStatus().toString());
+                request.setAttribute("order_date", order.getOrderDate().toString());
+                request.setAttribute("user_id", order.getUserId());
+                orderlineitemslist = orderlineitems.getOrderLineItems(orderID);
+                for (OrderLineItem lineitem : orderlineitemslist) {
+                    int productID = lineitem.getProductId();
+                    productlist.add(products.getProduct(productID));
+                }
+                request.setAttribute("product_list", productlist);
+                request.setAttribute("order_id", orderIDString);
+                request.getRequestDispatcher("/WEB-INF/jsp/order.jsp").forward(request, response);
+            } else {
+                request.setAttribute("found_id", "No ID found");
+                request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

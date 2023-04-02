@@ -4,6 +4,8 @@ import iotbay.database.DatabaseManager;
 import iotbay.models.entities.OrderLineItem;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.*;
 
 public class OrderLineItems {
     //    if (!this.tableExists("ORDER_LINE_ITEM")) {
@@ -78,6 +80,25 @@ public class OrderLineItems {
             pstmt.executeQuery();
         }
     }
+    public LinkedList<OrderLineItem> getOrderLineItems(int orderId) throws Exception {
+    LinkedList<OrderLineItem> orderLineItems = new LinkedList<>();
+    try (PreparedStatement pstmt = db.prepareStatement(
+            "SELECT * FROM ORDER_LINE_ITEM WHERE order_id = ?",
+            orderId
+    )){
+        ResultSet rs = pstmt.executeQuery();
+
+        while (rs.next()) {
+            try {
+                OrderLineItem orderLineItem = new OrderLineItem(rs);
+                orderLineItems.add(orderLineItem);
+            } catch (Exception e) {
+                throw new Exception("Getting order failed, no rows affected.");
+            }
+        }
+    }
+    return orderLineItems;
+}
 
     public void updateOrderLineItem(int orderId, int productId, int quantity) throws Exception {
         try (PreparedStatement pstmt = db.prepareStatement(
