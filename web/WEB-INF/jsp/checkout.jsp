@@ -12,35 +12,7 @@
     <head>
         <title>Checkout</title>
         <script src="https://js.stripe.com/v3/"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/public/images/icons/favicon.png"/>
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/vendor/bootstrap/css/bootstrap.min.css">
-
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/fonts/iconic/css/material-design-iconic-font.min.css">
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/fonts/linearicons-v1.0.0/icon-font.min.css">
-
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/animate/animate.css">
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/vendor/css-hamburgers/hamburgers.min.css">
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/vendor/animsition/css/animsition.min.css">
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/vendor/select2/select2.min.css">
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/vendor/daterangepicker/daterangepicker.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/vendor/slick/slick.css">
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/vendor/MagnificPopup/magnific-popup.css">
-        <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.css">
-
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/util.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/main.css">
+        <jsp:include page="components/header-links.jsp" />
     </head>
     <body class="stext-112 cl6 p-b-26">
 
@@ -102,8 +74,8 @@
                         <div class="p-t-50">
                             <h2 class="mtext-105 cl2 p-b-30 txt-center">No available payments.</h2>
                         </div>
-                            
-                        
+
+
                     </c:if>
                     <c:if test="${not empty sessionScope.user.paymentMethods}">
                         <form>
