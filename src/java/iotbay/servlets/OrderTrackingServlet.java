@@ -111,14 +111,13 @@ public class OrderTrackingServlet extends HttpServlet {
                 ArrayList<OrderLineItem> orderLineItemsList = this.orderLineItems.getOrderLineItems(orderID);
                 ArrayList<Product> productList = new ArrayList<>();
                 for (OrderLineItem lineItem : orderLineItemsList) {
-                    int productID = lineItem.getProductId();
-                    productList.add(products.getProduct(productID));
+                    productList.add(products.getProduct(lineItem.getProductId()));
                 }
                 request.setAttribute("productList", productList);
-                request.setAttribute("order_id", orderIDString);
                 request.getRequestDispatcher("/WEB-INF/jsp/order.jsp").forward(request, response);
             } else {
-                request.setAttribute("error", "Order could not be found.");
+                request.setAttribute("error_title", "Error");
+                request.setAttribute("error_msg", "Order could not be found.");
                 request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
             }
         } catch (Exception e) {

@@ -13,7 +13,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <jsp:include page="components/header-links.jsp" />
-        <jsp:include page="components/bootstrap.jsp" />
     </head>
     <body>
         <header class="header-v4">
@@ -48,32 +47,31 @@
         <!-- Content page -->
         <section class="bg0 p-t-104 p-b-116">
             <div class="container">
-
-                <div class=" bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
+                <div class="bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
                     <form method="POST" action="register">
                         <h4 class="mtext-105 cl2 txt-center p-b-30">
                             Register
                         </h4>
                         <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username" name="username" required placeholder="Your User Name">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent col-sm">
+                        <div class="row" style="gap: 10px">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="firstName" name="firstName" required placeholder="Your First Name">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
-                            <div class="bor8 m-b-20 how-pos4-parent col-sm">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="lastName" name="lastName" required placeholder="Your Last Name">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="email" id="email" name="email" required placeholder="Your Email">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/at-sign.svg" alt="ICON">
                             </div>
@@ -81,7 +79,7 @@
 
 
                         <div class="row">
-                            <div class="bor8 m-b-30 how-pos4-parent">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="password" id="password" name="password" required placeholder="Your Password">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/lock.svg" alt="ICON">
                             </div>
@@ -89,7 +87,7 @@
 
 
                         <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="address" name="address" required placeholder="Your Address">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/map-pin.svg" alt="ICON">
                             </div>
@@ -97,7 +95,7 @@
 
 
                         <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="tel" id="phone" name="phone" required placeholder="Your Phone Number">
                                 <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/phone.svg" alt="ICON">
                             </div>
@@ -106,17 +104,13 @@
 
 
 
-                        <div class="row">
+                        <div class="">
                             <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
                                 Create an Account
                             </button>
                         </div>
 
                     </form>
-
-                    <!--                    <div class="row">
-                                            <div class="cf-turnstile" data-sitekey="0x4AAAAAAADUHrspn0fJpmst"></div>
-                                        </div>-->
                 </div>
 
 

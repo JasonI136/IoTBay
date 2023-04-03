@@ -15,7 +15,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <jsp:include page="components/header-links.jsp" />
-        <jsp:include page="components/bootstrap.jsp" />
     </head>
     <body>
         <header class="header-v4">
@@ -30,7 +29,7 @@
             <section class="bg-img1 txt-center p-lr-15 p-tb-92"
                      style="background-image: url('${pageContext.request.contextPath}/public/images/bg-02.jpg');">
                 <h2 class="ltext-105 cl0 txt-center">
-                    Welcome <%=user.getFirstName()%> <%=user.getLastName()%>
+                    Welcome ${user.firstName} ${user.lastName}
                 </h2>
             </section>
         </div>
@@ -57,26 +56,26 @@
                             Your Account Details
                         </h4>
                         <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username"
-                                       name="username" required placeholder="Your User Name" value='<%=user.getUsername()%>'
+                                       name="username" required placeholder="Your User Name" value='${user.username}'
                                        disabled>
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent col-sm">
+                        <div class="row" style="gap: 10px">
+                            <div class="bor8 m-b-20 how-pos4-parent col">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="firstName"
-                                       name="firstName" required placeholder="Your First Name" value='<%=user.getFirstName()%>'
+                                       name="firstName" required placeholder="Your First Name" value='${user.firstName}'
                                        disabled>
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
-                            <div class="bor8 m-b-20 how-pos4-parent col-sm">
+                            <div class="bor8 m-b-20 how-pos4-parent col">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="lastName"
-                                       name="lastName" required placeholder="Your Last Name" value='<%=user.getLastName()%>'
+                                       name="lastName" required placeholder="Your Last Name" value='${user.lastName}'
                                        disabled>
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
@@ -84,9 +83,9 @@
                         </div>
 
                         <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="email" id="email" name="email"
-                                       required placeholder="Your Email" value='<%=user.getEmail()%>' disabled>
+                                       required placeholder="Your Email" value='${user.email}' disabled>
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/at-sign.svg" alt="ICON">
                             </div>
@@ -94,9 +93,9 @@
 
 
                         <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="address" name="address"
-                                       required placeholder="Your Address" value='<%=user.getAddress()%>' disabled>
+                                       required placeholder="Your Address" value='${user.address}' disabled>
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/map-pin.svg" alt="ICON">
                             </div>
@@ -104,9 +103,9 @@
 
 
                         <div class="row">
-                            <div class="bor8 m-b-20 how-pos4-parent">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="tel" id="phone" name="phone"
-                                       required placeholder="Your Phone Number" value='<%=user.getPhoneNumber()%>' disabled>
+                                       required placeholder="Your Phone Number" value='${user.phoneNumber}' disabled>
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/phone.svg" alt="ICON">
                             </div>
@@ -159,7 +158,7 @@
 
                         <c:forEach var="order" items="${sessionScope.user.orders}">
                             <div class="row">
-                                <form method="post" action="orderTracking">
+                                <form class="col" method="post" action="orderTracking">
                                     <button type="submit" name="orderid" value="${order.id}" class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
                                     ${order.id} | ${order.orderDate} | ${order.orderStatus.toString()}
                                     </button>

@@ -238,39 +238,6 @@ IoTBay - Internet of Things Bay -  is the culmination of 30 years in information
                             })
                         });
 		</script>
-
-		<script>
-                        var success = "${success}";
-                        var error = "${error}";
-
-                        if (success) {
-                            swal.fire({
-                                title: 'Welcome!',
-                                icon: 'success',
-                                text: 'Login successful!',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = "${pageContext.request.contextPath}/user";
-                                }
-                            });
-
-                        }
-
-                        if (error) {
-                            swal.fire({
-                                title: 'Error',
-                                icon: 'error',
-                                text: '${error}',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-		</script>
-
 		<script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
 
 		<script src="${pageContext.request.contextPath}/public/js/main.js"></script>

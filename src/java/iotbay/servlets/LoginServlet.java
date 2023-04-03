@@ -83,19 +83,21 @@ public class LoginServlet extends HttpServlet {
             User user = users.authenticateUser(username, password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
-                request.setAttribute("success", "Login successful");
+                request.setAttribute("success_title", "Login successful");
+                request.setAttribute("success_msg", "Welcome " + user.getFirstName() + " " + user.getLastName() + "!");
                 request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
-//                response.sendRedirect(request.getContextPath() + "/user");
             } else {
                 response.setStatus(401);
-                request.setAttribute("error", "The username or password was incorrect.");
+                request.setAttribute("error_title", "Login failed");
+                request.setAttribute("error_msg", "The username or password is incorrect.");
                 request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
                
             }
         } catch (Exception e) {
             if (e instanceof UserNotFoundException) {
                 response.setStatus(404);
-                request.setAttribute("error", "The account does not exist.");
+                request.setAttribute("error_title", "Account not found");
+                request.setAttribute("error_msg", "The account does not exist.");
                 request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
             } else {
                 throw new ServletException("Error: " + e.getMessage());

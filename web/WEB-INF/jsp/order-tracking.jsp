@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -131,6 +132,19 @@
         </div>
     </section>
 
+    <c:if test="${(not empty error_title) or (not empty error_msg)}">
+            <script>
+                swal.fire({
+                    title: '${error_title}',
+                    icon: 'error',
+                    text: '${error_msg}',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+    </c:if>
+
     <!-- Footer -->
     <footer class="bg3 p-t-75 p-b-32">
         <jsp:include page="components/footer.jsp"/>
@@ -182,20 +196,6 @@
                 ps.update();
             })
         });
-    </script>
-    <script>
-        var error = "${error}";
-        if (error) {
-            swal.fire({
-                title: 'Error',
-                icon: 'error',
-                text: '${error}',
-                showCancelButton: false,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-            }).then((result));
-        }
-
     </script>
 
     <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
