@@ -116,7 +116,7 @@
                             </div>
 
 
-                            <a type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" style="color: white;">
+                            <a type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" onclick="checkOut()" style="color: white;">
                                 Confirm Order
                             </a>
                         </form>
@@ -215,7 +215,7 @@
 
 <script>
     function checkOut() {
-        let paymentMethodId = document.getElementById("payment_method").value;
+        let paymentMethodId = document.getElementById("payment-method").value;
         fetch("${pageContext.request.contextPath}/cart/checkout", {
             method: "POST",
             headers: {
