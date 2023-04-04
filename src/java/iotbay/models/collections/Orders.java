@@ -114,7 +114,7 @@ public class Orders {
             if (rs.next()) {
                 return new Order(rs);
             } else {
-                throw new Exception("Getting order failed, no rows affected.");
+                return null;
             }
         }
     }

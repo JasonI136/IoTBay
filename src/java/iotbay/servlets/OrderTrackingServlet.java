@@ -3,20 +3,44 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package iotbay.servlets;
-
+import iotbay.database.DatabaseManager;
+import iotbay.models.collections.Orders;
+import iotbay.models.entities.OrderLineItem;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import iotbay.models.entities.User;
+import iotbay.models.collections.OrderLineItems;
+import iotbay.models.entities.Order;
+import iotbay.models.entities.Product;
+import iotbay.models.collections.Products;
+
+import java.sql.Array;
+import java.util.*;
+
 
 /**
  *
  * @author jasonmba
  */
 public class OrderTrackingServlet extends HttpServlet {
+
+    private Orders orders;
+
+    private OrderLineItems orderLineItems;
+
+    private Products products;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.orders = (Orders) getServletContext().getAttribute("orders");
+        this.orderLineItems = (OrderLineItems) getServletContext().getAttribute("orderLineItems");
+        this.products = (Products) getServletContext().getAttribute("products");
+    }
+
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,7 +59,7 @@ public class OrderTrackingServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet orderTrackingServlet</title>");            
+            out.println("<title>Servlet orderTrackingServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet orderTrackingServlet at " + request.getContextPath() + "</h1>");
@@ -43,8 +67,8 @@ public class OrderTrackingServlet extends HttpServlet {
             out.println("</html>");
         }
     }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -70,10 +94,36 @@ public class OrderTrackingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //String lastname = request.getParameter("lastname");
-        String orderID = request.getParameter("orderid");
-        request.setAttribute("order_id", orderID);
-        request.getRequestDispatcher("/WEB-INF/jsp/order.jsp").forward(request, response);
+
+        String orderIDString = request.getParameter("orderid");
+        if (orderIDString.isEmpty()) {
+            request.setAttribute("error", "Please enter an order ID.");
+            request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
+            return;
+        }
+        
+        int orderID = Integer.parseInt(orderIDString);
+
+        try {
+            Order order = this.orders.getOrder(orderID);
+            if (order != null) {
+                request.setAttribute("order", order);
+                ArrayList<OrderLineItem> orderLineItemsList = this.orderLineItems.getOrderLineItems(orderID);
+                ArrayList<Product> productList = new ArrayList<>();
+                for (OrderLineItem lineItem : orderLineItemsList) {
+                    productList.add(products.getProduct(lineItem.getProductId()));
+                }
+                request.setAttribute("productList", productList);
+                request.getRequestDispatcher("/WEB-INF/jsp/order.jsp").forward(request, response);
+            } else {
+                request.setAttribute("error_title", "Error");
+                request.setAttribute("error_msg", "Order could not be found.");
+                request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+
     }
 
     /**

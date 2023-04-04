@@ -120,8 +120,9 @@ public class RegisterServlet extends HttpServlet {
             
             throw new ServletException("An error occurred whilst registering " + username + ". " + e.getMessage());
         }
-        
-        request.setAttribute("success", "Registration successful, you may now login.");
+
+        request.setAttribute("success_title", "Registration successful");
+        request.setAttribute("success_msg", "You have successfully registered. Please login to continue.");
         request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
         
     }

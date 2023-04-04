@@ -16,10 +16,10 @@
         <div class="row">
             <div class="col-sm-6 col-lg-3 p-b-50">
                 <h4 class="stext-301 cl0 p-b-30">
-                    Categories
+                    Want to Shop?
                 </h4>
 
-                <ul>
+                <ul class="footer-sec-ul">
                     <li class="p-b-10">
                         <a href="${pageContext.request.contextPath}/index" class="stext-107 cl7 hov-cl1 trans-04">
                             Home
@@ -37,17 +37,17 @@
 
             <div class="col-sm-6 col-lg-3 p-b-50">
                 <h4 class="stext-301 cl0 p-b-30">
-                    Help
+                    Need Help With An Order?
                 </h4>
 
-                <ul>
+                <ul class="footer-sec-ul">
                     <li class="p-b-10">
                         <a href="${pageContext.request.contextPath}/orderTracking" class="stext-107 cl7 hov-cl1 trans-04">
                             Track Order
                         </a>
                     </li>
-		    
-		    <li class="p-b-10">
+
+                    <li class="p-b-10">
                         <a href="${pageContext.request.contextPath}/contactUs" class="stext-107 cl7 hov-cl1 trans-04">
                             Contact
                         </a>
@@ -63,48 +63,22 @@
                 <p class="stext-107 cl7 size-201">
                     Any questions? Let us know in store, by email at iotbay@sales.com or phone +61 861 654 222
                 </p>
-
-                <div class="p-t-27">
-                    <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                        <i class="fa fa-facebook"></i>
-                    </a>
-
-                    <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                        <i class="fa fa-instagram"></i>
-                    </a>
-
-                    <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                        <i class="fa fa-pinterest-p"></i>
-                    </a>
-                </div>
             </div>
 
             <div class="col-sm-6 col-lg-3 p-b-50">
                 <h4 class="stext-301 cl0 p-b-30">
-                    Newsletter
+                    Learn more about us
                 </h4>
-
-                <form>
-                    <div class="wrap-input1 w-full p-b-4">
-                        <input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
-                        <div class="focus-input1 trans-04"></div>
-                    </div>
-
-                    <div class="p-t-18">
-                        <button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-                            Subscribe
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="p-t-40">
-            <div class="flex-c-m flex-w p-b-18">
-                <a href="#" class="m-all-1">
-                    <img src="${pageContext.request.contextPath}/public/images/icons/icon-pay-01.png" alt="ICON-PAY">
-                </a>
-
+                <li class="p-b-10">
+                    <a href="${pageContext.request.contextPath}/aboutUs" class="stext-107 cl7 hov-cl1 trans-04">
+                        About Us
+                    </a>
+                </li>
+                
+                <p class="stext-107 cl7 size-201">
+                    Payment Options
+                </p>
+                
                 <a href="#" class="m-all-1">
                     <img src="${pageContext.request.contextPath}/public/images/icons/icon-pay-02.png" alt="ICON-PAY">
                 </a>

@@ -481,4 +481,20 @@ public class User implements Serializable {
         return null;
     }
 
+    public ArrayList<Order> getOrders() throws Exception {
+        ArrayList<Order> orders = new ArrayList<>();
+        try (PreparedStatement statement = this.db.prepareStatement(
+                "SELECT * FROM CUSTOMER_ORDER WHERE user_id = ?",
+                this.id
+        )) {
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                orders.add(new Order(rs));
+            }
+        }
+
+        return orders;
+    }
+
 }
