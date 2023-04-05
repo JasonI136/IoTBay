@@ -59,7 +59,7 @@
     </servlet>
     <servlet>
         <servlet-name>AdminUsersServlet</servlet-name>
-        <servlet-class>AdminUsersServlet</servlet-class>
+        <servlet-class>iotbay.servlets.AdminUsersServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>OrderTrackingServlet</servlet-name>

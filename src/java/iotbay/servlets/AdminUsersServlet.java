@@ -1,4 +1,4 @@
-/*
+package iotbay.servlets;/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
@@ -33,10 +33,10 @@ public class AdminUsersServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AdminUsersServlet</title>");            
+            out.println("<title>Servlet iotbay.servlets.AdminUsersServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AdminUsersServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet iotbay.servlets.AdminUsersServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
