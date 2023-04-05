@@ -34,10 +34,6 @@
         <servlet-class>iotbay.servlets.ProductServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>OrderTrackingServlet</servlet-name>
-        <servlet-class>iotbay.servlets.OrderTrackingServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ContactServlet</servlet-name>
         <servlet-class>iotbay.servlets.ContactServlet</servlet-class>
     </servlet>
@@ -64,6 +60,10 @@
     <servlet>
         <servlet-name>AdminUsersServlet</servlet-name>
         <servlet-class>AdminUsersServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderTrackingServlet</servlet-name>
+        <servlet-class>iotbay.servlets.OrderTrackingServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
@@ -102,10 +102,6 @@
         <url-pattern>/product/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>OrderTrackingServlet</servlet-name>
-        <url-pattern>/orderTracking</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ContactServlet</servlet-name>
         <url-pattern>/contactUs</url-pattern>
     </servlet-mapping>
@@ -132,6 +128,10 @@
     <servlet-mapping>
         <servlet-name>AdminUsersServlet</servlet-name>
         <url-pattern>/admin/users</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderTrackingServlet</servlet-name>
+        <url-pattern>/orderTracking</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
