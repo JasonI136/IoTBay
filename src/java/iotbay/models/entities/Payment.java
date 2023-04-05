@@ -2,6 +2,7 @@ package iotbay.models.entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
@@ -21,7 +22,7 @@ public class Payment implements Serializable {
 //
 //            Statement stmt = this.conn.createStatement();
 //            stmt.execute(createTableQuery);
-//            conn.commit();
+//            
 //        }
 
     private int id;
@@ -31,6 +32,14 @@ public class Payment implements Serializable {
     private float amount;
 
     public Payment() {};
+
+    public Payment(ResultSet rs) throws Exception {
+        this.id = rs.getInt("id");
+        this.invoiceId = rs.getInt("invoice_id");
+        this.date = rs.getTimestamp("date");
+        this.paymentMethodId = rs.getInt("payment_method_id");
+        this.amount = rs.getFloat("amount");
+    }
 
     public Payment(int id, int invoiceId, Timestamp date, int paymentMethodId, float amount) {
         this.id = id;

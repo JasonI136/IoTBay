@@ -9,6 +9,11 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.10.1" />
           <element id="library" level="project" name="Maven: com.stripe:stripe-java:22.13.0" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-api:2.20.0" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-core:2.20.0" />
+          <element id="library" level="project" name="Maven: com.zaxxer:HikariCP:4.0.3" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:2.0.7" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.20.0" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="IoTBay/web/Web" />

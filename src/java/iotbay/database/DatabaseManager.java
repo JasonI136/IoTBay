@@ -4,6 +4,11 @@
  */
 package iotbay.database;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.*;
 
 /**
@@ -11,7 +16,11 @@ import java.sql.*;
  */
 public class DatabaseManager {
 
-    protected Connection conn;
+
+    protected HikariDataSource dataSource;
+
+    private static final Logger logger = LogManager.getLogger(DatabaseManager.class);
+
 
     /**
      * Creates a new instance of DatabaseManager
@@ -24,7 +33,16 @@ public class DatabaseManager {
      * @throws SQLException           if there is an error connecting to the database
      */
     public DatabaseManager(String dbUrl, String dbUser, String dbPass, String dbName) throws ClassNotFoundException, SQLException {
-        this.conn = DriverManager.getConnection(dbUrl + dbName, dbUser, dbPass);
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(dbUrl + dbName);
+        config.setUsername(dbUser);
+        config.setPassword(dbPass);
+        config.setMaximumPoolSize(100);
+        config.setLeakDetectionThreshold(10000);
+
+        this.dataSource = new HikariDataSource(config);
+
+
         this.initDb();
     }
 
@@ -34,17 +52,9 @@ public class DatabaseManager {
      * @throws SQLException if there is an error creating the tables
      */
     private void initDb() throws SQLException {
-
-//        DatabaseMetaData metadata = conn.getMetaData();
-//        ResultSet rs = metadata.getTypeInfo();
-//        while (rs.next()) {
-//            String typeName = rs.getString("TYPE_NAME");
-//            int dataType = rs.getInt("DATA_TYPE");
-//            System.out.println("Type name: " + typeName + ", Data type: " + dataType);
-//        }
-
         // create the user table
         if (!this.tableExists("USER_ACCOUNT")) {
+            logger.warn("Creating USER_ACCOUNT table");
             String createTableQuery =
                     "CREATE TABLE USER_ACCOUNT ("
                             + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
@@ -61,13 +71,17 @@ public class DatabaseManager {
                             + "PRIMARY KEY (id)"
                             + ")";
 
-            Statement stmt = this.conn.createStatement();
-            stmt.execute(createTableQuery);
-            conn.commit();
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
         }
 
         // create the payment method table
         if (!this.tableExists("PAYMENT_METHOD")) {
+            logger.warn("Creating PAYMENT_METHOD table");
             String createTableQuery =
                     "CREATE TABLE PAYMENT_METHOD ("
                             + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
@@ -79,13 +93,17 @@ public class DatabaseManager {
                             + "CONSTRAINT user_id_ref FOREIGN KEY (user_id) REFERENCES USER_ACCOUNT(id)"
                             + ")";
 
-            Statement stmt = this.conn.createStatement();
-            stmt.execute(createTableQuery);
-            conn.commit();
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
         }
 
         // create the category table
         if (!this.tableExists("CATEGORY")) {
+            logger.warn("Creating CATEGORY table");
             String createTableQuery =
                     "CREATE TABLE CATEGORY ("
                             + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
@@ -93,14 +111,18 @@ public class DatabaseManager {
                             + "PRIMARY KEY (id)"
                             + ")";
 
-            Statement stmt = this.conn.createStatement();
-            stmt.execute(createTableQuery);
-            conn.commit();
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
 
         }
 
         // create the products table
         if (!this.tableExists("PRODUCT")) {
+            logger.warn("Creating PRODUCT table");
             String createTableQuery =
                     "CREATE TABLE PRODUCT ("
                             + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
@@ -114,12 +136,16 @@ public class DatabaseManager {
                             + "CONSTRAINT category_id_ref FOREIGN KEY (category_id) REFERENCES CATEGORY(id)"
                             + ")";
 
-            Statement stmt = this.conn.createStatement();
-            stmt.execute(createTableQuery);
-            conn.commit();
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
         }
 
         if (!this.tableExists("CUSTOMER_ORDER")) {
+            logger.warn("Creating CUSTOMER_ORDER table");
             String createTableQuery =
                     "CREATE TABLE CUSTOMER_ORDER ("
                             + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
@@ -130,12 +156,16 @@ public class DatabaseManager {
                             + "CONSTRAINT customer_order_user_id_ref FOREIGN KEY (user_id) REFERENCES USER_ACCOUNT(id)"
                             + ")";
 
-            Statement stmt = this.conn.createStatement();
-            stmt.execute(createTableQuery);
-            conn.commit();
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
         }
 
         if (!this.tableExists("ORDER_LINE_ITEM")) {
+            logger.warn("Creating ORDER_LINE_ITEM table");
             String createTableQuery =
                     "CREATE TABLE ORDER_LINE_ITEM ("
                             + "order_id                         INT,"
@@ -146,12 +176,16 @@ public class DatabaseManager {
                             + "CONSTRAINT order_line_item_product_id_ref FOREIGN KEY (product_id) REFERENCES PRODUCT(id)"
                             + ")";
 
-            Statement stmt = this.conn.createStatement();
-            stmt.execute(createTableQuery);
-            conn.commit();
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
         }
 
         if (!this.tableExists("INVOICE")) {
+            logger.warn("Creating INVOICE table");
             String createTableQuery =
                     "CREATE TABLE INVOICE ("
                             + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
@@ -162,12 +196,16 @@ public class DatabaseManager {
                             + "CONSTRAINT invoice_order_id_ref FOREIGN KEY (order_id) REFERENCES CUSTOMER_ORDER(id)"
                             + ")";
 
-            Statement stmt = this.conn.createStatement();
-            stmt.execute(createTableQuery);
-            conn.commit();
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
         }
 
         if (!this.tableExists("PAYMENT")) {
+            logger.warn("Creating PAYMENT table");
             String createTableQuery =
                     "CREATE TABLE PAYMENT ("
                             + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
@@ -180,18 +218,25 @@ public class DatabaseManager {
                             + "CONSTRAINT payment_payment_method_id_ref FOREIGN KEY (payment_method_id) REFERENCES PAYMENT_METHOD(id)"
                             + ")";
 
-            Statement stmt = this.conn.createStatement();
-            stmt.execute(createTableQuery);
-            conn.commit();
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
         }
 
 
-        System.out.println("Database initalised successfully.");
+        logger.info("Database initialized.");
 
     }
 
     public Connection getDbConnection() {
-        return this.conn;
+        try {
+            return this.dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -202,18 +247,11 @@ public class DatabaseManager {
      * @throws SQLException if there is an error checking if the table exists
      */
     private boolean tableExists(String tableName) throws SQLException {
-        DatabaseMetaData dbMeta = this.conn.getMetaData();
-        ResultSet rs = dbMeta.getTables(null, null, tableName, null);
-        return rs.next();
-    }
-
-    public PreparedStatement prepareStatement(String sql, Object... params) throws SQLException {
-        PreparedStatement statement = this.getDbConnection().prepareStatement(sql);
-
-        for (int i = 0; i < params.length; i++) {
-            statement.setObject(i + 1, params[i]);
+        try (Connection conn = this.getDbConnection()) {
+            DatabaseMetaData dbMeta = conn.getMetaData();
+            ResultSet rs = dbMeta.getTables(null, null, tableName, null);
+            return rs.next();
         }
 
-        return statement;
     }
 }

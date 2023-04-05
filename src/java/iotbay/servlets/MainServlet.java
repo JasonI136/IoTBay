@@ -19,6 +19,8 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -31,10 +33,12 @@ public class MainServlet extends HttpServlet {
     private Products products;
     private Categories categories;
 
-
+    private static final Logger logger = LogManager.getLogger(MainServlet.class);
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+
+
         
         // Load the application configuration.
         InputStream inputStream = getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
@@ -102,9 +106,11 @@ public class MainServlet extends HttpServlet {
 
         getServletContext().setAttribute("invoices", invoices);
 
-
-
         Stripe.apiKey = secrets.getProperty("stripe.api.key");
+
+
+    	logger.error("Hello!");
+        logger.trace("Hello Trace!");
 
     }
     

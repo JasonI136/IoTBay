@@ -11,6 +11,8 @@ import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.entities.PaymentMethod;
 import iotbay.models.entities.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -19,6 +21,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,6 +48,8 @@ public class Users {
      * An instance of the database manager
      */
     private final DatabaseManager db;
+
+    private static final Logger logger = LogManager.getLogger(DatabaseManager.class);
 
     /**
      * Initalizes the users collection with the database manager
@@ -123,44 +128,46 @@ public class Users {
      *
      * @param username the username of the user to retrieve
      * @return the user as a User object
-     * @throws SQLException if there is an error retrieving the user
+     * @throws SQLException          if there is an error retrieving the user
      * @throws UserNotFoundException if the user does not exist
      */
     public User getUser(String username) throws Exception {
 
-        ResultSet userRs;
-        try (PreparedStatement userQuery = this.db.prepareStatement(
-                "SELECT * FROM USER_ACCOUNT WHERE username = ?",
-                username
-        )) {
-            userRs = userQuery.executeQuery();
-
-            if (!userRs.next()) {
-                throw new UserNotFoundException("The user with username " + username + " does not exist.");
-            }
-
-            List<PaymentMethod> paymentMethods;
-            ResultSet paymentMethodsRs;
-            try (PreparedStatement userPaymentMethodsQuery = this.db.prepareStatement(
-                    "SELECT * FROM PAYMENT_METHOD WHERE user_id = ?",
-                    userRs.getInt("id")
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement userQueryStmt = conn.prepareStatement(
+                    "SELECT * FROM USER_ACCOUNT WHERE username = ?"
             )) {
-                paymentMethods = new ArrayList<>();
-                paymentMethodsRs = userPaymentMethodsQuery.executeQuery();
+                userQueryStmt.setString(1, username);
 
-                while (paymentMethodsRs.next()) {
-                    PaymentMethod paymentMethod = new PaymentMethod(paymentMethodsRs);
-                    paymentMethods.add(paymentMethod);
+                try (ResultSet userRs = userQueryStmt.executeQuery()) {
+                    if (!userRs.next()) {
+                        throw new UserNotFoundException("The user with username " + username + " does not exist.");
+                    }
+
+                    try (PreparedStatement userPaymentMethodsQueryStmt = conn.prepareStatement(
+                            "SELECT * FROM PAYMENT_METHOD WHERE user_id = ?"
+                    )) {
+                        userPaymentMethodsQueryStmt.setInt(1, userRs.getInt("id"));
+
+                        try (ResultSet paymentMethodsRs = userPaymentMethodsQueryStmt.executeQuery()) {
+                            List<PaymentMethod> paymentMethods = new ArrayList<>();
+
+                            while (paymentMethodsRs.next()) {
+                                paymentMethods.add(new PaymentMethod(paymentMethodsRs));
+                            }
+
+                            User user = new User(this.db, userRs);
+                            user.setPaymentMethods(paymentMethods);
+
+                            return user;
+                        }
+                    }
                 }
 
 
-                User user = new User(this.db, userRs);
-                user.setPaymentMethods(paymentMethods);
-
-                return user;
             }
-
         }
+
 
     }
 
@@ -168,43 +175,45 @@ public class Users {
      * Adds a user to the database.
      *
      * @param user the user to add as a User object
-     * @throws SQLException if there is an error adding the user
+     * @throws SQLException        if there is an error adding the user
      * @throws UserExistsException if the user already exists
      */
-    private void addUser(User user) throws SQLException, UserExistsException {
+    private void addUser(User user) throws Exception {
 
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement checkUserQuery = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM USER_ACCOUNT WHERE username = ? OR email = ?"
+            )) {
+                checkUserQuery.setString(1, user.getUsername());
+                checkUserQuery.setString(2, user.getEmail());
 
-        ResultSet rs;
-        try (PreparedStatement checkUserQuery = this.db.prepareStatement(
-                "SELECT COUNT(*) FROM USER_ACCOUNT WHERE username = ? OR email = ?",
-                user.getUsername(),
-                user.getEmail()
-        )) {
-            rs = checkUserQuery.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
-                throw new UserExistsException("User already exists.");
+                try (ResultSet rs = checkUserQuery.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        throw new UserExistsException("User already exists.");
+                    }
+                }
             }
-        }
 
-        int affectedRows;
-        try (PreparedStatement addUserQuery = this.db.prepareStatement(
-                "INSERT INTO USER_ACCOUNT (username, password, password_salt, first_name, last_name, email, address, phone_number, stripe_customer_id) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                user.getUsername(),
-                user.getPassword(),
-                user.getPasswordSalt(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getAddress(),
-                user.getPhoneNumber(),
-                user.getStripeCustomerId()
-        )) {
+            try (PreparedStatement addUserQuery = conn.prepareStatement(
+                    "INSERT INTO USER_ACCOUNT (username, password, password_salt, first_name, last_name, email, address, phone_number, stripe_customer_id) "
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            )) {
+                addUserQuery.setString(1, user.getUsername());
+                addUserQuery.setString(2, user.getPassword());
+                addUserQuery.setString(3, user.getPasswordSalt());
+                addUserQuery.setString(4, user.getFirstName());
+                addUserQuery.setString(5, user.getLastName());
+                addUserQuery.setString(6, user.getEmail());
+                addUserQuery.setString(7, user.getAddress());
+                addUserQuery.setInt(8, user.getPhoneNumber());
+                addUserQuery.setString(9, user.getStripeCustomerId());
 
-            affectedRows = addUserQuery.executeUpdate();
-            if (affectedRows == 1) {
-                System.out.println("User " + user.getUsername() + " was added to the database.");
-                this.db.getDbConnection().commit();
+                int affectedRows = addUserQuery.executeUpdate();
+                if (affectedRows == 1) {
+                    logger.info("User " + user.getUsername() + " added to database.");
+                } else {
+                    throw new SQLException("Failed to add user to database.");
+                }
             }
         }
 

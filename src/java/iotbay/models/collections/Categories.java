@@ -3,6 +3,7 @@ package iotbay.models.collections;
 import iotbay.database.DatabaseManager;
 import iotbay.models.entities.Category;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,15 +38,16 @@ public class Categories {
 
         String query = "SELECT * FROM CATEGORY";
 
-        try (PreparedStatement pstmt = this.db.getDbConnection().prepareStatement(query)) {
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    Category category = new Category(rs);
-                    categoryList.add(category);
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        categoryList.add(new Category(rs));
+                    }
                 }
             }
         }
+
         return categoryList;
 
 

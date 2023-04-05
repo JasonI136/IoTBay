@@ -21,7 +21,7 @@ public class Invoice implements Serializable {
 //
 //            Statement stmt = this.conn.createStatement();
 //            stmt.execute(createTableQuery);
-//            conn.commit();
+//            
 //        }
 
 

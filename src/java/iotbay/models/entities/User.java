@@ -5,8 +5,11 @@
 package iotbay.models.entities;
 
 import iotbay.database.DatabaseManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +28,8 @@ public class User implements Serializable {
      * This is transient because it is not serializable.
      */
     private final transient DatabaseManager db;
+
+    private static final Logger logger = LogManager.getLogger(User.class);
 
     /**
      * The user's unique id.
@@ -391,22 +396,20 @@ public class User implements Serializable {
      * @throws SQLException if there is an error adding the payment method
      */
     public void addPaymentMethod(PaymentMethod paymentMethod) throws SQLException {
-        int affectedRows;
-        try (PreparedStatement statement = this.db.prepareStatement(
-                "INSERT INTO PAYMENT_METHOD (stripe_payment_method_id, user_id, PAYMENT_METHOD_TYPE, CARD_LAST_4) VALUES (?, ?, ?, ?)",
-                paymentMethod.getStripePaymentMethodId(),
-                this.id,
-                paymentMethod.getPaymentMethodType(),
-                paymentMethod.getCardLast4()
-        )) {
-            affectedRows = statement.executeUpdate();
-            if (affectedRows == 1) {
-                System.out.println("Payment method " + paymentMethod.getStripePaymentMethodId() + " was added to the database.");
-                this.paymentMethods.add(paymentMethod);
-                this.db.getDbConnection().commit();
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO PAYMENT_METHOD (stripe_payment_method_id, user_id, PAYMENT_METHOD_TYPE, CARD_LAST_4) VALUES (?, ?, ?, ?)")) {
+                stmt.setString(1, paymentMethod.getStripePaymentMethodId());
+                stmt.setInt(2, this.id);
+                stmt.setString(3, paymentMethod.getPaymentMethodType());
+                stmt.setInt(4, paymentMethod.getCardLast4());
+
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 1) {
+                    logger.info("Payment method " + paymentMethod.getStripePaymentMethodId() + " was added to the database.");
+                    this.paymentMethods.add(paymentMethod);
+                }
             }
         }
-
 
     }
 
@@ -417,21 +420,18 @@ public class User implements Serializable {
      * @throws SQLException if there is an error deleting the payment method
      */
     public void deletePaymentMethod(PaymentMethod paymentMethod) throws SQLException {
-        int affectedRows;
-        try (PreparedStatement statement = this.db.prepareStatement(
-                "DELETE FROM PAYMENT_METHOD WHERE id = ?",
-                paymentMethod.getId()
-        )) {
-            affectedRows = statement.executeUpdate();
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM PAYMENT_METHOD WHERE id = ?")) {
+                stmt.setInt(1, paymentMethod.getId());
+                stmt.executeUpdate();
 
-            if (affectedRows == 1) {
-                System.out.println("Payment method " + paymentMethod.getId() + " was deleted from the database.");
-                this.paymentMethods.remove(paymentMethod);
-                this.db.getDbConnection().commit();
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 1) {
+                    logger.info("Payment method " + paymentMethod.getId() + " was deleted from the database.");
+                    this.paymentMethods.remove(paymentMethod);
+                }
             }
         }
-
-
     }
 
     /**
@@ -442,15 +442,14 @@ public class User implements Serializable {
      * @throws Exception if there is an error getting the payment method
      */
     public PaymentMethod getPaymentMethod(int paymentMethodId) throws Exception {
-        ResultSet rs;
-        try (PreparedStatement statement = this.db.prepareStatement(
-                "SELECT * FROM PAYMENT_METHOD WHERE id = ?",
-                paymentMethodId
-        )) {
-            rs = statement.executeQuery();
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PAYMENT_METHOD WHERE id = ?")) {
+                stmt.setInt(1, paymentMethodId);
+                ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                return new PaymentMethod(rs);
+                if (rs.next()) {
+                    return new PaymentMethod(rs);
+                }
             }
         }
 
@@ -465,17 +464,15 @@ public class User implements Serializable {
      */
     public PaymentMethod getPaymentMethodByStripeId(String stripePaymentMethodId) throws Exception {
 
-        try (PreparedStatement statement = this.db.prepareStatement(
-                "SELECT * FROM PAYMENT_METHOD WHERE STRIPE_PAYMENT_METHOD_ID = ?",
-                stripePaymentMethodId
-        )) {
-            ResultSet rs = statement.executeQuery();
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PAYMENT_METHOD WHERE stripe_payment_method_id = ?")) {
+                stmt.setString(1, stripePaymentMethodId);
+                ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                return new PaymentMethod(rs);
+                if (rs.next()) {
+                    return new PaymentMethod(rs);
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
         return null;
@@ -483,14 +480,15 @@ public class User implements Serializable {
 
     public ArrayList<Order> getOrders() throws Exception {
         ArrayList<Order> orders = new ArrayList<>();
-        try (PreparedStatement statement = this.db.prepareStatement(
-                "SELECT * FROM CUSTOMER_ORDER WHERE user_id = ?",
-                this.id
-        )) {
-            ResultSet rs = statement.executeQuery();
 
-            while (rs.next()) {
-                orders.add(new Order(rs));
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CUSTOMER_ORDER WHERE user_id = ?")) {
+                stmt.setInt(1, this.id);
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    orders.add(new Order(rs));
+                }
             }
         }
 
