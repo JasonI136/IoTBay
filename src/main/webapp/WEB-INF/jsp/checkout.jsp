@@ -12,7 +12,7 @@
     <head>
         <title>Checkout</title>
         <script src="https://js.stripe.com/v3/"></script>
-        <jsp:include page="components/header-links.jsp" />
+        <jsp:include page="components/header-links.jsp"/>
     </head>
     <body class="stext-112 cl6 p-b-26">
 
@@ -37,7 +37,7 @@
                         <div class="card-body">
                             <table class="table">
                                 <thead>
-                                    <tr >
+                                    <tr>
                                         <th>Item</th>
                                         <th>Quantity</th>
                                         <th>Price</th>
@@ -85,8 +85,9 @@
                                 <select class="form-control" id="payment-method" onchange="updateCardNumber()">
                                     <option value="" selected disabled>Pick a card</option>
                                     <c:forEach items="${sessionScope.user.paymentMethods}" var="paymentmethod">
-                                        <option value="${paymentmethod.stripePaymentMethodId}" data-last4="${paymentmethod.cardLast4}">
-                                            ${paymentmethod.paymentMethodType.toUpperCase()} ${paymentmethod.cardLast4}
+                                        <option value="${paymentmethod.stripePaymentMethodId}"
+                                                data-last4="${paymentmethod.cardLast4}">
+                                                ${paymentmethod.paymentMethodType.toUpperCase()} ${paymentmethod.cardLast4}
                                         </option>
                                     </c:forEach>
                                 </select>
@@ -96,27 +97,31 @@
                             <div id="credit-card-fields">
                                 <div class="form-group">
                                     <label for="card-number">Credit Card Number:</label>
-                                    <input type="text" class="form-control" id="card-number" placeholder="Enter your credit card number" value="" disabled>
+                                    <input type="text" class="form-control" id="card-number"
+                                           placeholder="Enter your credit card number" value="" disabled>
 
                                 </div>
                                 <div class="form-row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="expiry">Expiration Date:</label>
-                                            <input type="text" class="form-control" id="expiry" placeholder="MM/YY" disabled>
+                                            <input type="text" class="form-control" id="expiry" placeholder="MM/YY"
+                                                   disabled>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="cvv">CVV:</label>
-                                            <input type="password" class="form-control" id="cvv" placeholder="Enter CVV" maxlength="3" >
+                                            <input type="password" class="form-control" id="cvv" placeholder="Enter CVV"
+                                                   maxlength="3">
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
 
-                            <a type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" onclick="checkOut()" style="color: white;">
+                            <a type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
+                               onclick="checkOut()" style="color: white;">
                                 Confirm Order
                             </a>
                         </form>
@@ -138,12 +143,12 @@
 
 <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
 <script>
-                                    $(".js-select2").each(function () {
-                                        $(this).select2({
-                                            minimumResultsForSearch: 20,
-                                            dropdownParent: $(this).next('.dropDownSelect2')
-                                        });
-                                    })
+    $(".js-select2").each(function () {
+        $(this).select2({
+            minimumResultsForSearch: 20,
+            dropdownParent: $(this).next('.dropDownSelect2')
+        });
+    })
 </script>
 
 <script>
@@ -226,7 +231,7 @@
                 return response.json();
             }
         }).then(json => {
-            var stripe = Stripe('${stripe_pk}');
+            let stripe = Stripe('${stripe_pk}');
             stripe.confirmCardPayment(json.client_secret, {
                 payment_method: paymentMethodId
             }).then(function (result) {
@@ -247,51 +252,22 @@
                 } else {
                     // The payment has been processed!
                     if (result.paymentIntent.status === 'succeeded') {
-                        fetch(`${pageContext.request.contextPath}/order/confirm?paymentIntentId=\${result.paymentIntent.id}`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
+                        Swal.fire({
+                            title: 'Payment Successful!',
+                            icon: 'success',
+                            text: 'Your payment was successful.',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "${pageContext.request.contextPath}/user";
                             }
-                        }).then(response => {
-                            if (response.status === 200) {
-                                // Show a success message to your customer
-                                // There's a risk of the customer closing the window before callback
-                                // execution. Set up a webhook or plugin to listen for the
-                                // payment_intent.succeeded event that handles any business critical
-                                // post-payment actions.
-                                Swal.fire({
-                                    title: 'Payment Successful!',
-                                    icon: 'success',
-                                    text: 'Your payment was successful.',
-                                    showCancelButton: false,
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'OK',
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "${pageContext.request.contextPath}/user";
-                                    }
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Payment Failed!',
-                                    icon: 'error',
-                                    text: "There was an error processing your order.",
-                                    showCancelButton: false,
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'OK',
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "${pageContext.request.contextPath}/user";
-                                    }
-                                });
-                            }
-                        })
-
-
+                        });
                     }
                 }
             });
-        })
+        });
     }
 </script>
 </html>

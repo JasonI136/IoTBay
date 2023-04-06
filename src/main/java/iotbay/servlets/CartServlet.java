@@ -9,9 +9,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
+import iotbay.models.collections.Invoices;
+import iotbay.models.collections.OrderLineItems;
+import iotbay.models.collections.Orders;
 import iotbay.models.collections.Products;
-import iotbay.models.entities.Cart;
-import iotbay.models.entities.User;
+import iotbay.models.entities.*;
+import iotbay.models.enums.OrderStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.servlet.ServletException;
@@ -19,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -34,6 +40,12 @@ public class CartServlet extends HttpServlet {
 
     Products products;
 
+    Orders orders;
+
+    OrderLineItems orderLineItems;
+
+    Invoices invoices;
+
     /**
      * Initalises the servlet. Gets the database manager from the servlet context.
      *
@@ -44,6 +56,9 @@ public class CartServlet extends HttpServlet {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
         this.products = (Products) getServletContext().getAttribute("products");
+        this.orders = (Orders) getServletContext().getAttribute("orders");
+        this.orderLineItems = (OrderLineItems) getServletContext().getAttribute("orderLineItems");
+        this.invoices = (Invoices) getServletContext().getAttribute("invoices");
     }
 
 
@@ -116,15 +131,12 @@ public class CartServlet extends HttpServlet {
     }
 
     private void checkOut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        Timestamp date = new Timestamp(System.currentTimeMillis());
+        Order newOrder = null;
         try {
             this.initShoppingCart(request);
             Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
             User user = (User) request.getSession().getAttribute("user");
-
-            // generate a random order session id
-            String orderSessionId = UUID.randomUUID().toString();
-            request.getSession().setAttribute("orderSessionId", orderSessionId);
-            // refresh the user
 
             // create stripe payment intent
             Map<String, Object> params = new HashMap<>();
@@ -132,8 +144,36 @@ public class CartServlet extends HttpServlet {
             params.put("currency", "aud");
             params.put("customer", user.getStripeCustomerId());
             // add metadata
+
+            // create a new order
+            newOrder = this.orders.addOrder(user.getId(), new Timestamp(System.currentTimeMillis()), OrderStatus.PENDING);
+
+            if (newOrder == null) {
+                throw new Exception("Failed to create order");
+            }
+
             Map<String, String> metadata = new HashMap<>();
-            metadata.put("orderSessionId", orderSessionId);
+            metadata.put("order_id", Integer.toString(newOrder.getId()));
+
+            // create the order line items
+            Cart cart = (Cart) request.getSession().getAttribute("shoppingCart");
+
+            for (CartItem cartItem: cart.getCartItems()) {
+                try {
+                    this.orderLineItems.addOrderLineItem(newOrder.getId(), cartItem.getProduct().getId(), cartItem.getCartQuantity());
+                } catch (Exception e) {
+                    throw new ServletException(e);
+                }
+            }
+
+            Invoice invoice;
+            try {
+                invoice = this.invoices.addInvoice(newOrder.getId(), date, (float) userShoppingCart.getTotalPrice() * 100);
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+
+            metadata.put("invoice_id", Integer.toString(invoice.getId()));
             params.put("metadata", metadata);
 
             PaymentIntent paymentIntent = PaymentIntent.create(params);
@@ -143,6 +183,14 @@ public class CartServlet extends HttpServlet {
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(new Gson().toJson(paymentIntent));
         } catch (Exception e) {
+            // if there is an error, delete the order
+            if (newOrder != null) {
+                try {
+                    this.orders.deleteOrder(newOrder.getId());
+                } catch (Exception ex) {;
+                    throw new RuntimeException(ex);
+                }
+            }
             throw new ServletException(e.getMessage());
         }
     }

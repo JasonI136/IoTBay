@@ -487,7 +487,7 @@ public class User implements Serializable {
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
-                    orders.add(new Order(rs));
+                    orders.add(new Order(rs, this.db));
                 }
             }
         }

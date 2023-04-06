@@ -122,4 +122,20 @@ public class OrderLineItems {
             }
         }
     }
+
+    public void deleteOrderLineItems(int orderId) throws Exception {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "DELETE FROM ORDER_LINE_ITEM WHERE order_id = ?")) {
+
+                stmt.setInt(1, orderId);
+
+                int affectedRows = stmt.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new Exception("Deleting order line items failed, no rows affected.");
+                }
+            }
+        }
+    }
 }

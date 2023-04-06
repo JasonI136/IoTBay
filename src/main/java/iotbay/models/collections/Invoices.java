@@ -98,5 +98,21 @@ public class Invoices {
         }
     }
 
+    public void deleteInvoiceByOrderId(int orderId) throws Exception {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "DELETE FROM INVOICE WHERE order_id = ?")) {
+
+                stmt.setInt(1, orderId);
+
+                int affectedRows = stmt.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new Exception("Deleting invoice failed, no rows affected.");
+                }
+            }
+        }
+    }
+
 
 }

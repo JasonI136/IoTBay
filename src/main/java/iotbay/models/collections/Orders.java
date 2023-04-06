@@ -6,28 +6,22 @@ import iotbay.models.enums.OrderStatus;
 
 import java.io.Serializable;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Orders {
 
     DatabaseManager db;
 
-    private int id;
-
-    private int userId;
-
-    private Date orderDate;
-
-    private String orderStatus;
-
     public Orders(DatabaseManager db) {
         this.db = db;
     }
 
-    public Order addOrder(int userId, Timestamp orderDate, String orderStatus) throws Exception {
-        Order order = new Order();
+    public Order addOrder(int userId, Timestamp orderDate, OrderStatus orderStatus) throws Exception {
+        Order order = new Order(this.db);
         order.setUserId(userId);
         order.setOrderDate(orderDate);
-        order.setOrderStatus(OrderStatus.valueOf(orderStatus));
+        order.setOrderStatus(orderStatus);
 
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
@@ -85,7 +79,7 @@ public class Orders {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        return new Order(rs);
+                        return new Order(rs, this.db);
                     } else {
                         return null;
                     }
@@ -93,6 +87,25 @@ public class Orders {
             }
         }
 
+    }
+
+    public List<Order> getOrders(OrderStatus status) throws Exception {
+        List<Order> orders = new ArrayList<>();
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT * FROM CUSTOMER_ORDER WHERE order_status = ?")) {
+
+                stmt.setString(1, status.toString());
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        orders.add(new Order(rs, this.db));
+                    }
+                }
+            }
+        }
+
+        return orders;
     }
 
     public void deleteOrder(int id) throws Exception {
@@ -109,6 +122,10 @@ public class Orders {
                 }
             }
         }
+    }
+
+    public DatabaseManager getDb() {
+        return db;
     }
 
 }

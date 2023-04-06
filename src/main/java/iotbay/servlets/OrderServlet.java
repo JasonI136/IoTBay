@@ -102,95 +102,10 @@ public class OrderServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getPathInfo();
-
-        if (path != null) {
-            switch(path) {
-                case "/confirm":
-                    confirmOrder(request, response);
-                    return;
-                default:
-                    response.sendError(404);
-                    return;
-            }
-        }
-
         response.sendError(404);
     }
 
-    private void confirmOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // get the stripe payment intent id from the request parameter and verify it with the stripe api.
-// if the payment intent is valid, then create the order and redirect to the order confirmation page.
-// if the payment intent is invalid, then redirect to the order page with an error message.
 
-        String paymentIntentId = request.getParameter("paymentIntentId");
-        Timestamp date = new Timestamp(new java.util.Date().getTime());
-        PaymentIntent paymentIntent;
-
-        try {
-            paymentIntent = PaymentIntent.retrieve(paymentIntentId);
-        } catch (Exception e) {response.sendError(500);
-            throw new ServletException(e);
-        }
-
-        String orderSessionId = (String) request.getSession().getAttribute("orderSessionId");
-
-        if (paymentIntent.getMetadata().get("orderSessionId") == null || !paymentIntent.getMetadata().get("orderSessionId").equals(orderSessionId)) {
-            response.sendError(400);
-            return;
-        }
-
-        if (paymentIntent.getStatus().equals("succeeded")) {
-            User user = (User) request.getSession().getAttribute("user");
-            // create the order
-            Order order;
-            try {
-                order = this.orders.addOrder(user.getId(), date, OrderStatus.PROCESSING.getValue());
-            } catch (Exception e) {
-                throw new ServletException(e);
-            }
-            // create the order line items
-            Cart cart = (Cart) request.getSession().getAttribute("shoppingCart");
-
-            for (CartItem cartItem: cart.getCartItems()) {
-                try {
-                    this.orderLineItems.addOrderLineItem(order.getId(), cartItem.getProduct().getId(), cartItem.getCartQuantity());
-                } catch (Exception e) {
-                    throw new ServletException(e);
-                }
-            }
-
-            // make the invoice
-            Invoice invoice;
-
-            try {
-                invoice = this.invoices.addInvoice(order.getId(), date, paymentIntent.getAmount().floatValue());
-            } catch (Exception e) {
-                throw new ServletException(e);
-            }
-
-            // make the payment
-            try {
-                this.payments.addPayment(invoice.getId(), date, user.getPaymentMethodByStripeId(paymentIntent.getPaymentMethod()).getId(), paymentIntent.getAmount().floatValue());
-            } catch (Exception e) {
-                throw new ServletException(e);
-            }
-
-            // clear the cart
-            request.getSession().setAttribute("shoppingCart", new Cart());
-            request.getSession().setAttribute("orderSessionId", null);
-
-            response.setStatus(200);
-            // redirect to the order confirmation page
-        } else {
-            // redirect to the order page with an error message
-            response.sendError(400);
-        }
-
-
-
-
-    }
 
     /**
      * Returns a short description of the servlet.
