@@ -96,17 +96,16 @@ public class Orders {
 
 		query = "SELECT * FROM CUSTOMER_ORDER";
 
-		try (PreparedStatement pstmt = this.db.prepareStatement(
-			query
-		)) {
-
-			try (ResultSet rs = pstmt.executeQuery()) {
-				while (rs.next()) {
-					Order order = new Order(rs);
-					orderList.add(order);
-				}
-			}
-		}
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Order order = new Order(rs, this.db);
+                        orderList.add(order);
+                    }
+                }
+            }
+        }
 		return orderList;
 	}
 
