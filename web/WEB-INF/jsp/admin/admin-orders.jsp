@@ -4,6 +4,7 @@
     Author     : jasonmba
 --%>
 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -46,12 +47,36 @@
 		</header>
 
 
-		<section class="bg0 p-t-104 p-b-116">
+		<section class="bg0 p-t-104 p-b-20">
 			<div class="container">
 
 				<div class=" bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
 					<h1>Admin Orders</h1>
 				</div>
+			</div>
+
+		<section class="bg0 p-t-20 p-b-20">
+			<div class="container">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th scope="col">ID</th>
+						<th scope="col">User</th>
+						<th scope="col">Order Date</th>
+						<th scope="col">Order Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="order" items="${orders}">
+						<tr>
+							<td>${order.id}</td>
+							<td>${order.userId}</td>
+							<td>${order.orderDate}</td>
+							<td>${order.orderStatus}</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
 			</div>
 		</section>	
 
@@ -64,12 +89,12 @@
 	<script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/bootstrap.min.js"></script>
 	<script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
 	<script>
-                $(".js-select2").each(function () {
-                    $(this).select2({
-                        minimumResultsForSearch: 20,
-                        dropdownParent: $(this).next('.dropDownSelect2')
-                    });
-                })
+		$(".js-select2").each(function () {
+			$(this).select2({
+				minimumResultsForSearch: 20,
+				dropdownParent: $(this).next('.dropDownSelect2')
+			});
+		})
 	</script>
 	<script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
 	<script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/daterangepicker.js"></script>
@@ -77,26 +102,26 @@
 	<script src="${pageContext.request.contextPath}/public/js/slick-custom.js"></script>
 	<script src="${pageContext.request.contextPath}/public/vendor/parallax100/parallax100.js"></script>
 	<script>
-                $('.parallax100').parallax100();
+		$('.parallax100').parallax100();
 	</script>
 	<script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 	<script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
 	<script src="${pageContext.request.contextPath}/public/vendor/sweetalert/sweetalert.min.js"></script>
 	<script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script>
-                $('.js-pscroll').each(function () {
-                    $(this).css('position', 'relative');
-                    $(this).css('overflow', 'hidden');
-                    var ps = new PerfectScrollbar(this, {
-                        wheelSpeed: 1,
-                        scrollingThreshold: 1000,
-                        wheelPropagation: false,
-                    });
+		$('.js-pscroll').each(function () {
+			$(this).css('position', 'relative');
+			$(this).css('overflow', 'hidden');
+			var ps = new PerfectScrollbar(this, {
+				wheelSpeed: 1,
+				scrollingThreshold: 1000,
+				wheelPropagation: false,
+			});
 
-                    $(window).on('resize', function () {
-                        ps.update();
-                    })
-                });
+			$(window).on('resize', function () {
+				ps.update();
+			})
+		});
 	</script>
 	<script src="${pageContext.request.contextPath}/public/js/main.js"></script>
 </html>
