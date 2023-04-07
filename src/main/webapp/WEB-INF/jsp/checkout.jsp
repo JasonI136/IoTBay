@@ -121,7 +121,7 @@
 
 
                             <a type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
-                               onclick="checkOut()" style="color: white;">
+                               onclick="checkOut()" style="color: white; width: 100%;">
                                 Confirm Order
                             </a>
                         </form>

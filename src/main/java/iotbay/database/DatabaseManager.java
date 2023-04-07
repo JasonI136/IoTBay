@@ -9,6 +9,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.*;
 import java.sql.*;
 
 /**
@@ -117,7 +118,30 @@ public class DatabaseManager {
                 }
             }
 
+            // populate the category table from categories.sql
+            logger.warn("Populating CATEGORY table");
 
+
+            try {
+                try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("categories.sql")) {
+                    if (inputStream == null) {
+                        throw new FileNotFoundException("Could not find categories.sql");
+                    }
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        try (Connection conn = this.getDbConnection()) {
+                            try (Statement stmt = conn.createStatement()) {
+                                stmt.execute(line);
+                            }
+                        }
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                logger.error("Could not find categories.sql");
+            } catch (IOException e) {
+                logger.error("Error reading categories.sql");
+            }
         }
 
         // create the products table
@@ -140,6 +164,27 @@ public class DatabaseManager {
                 try (Statement stmt = conn.createStatement()) {
                     stmt.execute(createTableQuery);
                 }
+            }
+
+            try {
+                try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("products.sql")) {
+                    if (inputStream == null) {
+                        throw new FileNotFoundException("Could not find products.sql");
+                    }
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        try (Connection conn = this.getDbConnection()) {
+                            try (Statement stmt = conn.createStatement()) {
+                                stmt.execute(line);
+                            }
+                        }
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                logger.error("Could not find products.sql");
+            } catch (IOException e) {
+                logger.error("Error reading products.sql");
             }
 
         }
@@ -171,6 +216,7 @@ public class DatabaseManager {
                             + "order_id                         INT,"
                             + "product_id                       INT,"
                             + "quantity                         INT,"
+                            + "price                           FLOAT,"
                             + "PRIMARY KEY (order_id, product_id),"
                             + "CONSTRAINT order_line_item_order_id_ref FOREIGN KEY (order_id) REFERENCES CUSTOMER_ORDER(id),"
                             + "CONSTRAINT order_line_item_product_id_ref FOREIGN KEY (product_id) REFERENCES PRODUCT(id)"

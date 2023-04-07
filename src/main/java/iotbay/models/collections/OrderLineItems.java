@@ -10,24 +10,32 @@ public class OrderLineItems {
 
     DatabaseManager db;
 
-    public OrderLineItems(DatabaseManager db) {
+    Orders orders;
+
+    Products products;
+
+    public OrderLineItems(DatabaseManager db, Orders orders, Products products) {
         this.db = db;
+        this.orders = orders;
+        this.products = products;
     }
 
-    public OrderLineItem addOrderLineItem(int orderId, int productId, int quantity) throws Exception {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setProductId(productId);
+    public OrderLineItem addOrderLineItem(int orderId, int productId, int quantity, double price) throws Exception {
+        OrderLineItem orderLineItem = new OrderLineItem(this.db);
+        orderLineItem.setOrder(orders.getOrder(orderId));
+        orderLineItem.setProduct(products.getProduct(productId));
         orderLineItem.setQuantity(quantity);
+        orderLineItem.setPrice(price);
         
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO ORDER_LINE_ITEM (order_id, product_id, quantity) VALUES (?, ?, ?)",
+                    "INSERT INTO ORDER_LINE_ITEM (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS)) {
 
-                stmt.setInt(1, orderLineItem.getOrderId());
-                stmt.setInt(2, orderLineItem.getProductId());
+                stmt.setInt(1, orderLineItem.getOrder().getId());
+                stmt.setInt(2, orderLineItem.getProduct().getId());
                 stmt.setInt(3, orderLineItem.getQuantity());
+                stmt.setDouble(4, orderLineItem.getPrice());
 
                 int affectedRows = stmt.executeUpdate();
 
@@ -51,7 +59,7 @@ public class OrderLineItems {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        new OrderLineItem(rs);
+                        new OrderLineItem(rs, this.db);
                     } else {
                         throw new SQLException("Getting order line item failed, no ID obtained.");
                     }
@@ -66,17 +74,20 @@ public class OrderLineItems {
 
     try (Connection conn = this.db.getDbConnection()) {
         try (PreparedStatement stmt = conn.prepareStatement(
-                "SELECT * FROM ORDER_LINE_ITEM WHERE order_id = ?")) {
+                "SELECT ORDER_LINE_ITEM.ORDER_ID, ORDER_LINE_ITEM.PRODUCT_ID, ORDER_LINE_ITEM.QUANTITY, ORDER_LINE_ITEM.PRICE, P.NAME AS \"PRODUCT_NAME\", P.IMAGE_URL AS \"PRODUCT_IMAGE\", P.PRICE AS \"PRODUCT_PRICE\", CO.USER_ID, CO.ORDER_DATE, CO.ORDER_STATUS  FROM ORDER_LINE_ITEM\n" +
+                        "INNER JOIN CUSTOMER_ORDER CO on ORDER_LINE_ITEM.ORDER_ID = CO.ID\n" +
+                        "INNER JOIN PRODUCT P on ORDER_LINE_ITEM.PRODUCT_ID = P.ID\n" +
+                        "WHERE ORDER_LINE_ITEM.ORDER_ID = ?")) {
 
             stmt.setInt(1, orderId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     try {
-                        OrderLineItem orderLineItem = new OrderLineItem(rs);
+                        OrderLineItem orderLineItem = new OrderLineItem(rs, this.db);
                         orderLineItems.add(orderLineItem);
                     } catch (Exception e) {
-                        throw new Exception("Getting order failed, no rows affected.");
+                        throw new Exception("Getting order failed, no rows affected. Error message: " + e.getMessage() + "");
                     }
                 }
             }

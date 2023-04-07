@@ -160,7 +160,7 @@ public class CartServlet extends HttpServlet {
 
             for (CartItem cartItem: cart.getCartItems()) {
                 try {
-                    this.orderLineItems.addOrderLineItem(newOrder.getId(), cartItem.getProduct().getId(), cartItem.getCartQuantity());
+                    this.orderLineItems.addOrderLineItem(newOrder.getId(), cartItem.getProduct().getId(), cartItem.getCartQuantity(), cartItem.getTotalPrice());
                 } catch (Exception e) {
                     throw new ServletException(e);
                 }

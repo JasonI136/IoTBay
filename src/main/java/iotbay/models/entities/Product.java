@@ -53,7 +53,7 @@ public class Product implements Serializable {
      * <br>
      * <b>TABLE:</b> PRODUCT.price
      */
-    private int price;
+    private double price;
 
     /**
      * The product quantity
@@ -97,7 +97,7 @@ public class Product implements Serializable {
                 this.description = "";
             }
             this.imageURL = rs.getString("image_url");
-            this.price = rs.getInt("price");
+            this.price = rs.getDouble("price");
             this.quantity = rs.getInt("quantity");
             this.categoryId = rs.getInt("category_id");
             this.categoryName = rs.getString("category_name");
@@ -229,7 +229,7 @@ public class Product implements Serializable {
      *
      * @return The product price
      */
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -238,7 +238,7 @@ public class Product implements Serializable {
      *
      * @param price The product price
      */
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

@@ -86,7 +86,7 @@ public class MainServlet extends HttpServlet {
         this.products = new Products(db);
         this.categories = new Categories(db);
         Orders orders = new Orders(db);
-        OrderLineItems orderLineItems = new OrderLineItems(db);
+        OrderLineItems orderLineItems = new OrderLineItems(db, orders, this.products);
         Payments payments = new Payments(db);
         Invoices invoices = new Invoices(db);
         PaymentMethods paymentMethods = new PaymentMethods(db);

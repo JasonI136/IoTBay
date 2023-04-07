@@ -109,11 +109,7 @@ public class OrderTrackingServlet extends HttpServlet {
             if (order != null) {
                 request.setAttribute("order", order);
                 ArrayList<OrderLineItem> orderLineItemsList = this.orderLineItems.getOrderLineItems(orderID);
-                ArrayList<Product> productList = new ArrayList<>();
-                for (OrderLineItem lineItem : orderLineItemsList) {
-                    productList.add(products.getProduct(lineItem.getProductId()));
-                }
-                request.setAttribute("productList", productList);
+                request.setAttribute("orderLineItemsList", orderLineItemsList);
                 request.getRequestDispatcher("/WEB-INF/jsp/order.jsp").forward(request, response);
             } else {
                 request.setAttribute("error_title", "Error");

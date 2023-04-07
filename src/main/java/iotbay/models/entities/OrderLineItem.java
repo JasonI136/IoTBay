@@ -1,5 +1,9 @@
 package iotbay.models.entities;
 
+import iotbay.database.DatabaseManager;
+import iotbay.models.enums.OrderStatus;
+
+import javax.xml.crypto.Data;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -21,33 +25,47 @@ public class OrderLineItem implements Serializable {
 //                
 //        }
 
-    private int orderId;
-    private int productId;
+    private final transient DatabaseManager db;
+
+    private Order order;
+    private Product product;
     private int quantity;
 
-    public OrderLineItem() {};
+    private double price;
 
-    public OrderLineItem(ResultSet rs) throws Exception {
-        this.orderId = rs.getInt("order_id");
-        this.productId = rs.getInt("product_id");
+    public OrderLineItem(DatabaseManager db) {
+        this.db = db;
+    }
+
+    public OrderLineItem(ResultSet rs, DatabaseManager db) throws Exception {
+        this.db = db;
+        Order order = new Order(db);
+        order.setId(rs.getInt("order_id"));
+        order.setOrderDate(rs.getTimestamp("order_date"));
+        order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
+        order.setUserId(rs.getInt("user_id"));
+
+        Product product = new Product();
+        product.setId(rs.getInt("product_id"));
+        product.setName(rs.getString("product_name"));
+        product.setImageURL(rs.getString("product_image"));
+        product.setPrice(rs.getDouble("product_price"));
+
+        this.order = order;
+        this.product = product;
+        this.price = rs.getDouble("price");
         this.quantity = rs.getInt("quantity");
     }
 
-    public int getOrderId() {
-        return orderId;
+
+    public double getPrice() {
+        return price;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
-    public int getProductId() {
-        return productId;
-    }
-
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
 
     public int getQuantity() {
         return quantity;
@@ -55,5 +73,21 @@ public class OrderLineItem implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }
