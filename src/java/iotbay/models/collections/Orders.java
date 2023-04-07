@@ -1,10 +1,22 @@
 package iotbay.models.collections;
 
 import iotbay.database.DatabaseManager;
+import iotbay.exceptions.ProductNotFoundException;
+import iotbay.models.entities.Product;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import iotbay.database.DatabaseManager;
 import iotbay.models.entities.Order;
 import iotbay.models.enums.OrderStatus;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.sql.*;
 
 public class Orders {
@@ -24,7 +36,7 @@ public class Orders {
 //            stmt.execute(createTableQuery);
 //            conn.commit();
 //        }
-    //    This is an example of how you should write the function Github Copilot.
+	//    This is an example of how you should write the function Github Copilot.
 //    public void addPayment(int invoiceId, String date, int paymentMethodId, float amount) throws Exception {
 //        try (PreparedStatement pstmt = db.prepareStatement(
 //                "INSERT INTO PAYMENT (invoice_id, date, payment_method_id, amount) VALUES (?, ?, ?, ?)",
@@ -40,96 +52,116 @@ public class Orders {
 //            }
 //        }
 //    }
+	DatabaseManager db;
 
-    DatabaseManager db;
+	private int id;
 
-    private int id;
+	private int userId;
 
-    private int userId;
+	private Date orderDate;
 
-    private Date orderDate;
+	private String orderStatus;
 
-    private String orderStatus;
+	public Orders(DatabaseManager db) {
+		this.db = db;
+	}
 
-    public Orders(DatabaseManager db) {
-        this.db = db;
-    }
+	public Order addOrder(int userId, Timestamp orderDate, String orderStatus) throws Exception {
+		Order order = new Order();
+		order.setUserId(userId);
+		order.setOrderDate(orderDate);
+		order.setOrderStatus(OrderStatus.valueOf(orderStatus));
 
-    public Order addOrder(int userId, Timestamp orderDate, String orderStatus) throws Exception {
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setOrderDate(orderDate);
-        order.setOrderStatus(OrderStatus.valueOf(orderStatus));
+		try (PreparedStatement pstmt = db.getDbConnection().prepareStatement(
+			"INSERT INTO CUSTOMER_ORDER (user_id, order_date, order_status) VALUES (?, ?, ?)",
+			Statement.RETURN_GENERATED_KEYS)) {
 
-        try (PreparedStatement pstmt = db.getDbConnection().prepareStatement(
-                "INSERT INTO CUSTOMER_ORDER (user_id, order_date, order_status) VALUES (?, ?, ?)",
-                Statement.RETURN_GENERATED_KEYS)) {
+			pstmt.setInt(1, order.getUserId());
+			pstmt.setTimestamp(2, order.getOrderDate());
+			pstmt.setString(3, order.getOrderStatus().toString());
 
-            pstmt.setInt(1, order.getUserId());
-            pstmt.setTimestamp(2, order.getOrderDate());
-            pstmt.setString(3, order.getOrderStatus().toString());
+			int affectedRows = pstmt.executeUpdate();
 
-            int affectedRows = pstmt.executeUpdate();
+			if (affectedRows == 0) {
+				throw new Exception("Creating order failed, no rows affected.");
+			}
 
-            if (affectedRows == 0) {
-                throw new Exception("Creating order failed, no rows affected.");
-            }
+			// Get the ID of the new order
+			try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					order.setId(generatedKeys.getInt(1));
+				} else {
+					throw new SQLException("Creating order failed, no ID obtained.");
+				}
+			}
+		}
 
-            // Get the ID of the new order
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    order.setId(generatedKeys.getInt(1));
-                } else {
-                    throw new SQLException("Creating order failed, no ID obtained.");
-                }
-            }
-        }
+		return order;
+	}
 
-        return order;
-    }
+	public void updateOrder(int id, int userId, Timestamp orderDate, String orderStatus) throws Exception {
+		try (PreparedStatement pstmt = db.getDbConnection().prepareStatement(
+			"UPDATE CUSTOMER_ORDER SET user_id = ?, order_date = ?, order_status = ? WHERE id = ?")) {
 
-    public void updateOrder(int id, int userId, Timestamp orderDate, String orderStatus) throws Exception {
-        try (PreparedStatement pstmt = db.getDbConnection().prepareStatement(
-                "UPDATE CUSTOMER_ORDER SET user_id = ?, order_date = ?, order_status = ? WHERE id = ?")) {
+			pstmt.setInt(1, userId);
+			pstmt.setTimestamp(2, orderDate);
+			pstmt.setString(3, orderStatus);
 
-            pstmt.setInt(1, userId);
-            pstmt.setTimestamp(2, orderDate);
-            pstmt.setString(3, orderStatus);
+			int affectedRows = pstmt.executeUpdate();
 
-            int affectedRows = pstmt.executeUpdate();
+			if (affectedRows == 0) {
+				throw new Exception("Updating order failed, no rows affected.");
+			}
+		}
+	}
 
-            if (affectedRows == 0) {
-                throw new Exception("Updating order failed, no rows affected.");
-            }
-        }
-    }
+	public Order getOrder(int id) throws Exception {
+		try (PreparedStatement pstmt = db.prepareStatement(
+			"SELECT * FROM CUSTOMER_ORDER WHERE id = ?",
+			id
+		)) {
+			ResultSet rs = pstmt.executeQuery();
 
-    public Order getOrder(int id) throws Exception {
-        try (PreparedStatement pstmt = db.prepareStatement(
-                "SELECT * FROM CUSTOMER_ORDER WHERE id = ?",
-                id
-        )) {
-            ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				return new Order(rs);
+			} else {
+				return null;
+			}
+		}
+	}
 
-            if (rs.next()) {
-                return new Order(rs);
-            } else {
-                return null;
-            }
-        }
-    }
+	public List<Order> getOrders() throws Exception {
+		List<Order> orderList = new ArrayList<>();
 
-    public void deleteOrder(int id) throws Exception {
-        try (PreparedStatement pstmt = db.prepareStatement(
-                "DELETE FROM CUSTOMER_ORDER WHERE id = ?",
-                id
-        )) {
-            int affectedRows = pstmt.executeUpdate();
+		String query;
 
-            if (affectedRows == 0) {
-                throw new Exception("Deleting order failed, no rows affected.");
-            }
-        }
-    }
+		query = "SELECT * FROM CUSTOMER_ORDER";
+
+		try (PreparedStatement pstmt = this.db.prepareStatement(
+			query
+		)) {
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					Order order = new Order(rs);
+					orderList.add(order);
+				}
+			}
+		}
+		return orderList;
+	}
+
+	public void deleteOrder(int id) throws Exception {
+		try (PreparedStatement pstmt = db.prepareStatement(
+			"DELETE FROM CUSTOMER_ORDER WHERE id = ?",
+			id
+		)) {
+			int affectedRows = pstmt.executeUpdate();
+
+			if (affectedRows == 0) {
+				throw new Exception("Deleting order failed, no rows affected.");
+			}
+		}
+	}
 
 }
