@@ -88,6 +88,27 @@ public class Orders {
         }
 
     }
+    
+    public List<Order> getOrders() throws Exception {
+		List<Order> orderList = new ArrayList<>();
+
+		String query;
+
+		query = "SELECT * FROM CUSTOMER_ORDER";
+
+		try (PreparedStatement pstmt = this.db.prepareStatement(
+			query
+		)) {
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					Order order = new Order(rs);
+					orderList.add(order);
+				}
+			}
+		}
+		return orderList;
+	}
 
     public List<Order> getOrders(OrderStatus status) throws Exception {
         List<Order> orders = new ArrayList<>();
@@ -129,3 +150,5 @@ public class Orders {
     }
 
 }
+
+	
