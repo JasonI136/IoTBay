@@ -7,6 +7,8 @@ package iotbay.servlets;
 import iotbay.models.collections.Users;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.entities.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +22,8 @@ import java.io.PrintWriter;
  * @author cmesina
  */
 public class LoginServlet extends HttpServlet {
+
+    private static final Logger logger = LogManager.getLogger(LoginServlet.class);
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -79,12 +83,24 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
+        // check if the fields are empty
+        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+            response.setStatus(400);
+            request.setAttribute("error_title", "Login failed");
+            request.setAttribute("error_msg", "Please fill in all the fields.");
+            request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+            return;
+        }
+
         try {
             User user = users.authenticateUser(username, password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
                 request.setAttribute("success_title", "Login successful");
                 request.setAttribute("success_msg", "Welcome " + user.getFirstName() + " " + user.getLastName() + "!");
+
+                logger.info("User " + user.getUsername() + " logged in.");
+
                 request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
             } else {
                 response.setStatus(401);

@@ -38,7 +38,7 @@ public class DatabaseManager {
         config.setJdbcUrl(dbUrl + dbName);
         config.setUsername(dbUser);
         config.setPassword(dbPass);
-        config.setMaximumPoolSize(100);
+        config.setMaximumPoolSize(20);
         config.setLeakDetectionThreshold(10000);
 
         this.dataSource = new HikariDataSource(config);

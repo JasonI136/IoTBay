@@ -9,12 +9,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
-import iotbay.models.collections.Invoices;
-import iotbay.models.collections.OrderLineItems;
-import iotbay.models.collections.Orders;
-import iotbay.models.collections.Products;
+import iotbay.exceptions.UserNotFoundException;
+import iotbay.exceptions.UserNotLoggedInException;
+import iotbay.models.collections.*;
 import iotbay.models.entities.*;
 import iotbay.models.enums.OrderStatus;
+import iotbay.util.Misc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -46,6 +46,8 @@ public class CartServlet extends HttpServlet {
 
     Invoices invoices;
 
+    Users users;
+
     /**
      * Initalises the servlet. Gets the database manager from the servlet context.
      *
@@ -59,6 +61,7 @@ public class CartServlet extends HttpServlet {
         this.orders = (Orders) getServletContext().getAttribute("orders");
         this.orderLineItems = (OrderLineItems) getServletContext().getAttribute("orderLineItems");
         this.invoices = (Invoices) getServletContext().getAttribute("invoices");
+        this.users = (Users) getServletContext().getAttribute("users");
     }
 
 
@@ -80,6 +83,15 @@ public class CartServlet extends HttpServlet {
         if (path != null) {
             switch (path) {
                 case "/checkout":
+                    try {
+                        Misc.refreshUser(request, users);
+                    } catch (UserNotLoggedInException | UserNotFoundException e) {
+                        request.getSession().setAttribute("redirect", "/cart/checkout");
+                        response.sendRedirect(getServletContext().getContextPath() + "/login");
+                        return;
+                    } catch (Exception e) {
+                        throw new ServletException(e);
+                    }
                     request.setAttribute("stripe_pk", ((Properties) getServletContext().getAttribute("secrets")).getProperty("stripe.api.publishable.key"));
                     request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
                     break;
@@ -158,7 +170,7 @@ public class CartServlet extends HttpServlet {
             // create the order line items
             Cart cart = (Cart) request.getSession().getAttribute("shoppingCart");
 
-            for (CartItem cartItem: cart.getCartItems()) {
+            for (CartItem cartItem : cart.getCartItems()) {
                 try {
                     this.orderLineItems.addOrderLineItem(newOrder.getId(), cartItem.getProduct().getId(), cartItem.getCartQuantity(), cartItem.getTotalPrice());
                 } catch (Exception e) {
@@ -187,7 +199,8 @@ public class CartServlet extends HttpServlet {
             if (newOrder != null) {
                 try {
                     this.orders.deleteOrder(newOrder.getId());
-                } catch (Exception ex) {;
+                } catch (Exception ex) {
+                    ;
                     throw new RuntimeException(ex);
                 }
             }

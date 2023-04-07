@@ -70,10 +70,6 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>MainServlet</servlet-name>
-        <url-pattern/>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/register</url-pattern>
     </servlet-mapping>
@@ -138,4 +134,7 @@
             30
         </session-timeout>
     </session-config>
+    <error-page>
+        <location>/WEB-INF/jsp/error.jsp</location>
+    </error-page>
 </web-app>

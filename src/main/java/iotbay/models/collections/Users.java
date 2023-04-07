@@ -73,6 +73,8 @@ public class Users {
         newUser.setPassword(Base64.getEncoder().encodeToString(passwordHash));
         newUser.setPasswordSalt(Base64.getEncoder().encodeToString(salt));
 
+        this.checkUserExists(newUser);
+
         createStripeCustomer(newUser);
 
         this.addUser(newUser);
@@ -171,6 +173,25 @@ public class Users {
 
     }
 
+    private void checkUserExists(User user) throws Exception {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement checkUserQuery = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM USER_ACCOUNT WHERE username = ? OR email = ?"
+            )) {
+                checkUserQuery.setString(1, user.getUsername());
+                checkUserQuery.setString(2, user.getEmail());
+
+                try (ResultSet checkUserRs = checkUserQuery.executeQuery()) {
+                    checkUserRs.next();
+
+                    if (checkUserRs.getInt(1) > 0) {
+                        throw new UserExistsException("The user with username " + user.getUsername() + " or email " + user.getEmail() + " already exists.");
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Adds a user to the database.
      *
@@ -181,18 +202,8 @@ public class Users {
     private void addUser(User user) throws Exception {
 
         try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement checkUserQuery = conn.prepareStatement(
-                    "SELECT COUNT(*) FROM USER_ACCOUNT WHERE username = ? OR email = ?"
-            )) {
-                checkUserQuery.setString(1, user.getUsername());
-                checkUserQuery.setString(2, user.getEmail());
 
-                try (ResultSet rs = checkUserQuery.executeQuery()) {
-                    if (rs.next() && rs.getInt(1) > 0) {
-                        throw new UserExistsException("User already exists.");
-                    }
-                }
-            }
+            this.checkUserExists(user);
 
             try (PreparedStatement addUserQuery = conn.prepareStatement(
                     "INSERT INTO USER_ACCOUNT (username, password, password_salt, first_name, last_name, email, address, phone_number, stripe_customer_id) "

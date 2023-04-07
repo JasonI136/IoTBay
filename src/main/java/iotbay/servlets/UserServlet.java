@@ -59,6 +59,14 @@ public class UserServlet extends HttpServlet {
             throw new ServletException(e);
         }
 
+        String redirect = request.getSession().getAttribute("redirect") != null ? (String) request.getSession().getAttribute("redirect") : null;
+
+        if (redirect != null) {
+            request.getSession().removeAttribute("redirect");
+            response.sendRedirect(getServletContext().getContextPath() + redirect);
+            return;
+        }
+
         if (path != null) {
             if (path.equals("/payments/add/success")) {
                 addPaymentMethodSuccess(request, response);

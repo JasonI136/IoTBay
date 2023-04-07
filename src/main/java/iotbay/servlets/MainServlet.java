@@ -28,7 +28,6 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
- *
  * @author cmesina
  */
 public class MainServlet extends HttpServlet {
@@ -39,12 +38,12 @@ public class MainServlet extends HttpServlet {
     private Categories categories;
 
     private static final Logger logger = LogManager.getLogger(MainServlet.class);
+
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
 
 
-        
         // Load the application configuration.
         InputStream inputStream = getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
 
@@ -60,28 +59,28 @@ public class MainServlet extends HttpServlet {
 
         appConfig = new Properties();
         secrets = new Properties();
-        
-        
+
+
         try {
             appConfig.load(inputStream);
             secrets.load(inputStreamSecrets);
         } catch (IOException err) {
             throw new ServletException("Application configuration failed to load.");
         }
-        
+
         // Initialise the database
         DatabaseManager db;
         try {
-             db = new DatabaseManager(
-                appConfig.getProperty("database.url"), 
-                appConfig.getProperty("database.username"),
-                appConfig.getProperty("database.password"),
-                appConfig.getProperty("database.name")
+            db = new DatabaseManager(
+                    appConfig.getProperty("database.url"),
+                    appConfig.getProperty("database.username"),
+                    appConfig.getProperty("database.password"),
+                    appConfig.getProperty("database.name")
             );
         } catch (Exception e) {
             throw new ServletException("An error occurred whilst intialising the database: " + e.getMessage());
         }
-        
+
         Users users = new Users(db);
         this.products = new Products(db);
         this.categories = new Categories(db);
@@ -90,7 +89,7 @@ public class MainServlet extends HttpServlet {
         Payments payments = new Payments(db);
         Invoices invoices = new Invoices(db);
         PaymentMethods paymentMethods = new PaymentMethods(db);
-        
+
         // Make the db object accessible from other servlets.
         getServletContext().setAttribute("db", db);
         // Make config accessible from other servlets.
@@ -131,17 +130,17 @@ public class MainServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
         JobDetail job = newJob(HouseKeeper.class)
-            .withIdentity("housekeeper", "iotbay")
-            .usingJobData(jobDataMap)
-            .build();
+                .withIdentity("housekeeper", "iotbay")
+                .usingJobData(jobDataMap)
+                .build();
 
         Trigger trigger = newTrigger()
-            .withIdentity("housekeeper", "iotbay")
-            .startNow()
-            .withSchedule(simpleSchedule()
-                .withIntervalInMinutes(1)
-                .repeatForever())
-            .build();
+                .withIdentity("housekeeper", "iotbay")
+                .startNow()
+                .withSchedule(simpleSchedule()
+                        .withIntervalInMinutes(1)
+                        .repeatForever())
+                .build();
 
         try {
             scheduler.start();
@@ -151,59 +150,65 @@ public class MainServlet extends HttpServlet {
             System.exit(1);
         }
 
-    	logger.info("Application started.");
+        logger.info("Application started.");
 
     }
-    
-    
+
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-            String path = request.getRequestURI().substring(request.getContextPath().length());
-            if (path.startsWith("/public/")) {
-            // Serve a local file
-            String filePath = request.getServletContext().getRealPath(path);
-            File file = new File(filePath);
-            if (file.exists()) {
-                response.setContentType(getServletContext().getMimeType(filePath));
-                FileInputStream input = new FileInputStream(file);
-                OutputStream output = response.getOutputStream();
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = input.read(buffer)) != -1) {
-                    output.write(buffer, 0, bytesRead);
-                }
-                input.close();
-                output.flush();
-            } else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    String path = request.getRequestURI().substring(request.getContextPath().length());
+    if (path.startsWith("/public/")) {
+        // Serve a local file
+        String filePath = request.getServletContext().getRealPath(path);
+
+        if (filePath == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        File file = new File(filePath);
+        if (file.exists()) {
+            response.setContentType(getServletContext().getMimeType(filePath));
+            FileInputStream input = new FileInputStream(file);
+            OutputStream output = response.getOutputStream();
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
             }
-    } else {
-        // Forward the request to the JSP page
+            input.close();
+            output.flush();
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    } else if (path.isEmpty() || "/".equals(path)) {
+        // Show index.jsp if no path is specified
         List<Category> categories;
         List<Product> products;
         try {
@@ -212,21 +217,26 @@ public class MainServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }
-        
-        
+
+
         request.setAttribute("products", products);
         request.setAttribute("categories", categories);
         request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
+    } else {
+        // Send a 404 response for any other path
+        request.setAttribute("message", String.format("The page '%s' was not found.", path));
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
-    }
+}
+
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

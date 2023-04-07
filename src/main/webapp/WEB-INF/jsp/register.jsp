@@ -115,7 +115,37 @@
 
 
             </div>
-        </section>	
+        </section>
+
+        <c:if test="${(not empty success_title) or (not empty success_msg)}">
+            <script>
+                swal.fire({
+                    title: '${success_title}',
+                    icon: 'success',
+                    text: '${success_msg}',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "${pageContext.request.contextPath}/user";
+                    }
+                });
+            </script>
+        </c:if>
+
+        <c:if test="${(not empty error_title) or (not empty error_msg)}">
+            <script>
+                swal.fire({
+                    title: '${error_title}',
+                    icon: 'error',
+                    text: '${error_msg}',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
 
         <!-- Footer -->
         <footer class="bg3 p-t-75 p-b-32">
