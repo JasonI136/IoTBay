@@ -197,6 +197,7 @@ public class DatabaseManager {
                             + "user_id                          INT,"
                             + "order_date                       TIMESTAMP,"
                             + "order_status                     VARCHAR(256),"
+                            + "stripe_payment_intent_id         VARCHAR(256),"
                             + "PRIMARY KEY (id),"
                             + "CONSTRAINT customer_order_user_id_ref FOREIGN KEY (user_id) REFERENCES USER_ACCOUNT(id)"
                             + ")";

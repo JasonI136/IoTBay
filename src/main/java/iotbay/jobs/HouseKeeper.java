@@ -50,19 +50,21 @@ public class HouseKeeper implements Job {
         List<Order> pendingOrders = orders.getOrders(OrderStatus.PENDING);
 
         for (Order order : pendingOrders) {
-            PaymentIntentSearchParams params = PaymentIntentSearchParams
-                    .builder()
-                    .setQuery(String.format("status:'succeeded' AND metadata['order_id']:'%s'", order.getId()))
-                    .build();
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(order.getStripePaymentIntentId());
 
-            PaymentIntentSearchResult result = PaymentIntent.search(params);
+            // check if payment intent exists
+            if (paymentIntent == null) {
+                logger.error("Payment intent {} does not exist", order.getStripePaymentIntentId());
+                order.setOrderStatus(OrderStatus.EXCEPTION);
+                order.update();
+                continue;
+            }
 
-            if (result.getData().size() == 1) {
-                // get the paymentintent metadata
-                PaymentIntent paymentIntent = result.getData().get(0);
+            // check if payment intent is paid
+            if (paymentIntent.getStatus().equals("succeeded")) {
                 logger.info("Order {} has been paid for. Updating status to processing.", order.getId());
                 payments.addPayment(
-                        Integer.parseInt(paymentIntent.getMetadata().get("invoice_id")),
+                        order.getId(),
                         new Timestamp(paymentIntent.getCreated()),
                         paymentMethods.getPaymentMethod(paymentIntent.getPaymentMethod()).getId(),
                         paymentIntent.getAmount());
@@ -74,7 +76,7 @@ public class HouseKeeper implements Job {
     }
 
     /**
-     * Delete pending orders that are older than 30 minutes.
+     * Delete pending orders that are older than 5 minutes.
      */
     private void deleteOldPendingOrders(Orders orders, OrderLineItems orderLineItems, Invoices invoices) throws Exception {
 

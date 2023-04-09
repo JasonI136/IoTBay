@@ -190,6 +190,9 @@ public class CartServlet extends HttpServlet {
 
             PaymentIntent paymentIntent = PaymentIntent.create(params);
 
+            newOrder.setStripePaymentIntentId(paymentIntent.getId());
+            newOrder.update();
+
             // send payment intent to client
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -200,7 +203,6 @@ public class CartServlet extends HttpServlet {
                 try {
                     this.orders.deleteOrder(newOrder.getId());
                 } catch (Exception ex) {
-                    ;
                     throw new RuntimeException(ex);
                 }
             }
