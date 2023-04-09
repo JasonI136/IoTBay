@@ -273,6 +273,29 @@ public class DatabaseManager {
 
         }
 
+        if (!this.tableExists("SHIPMENT")) {
+            logger.warn("Creating SHIPMENT table");
+            String createTableQuery =
+                    "CREATE TABLE SHIPMENT ("
+                            + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+                            + "order_id                         INT,"
+                            + "dispatch_date                    DATE,"
+                            + "delivery_date                    DATE,"
+                            + "courier_name                     VARCHAR(256),"
+                            + "tracking_number                  VARCHAR(256),"
+                            + "status                           VARCHAR(256),"
+                            + "PRIMARY KEY (id),"
+                            + "CONSTRAINT shipment_order_id_ref FOREIGN KEY (order_id) REFERENCES CUSTOMER_ORDER(id)"
+                            + ")";
+
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
+        }
+
 
         logger.info("Database initialized.");
 

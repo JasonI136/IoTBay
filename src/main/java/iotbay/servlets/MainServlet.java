@@ -10,6 +10,7 @@ import iotbay.jobs.HouseKeeper;
 import iotbay.models.collections.*;
 import iotbay.models.entities.Category;
 import iotbay.models.entities.Product;
+import iotbay.models.entities.Shipment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.*;
@@ -88,6 +89,7 @@ public class MainServlet extends HttpServlet {
         OrderLineItems orderLineItems = new OrderLineItems(db, orders, this.products);
         Payments payments = new Payments(db);
         Invoices invoices = new Invoices(db);
+        Shipments shipments = new Shipments(db);
         PaymentMethods paymentMethods = new PaymentMethods(db);
 
         // Make the db object accessible from other servlets.
@@ -112,6 +114,8 @@ public class MainServlet extends HttpServlet {
         getServletContext().setAttribute("invoices", invoices);
 
         getServletContext().setAttribute("paymentMethods", paymentMethods);
+
+        getServletContext().setAttribute("shipments", shipments);
 
         Stripe.apiKey = secrets.getProperty("stripe.api.key");
 
