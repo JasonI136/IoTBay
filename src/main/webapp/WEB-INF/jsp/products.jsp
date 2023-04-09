@@ -191,8 +191,8 @@
 
                                             <input class="mtext-104 cl3 txt-center num-product" type="number"
                                                    name="num-product"
-                                                   min="1" value="1" id="quantity">
-
+                                                   id="quantity"
+                                                   oninput="this.value = Math.abs(this.value)" min="1"/>
                                             <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
                                                 <i class="fs-16 zmdi zmdi-plus"></i>
                                             </div>
@@ -338,6 +338,16 @@
                                 if (result.isConfirmed) {
                                     window.location.href = "${pageContext.request.contextPath}/shop";
                                 }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                icon: 'error',
+                                text: 'Item could not be added to cart.',
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK',
+                                target: document.querySelector('#modal-content')
                             });
                         }
                     });

@@ -88,7 +88,7 @@
                                     <c:when test="${order.orderStatus eq 'DELIVERED'}">
                                     <h1 class="ltext-105 txt-center mb-4" style="font-size: 30px !important;">Order
                                         ID ${order.id}
-                                        is has been shipped</h1>
+                                        is has been delivered</h1>
                                     <div class="progress" style="height: 10px; width: 200%">
                                         <div class="progress-bar bg-success" role="progressbar"
                                              style="width: 100%; margin-right: -100%" aria-valuenow="100"

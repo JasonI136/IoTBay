@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
+import iotbay.exceptions.ProductNotFoundException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.exceptions.UserNotLoggedInException;
 import iotbay.models.collections.*;
@@ -211,16 +212,44 @@ public class CartServlet extends HttpServlet {
     }
 
     private void addCartItem(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        if (request.getParameter("productId") != null) {
-            try {
-                this.initShoppingCart(request);
-                Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
-                userShoppingCart.addCartItem(this.products.getProduct(Integer.parseInt(request.getParameter("productId"))), Integer.parseInt(request.getParameter("quantity")));
-                response.setStatus(200);
-            } catch (Exception e) {
-                throw new ServletException(e.getMessage());
+        try {
+            if (request.getParameter("productId") != null) {
+
+                try {
+                    Product product = this.products.getProduct(Integer.parseInt(request.getParameter("productId")));
+                    if (product == null) {
+                        response.sendError(404, "Product ID not found");
+                        return;
+                    }
+
+                    int quantity = Integer.parseInt(request.getParameter("quantity"));
+
+                    if (quantity < 1) {
+                        response.sendError(400, "Invalid quantity");
+                        return;
+                    }
+                    try {
+                        this.initShoppingCart(request);
+                        Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
+                        userShoppingCart.addCartItem(product, quantity);
+                        response.setStatus(200);
+                    } catch (Exception e) {
+                        response.sendError(400, "Invalid product id");
+                        return;
+                    }
+
+                } catch (NumberFormatException e) {
+                    response.sendError(400, "Invalid product id");
+                    return;
+                } catch (ProductNotFoundException e) {
+                    response.sendError(404, "Product ID not found");
+                    return;
+                }
             }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
         }
+
     }
 
     private void updateCart(HttpServletRequest request, HttpServletResponse response) throws ServletException {
