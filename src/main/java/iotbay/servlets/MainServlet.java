@@ -16,11 +16,13 @@ import org.apache.logging.log4j.Logger;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -43,7 +45,6 @@ public class MainServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-
 
         // Load the application configuration.
         InputStream inputStream = getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
@@ -184,54 +185,54 @@ public class MainServlet extends HttpServlet {
      * @throws IOException      if an I/O error occurs
      */
     @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    String path = request.getRequestURI().substring(request.getContextPath().length());
-    if (path.startsWith("/public/")) {
-        // Serve a local file
-        String filePath = request.getServletContext().getRealPath(path);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        if (path.startsWith("/public/")) {
+            // Serve a local file
+            String filePath = request.getServletContext().getRealPath(path);
 
-        if (filePath == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
-        File file = new File(filePath);
-        if (file.exists()) {
-            response.setContentType(getServletContext().getMimeType(filePath));
-            FileInputStream input = new FileInputStream(file);
-            OutputStream output = response.getOutputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = input.read(buffer)) != -1) {
-                output.write(buffer, 0, bytesRead);
+            if (filePath == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
-            input.close();
-            output.flush();
+
+            File file = new File(filePath);
+            if (file.exists()) {
+                response.setContentType(getServletContext().getMimeType(filePath));
+                FileInputStream input = new FileInputStream(file);
+                OutputStream output = response.getOutputStream();
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                }
+                input.close();
+                output.flush();
+            } else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } else if (path.isEmpty() || "/".equals(path)) {
+            // Show index.jsp if no path is specified
+            List<Category> categories;
+            List<Product> products;
+            try {
+                products = this.products.getProducts(100, 0, false);
+                categories = this.categories.getCategories();
+            } catch (Exception e) {
+                throw new ServletException("Failed to query database: " + e.getMessage());
+            }
+
+
+            request.setAttribute("products", products);
+            request.setAttribute("categories", categories);
+            request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
         } else {
+            // Send a 404 response for any other path
+            request.setAttribute("message", String.format("The page '%s' was not found.", path));
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
-    } else if (path.isEmpty() || "/".equals(path)) {
-        // Show index.jsp if no path is specified
-        List<Category> categories;
-        List<Product> products;
-        try {
-            products = this.products.getProducts(100, 0, false);
-            categories = this.categories.getCategories();
-        } catch (Exception e) {
-            throw new ServletException("Failed to query database: " + e.getMessage());
-        }
-
-
-        request.setAttribute("products", products);
-        request.setAttribute("categories", categories);
-        request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
-    } else {
-        // Send a 404 response for any other path
-        request.setAttribute("message", String.format("The page '%s' was not found.", path));
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
-}
 
 
     /**

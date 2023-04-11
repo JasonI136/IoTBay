@@ -4,7 +4,7 @@ import iotbay.exceptions.UserNotLoggedInException;
 import iotbay.models.entities.User;
 import iotbay.models.collections.Users;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

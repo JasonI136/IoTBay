@@ -32,19 +32,19 @@
             <!-- Menu desktop -->
             <div class="menu-desktop">
                 <ul class="main-menu">
-                    <li class="${(requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat("/admin") || requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath) ? 'active-menu' : ''}">
+                    <li class="${(requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat("/admin") || requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath) ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/admin">Dashboard</a>
                     </li>
 
-                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/inventory') ? 'active-menu' : ''}">
+                    <li class="${requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/inventory') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/admin/inventory">Inventory Management</a>
                     </li>
 
-                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/orders') ? 'active-menu' : ''}">
+                    <li class="${requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/orders') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/admin/orders">Order Management</a>
                     </li>
 
-                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/users') ? 'active-menu' : ''}">
+                    <li class="${requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/users') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/admin/users">User Management</a>
                     </li>
                 </ul>

@@ -9,9 +9,9 @@
     </File>
   </Appenders>
   <Loggers>
-<!--    <Logger name="com.zaxxer.hikari" level="trace">-->
-<!--      <AppenderRef ref="Console"/>-->
-<!--    </Logger>-->
+    <Logger name="com.zaxxer.hikari" level="trace">
+      <AppenderRef ref="Console"/>
+    </Logger>
     <Root level="trace">
 <!--      <AppenderRef ref="Console"/>-->
         <AppenderRef ref="debug_file"/>
