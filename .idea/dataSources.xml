@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="iotbaydb@localhost" uuid="c875f770-b325-4d79-a4ca-1c9b7cdfcf17">
+    <data-source source="LOCAL" name="iotbaydb@localhost" uuid="94bf088e-7d79-43e0-ad3a-3e780ecf90ec">
       <driver-ref>derby.remote</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.apache.derby.jdbc.ClientDriver</jdbc-driver>

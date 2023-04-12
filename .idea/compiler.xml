@@ -10,7 +10,13 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="IoTBay" target="1.8" />
+      <module name="IoTBay-maven" target="1.7" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="IoTBay" options="-endorseddirs $PROJECT_DIR$/target/endorsed" />
+      <module name="IoTBay-maven" options="-endorseddirs $PROJECT_DIR$/target/endorsed" />
+    </option>
   </component>
 </project>
