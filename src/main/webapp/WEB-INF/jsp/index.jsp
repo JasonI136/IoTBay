@@ -14,7 +14,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <jsp:include page="components/header-links.jsp"/>
-
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/public/images/icons/favicon.png"/>
     </head>
     <body class="animsition">
 
@@ -146,7 +146,7 @@
                                         <div class="block2-txt-child1 flex-col-l ">
                                             <a href="product-detail.html"
                                                class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                                    ${product.name}
+                                                ${product.name}
                                             </a>
 
                                             <span class="stext-105 cl3">
@@ -277,12 +277,12 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
         <script>
-            $(".js-select2").each(function () {
-                $(this).select2({
-                    minimumResultsForSearch: 20,
-                    dropdownParent: $(this).next('.dropDownSelect2')
-                });
-            })
+                                               $(".js-select2").each(function () {
+                                                   $(this).select2({
+                                                       minimumResultsForSearch: 20,
+                                                       dropdownParent: $(this).next('.dropDownSelect2')
+                                                   });
+                                               })
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
@@ -293,109 +293,109 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/parallax100/parallax100.js"></script>
         <script>
-            $('.parallax100').parallax100();
+                                               $('.parallax100').parallax100();
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
         <script>
-            $('.gallery-lb').each(function () { // the containers for all your galleries
-                $(this).magnificPopup({
-                    delegate: 'a', // the selector for gallery item
-                    type: 'image',
-                    gallery: {
-                        enabled: true
-                    },
-                    mainClass: 'mfp-fade'
-                });
-            });
+                                               $('.gallery-lb').each(function () { // the containers for all your galleries
+                                                   $(this).magnificPopup({
+                                                       delegate: 'a', // the selector for gallery item
+                                                       type: 'image',
+                                                       gallery: {
+                                                           enabled: true
+                                                       },
+                                                       mainClass: 'mfp-fade'
+                                                   });
+                                               });
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/sweetalert/sweetalert.min.js"></script>
         <script>
-            $('.js-addwish-b2').on('click', function (e) {
-                e.preventDefault();
-            });
+                                               $('.js-addwish-b2').on('click', function (e) {
+                                                   e.preventDefault();
+                                               });
 
-            $('.js-addwish-b2').each(function () {
-                var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-                $(this).on('click', function () {
-                    swal(nameProduct, "is added to wishlist !", "success");
+                                               $('.js-addwish-b2').each(function () {
+                                                   var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+                                                   $(this).on('click', function () {
+                                                       swal(nameProduct, "is added to wishlist !", "success");
 
-                    $(this).addClass('js-addedwish-b2');
-                    $(this).off('click');
-                });
-            });
+                                                       $(this).addClass('js-addedwish-b2');
+                                                       $(this).off('click');
+                                                   });
+                                               });
 
-            $('.js-addwish-detail').each(function () {
-                var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+                                               $('.js-addwish-detail').each(function () {
+                                                   var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
 
-                $(this).on('click', function () {
-                    swal(nameProduct, "is added to wishlist !", "success");
+                                                   $(this).on('click', function () {
+                                                       swal(nameProduct, "is added to wishlist !", "success");
 
-                    $(this).addClass('js-addedwish-detail');
-                    $(this).off('click');
-                });
-            });
+                                                       $(this).addClass('js-addedwish-detail');
+                                                       $(this).off('click');
+                                                   });
+                                               });
 
-            /*---------------------------------------------*/
+                                               /*---------------------------------------------*/
 
-            $('.js-addcart-detail').each(function () {
-                var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-                $(this).on('click', function () {
-                    addToCart(document.querySelector('#add-to-cart').value, document.querySelector('#quantity').value)
-                        .then(response => {
-                            if (response.status === 200) {
-                                Swal.fire({
-                                    title: 'Success!',
-                                    icon: 'success',
-                                    text: 'Item added to cart!',
-                                    showCancelButton: false,
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'OK',
-                                    target: document.querySelector('#modal-content')
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "${pageContext.request.contextPath}/cart";
-                                    }
-                                });
-                            }
-                        });
-                });
-            });
+                                               $('.js-addcart-detail').each(function () {
+                                                   var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
+                                                   $(this).on('click', function () {
+                                                       addToCart(document.querySelector('#add-to-cart').value, document.querySelector('#quantity').value)
+                                                               .then(response => {
+                                                                   if (response.status === 200) {
+                                                                       Swal.fire({
+                                                                           title: 'Success!',
+                                                                           icon: 'success',
+                                                                           text: 'Item added to cart!',
+                                                                           showCancelButton: false,
+                                                                           confirmButtonColor: '#3085d6',
+                                                                           confirmButtonText: 'OK',
+                                                                           target: document.querySelector('#modal-content')
+                                                                       }).then((result) => {
+                                                                           if (result.isConfirmed) {
+                                                                               window.location.href = "${pageContext.request.contextPath}/cart";
+                                                                           }
+                                                                       });
+                                                                   }
+                                                               });
+                                                   });
+                                               });
 
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script>
-            $('.js-pscroll').each(function () {
-                $(this).css('position', 'relative');
-                $(this).css('overflow', 'hidden');
-                var ps = new PerfectScrollbar(this, {
-                    wheelSpeed: 1,
-                    scrollingThreshold: 1000,
-                    wheelPropagation: false,
-                });
+                                               $('.js-pscroll').each(function () {
+                                                   $(this).css('position', 'relative');
+                                                   $(this).css('overflow', 'hidden');
+                                                   var ps = new PerfectScrollbar(this, {
+                                                       wheelSpeed: 1,
+                                                       scrollingThreshold: 1000,
+                                                       wheelPropagation: false,
+                                                   });
 
-                $(window).on('resize', function () {
-                    ps.update();
-                })
-            });
+                                                   $(window).on('resize', function () {
+                                                       ps.update();
+                                                   })
+                                               });
         </script>
 
         <script>
 
             function fetchProductDetails(productId) {
                 fetch('${pageContext.request.contextPath}/product/' + productId)
-                    .then(response => response.json())
-                    .then(json => {
-                        document.querySelector('#product-name').innerHTML = json.name;
-                        document.querySelector('#img-product-modal').src = json.imageURL;
-                        document.querySelector('#product-description').innerHTML = json.description;
-                        document.querySelector('#product-price').innerHTML = "$ " + json.price;
-                        document.querySelector('#add-to-cart').value = json.id;
-                    });
+                        .then(response => response.json())
+                        .then(json => {
+                            document.querySelector('#product-name').innerHTML = json.name;
+                            document.querySelector('#img-product-modal').src = json.imageURL;
+                            document.querySelector('#product-description').innerHTML = json.description;
+                            document.querySelector('#product-price').innerHTML = "$ " + json.price;
+                            document.querySelector('#add-to-cart').value = json.id;
+                        });
             }
 
             function addToCart(productId, quantity) {
