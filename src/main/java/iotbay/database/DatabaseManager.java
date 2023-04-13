@@ -98,6 +98,7 @@ public class DatabaseManager {
                             + "phone_number                     INT,"
                             + "is_staff                         BOOLEAN,"
                             + "stripe_customer_id               VARCHAR(256),"
+                            + "registration_date                TIMESTAMP,"
                             + "PRIMARY KEY (id)"
                             + ")";
 

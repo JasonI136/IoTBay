@@ -129,6 +129,7 @@ public class RegisterServlet extends HttpServlet {
         newUser.setEmail(emailAddress);
         newUser.setAddress(address);
         newUser.setPhoneNumber(phoneNumber);
+        newUser.setRegistrationDate(new java.sql.Timestamp(System.currentTimeMillis()));
         
         try {
             this.users.registerUser(newUser);

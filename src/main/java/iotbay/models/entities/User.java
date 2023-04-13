@@ -9,10 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,6 +123,8 @@ public class User implements Serializable {
      * <b>TABLE:</b> PAYMENT_METHOD
      */
     private List<PaymentMethod> paymentMethods;
+
+    private Timestamp registrationDate;
 
     /**
      * User
@@ -495,4 +494,12 @@ public class User implements Serializable {
         return orders;
     }
 
+
+    public Timestamp getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(Timestamp registrationDate) {
+        this.registrationDate = registrationDate;
+    }
 }

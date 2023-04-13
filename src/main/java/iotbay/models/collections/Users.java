@@ -220,8 +220,8 @@ public class Users {
             this.checkUserExists(user);
 
             try (PreparedStatement addUserQuery = conn.prepareStatement(
-                    "INSERT INTO USER_ACCOUNT (username, password, password_salt, first_name, last_name, email, address, phone_number, stripe_customer_id) "
-                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO USER_ACCOUNT (username, password, password_salt, first_name, last_name, email, address, phone_number, stripe_customer_id, is_staff, registration_date) "
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             )) {
                 addUserQuery.setString(1, user.getUsername());
                 addUserQuery.setString(2, user.getPassword());
@@ -232,6 +232,9 @@ public class Users {
                 addUserQuery.setString(7, user.getAddress());
                 addUserQuery.setInt(8, user.getPhoneNumber());
                 addUserQuery.setString(9, user.getStripeCustomerId());
+                addUserQuery.setBoolean(10, user.getIsStaff());
+                addUserQuery.setTimestamp(11, user.getRegistrationDate());
+
 
                 int affectedRows = addUserQuery.executeUpdate();
                 if (affectedRows == 1) {
