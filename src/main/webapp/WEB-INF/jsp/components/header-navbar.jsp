@@ -23,7 +23,7 @@
 
 
                 <c:if test="${sessionScope.user != null}">
-                    <c:if test="${sessionScope.user.isStaff == true}">
+                    <c:if test="${sessionScope.user.staff == true}">
                         <a href="${pageContext.request.contextPath}/admin" class="flex-c-m trans-04 p-lr-25">
                             <b>Admin</b>
                         </a>

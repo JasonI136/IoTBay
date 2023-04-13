@@ -133,7 +133,7 @@ public class Users {
         byte[] encryptedPassword = encryptPassword(password, salt);
 
         if (MessageDigest.isEqual(encryptedPassword, Base64.getDecoder().decode(user.getPassword()))) {
-            if (user.getIsStaff()) {
+            if (user.isStaff()) {
                 System.out.println("THIS IS AN ADMIN"); // print to console if user is staff
             }
             return user;
@@ -235,7 +235,7 @@ public class Users {
                 addUserQuery.setString(7, user.getAddress());
                 addUserQuery.setInt(8, user.getPhoneNumber());
                 addUserQuery.setString(9, user.getStripeCustomerId());
-                addUserQuery.setBoolean(10, user.getIsStaff());
+                addUserQuery.setBoolean(10, user.isStaff());
                 addUserQuery.setTimestamp(11, user.getRegistrationDate());
 
 

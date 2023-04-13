@@ -88,7 +88,7 @@ public class Misc {
         if (refreshUser(request, response, users)) return true;
 
         User currentUser = (User) request.getSession().getAttribute("user");
-        if (!currentUser.getIsStaff()) {
+        if (!currentUser.isStaff()) {
             request.getSession().setAttribute("message", "You do not have permission to access this page.");
             try {
                 response.sendError(403);

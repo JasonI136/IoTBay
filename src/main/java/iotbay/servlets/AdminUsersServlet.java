@@ -64,7 +64,7 @@ public class AdminUsersServlet extends HttpServlet {
             throws ServletException, IOException {
 
 
-        if (Misc.userIsStaff(request, response, db.getUserManager(), "/admin/users")) return;
+        if (Misc.userIsStaff(request, response, db.getUsers(), "/admin/users")) return;
 
         request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-users.jsp").forward(request, response);
     }

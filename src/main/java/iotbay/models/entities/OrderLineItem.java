@@ -2,12 +2,13 @@ package iotbay.models.entities;
 
 import iotbay.database.DatabaseManager;
 import iotbay.models.enums.OrderStatus;
+import lombok.*;
 
-import javax.xml.crypto.Data;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+@Data
 public class OrderLineItem implements Serializable {
 //    if (!this.tableExists("ORDER_LINE_ITEM")) {
 //              String createTableQuery =
@@ -58,36 +59,4 @@ public class OrderLineItem implements Serializable {
     }
 
 
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
 }

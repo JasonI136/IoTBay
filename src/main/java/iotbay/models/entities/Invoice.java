@@ -1,11 +1,14 @@
 package iotbay.models.entities;
 
+import lombok.*;
+
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
+@Data
 public class Invoice implements Serializable {
 
 //     if (!this.tableExists("INVOICE")) {
@@ -39,35 +42,4 @@ public class Invoice implements Serializable {
         this.amount = rs.getFloat("amount");
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
-
-    public Timestamp getInvoiceDate() {
-        return invoiceDate;
-    }
-
-    public void setInvoiceDate(Timestamp invoiceDate) {
-        this.invoiceDate = invoiceDate;
-    }
-
-    public float getAmount() {
-        return amount;
-    }
-
-    public void setAmount(float amount) {
-        this.amount = amount;
-    }
 }

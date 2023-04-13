@@ -38,17 +38,6 @@ import java.util.stream.Collectors;
 public class CartServlet extends HttpServlet {
 
     DatabaseManager db;
-
-    Products products;
-
-    Orders orders;
-
-    OrderLineItems orderLineItems;
-
-    Invoices invoices;
-
-    Users users;
-
     /**
      * Initalises the servlet. Gets the database manager from the servlet context.
      *
@@ -58,11 +47,6 @@ public class CartServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
-        this.products = (Products) getServletContext().getAttribute("products");
-        this.orders = (Orders) getServletContext().getAttribute("orders");
-        this.orderLineItems = (OrderLineItems) getServletContext().getAttribute("orderLineItems");
-        this.invoices = (Invoices) getServletContext().getAttribute("invoices");
-        this.users = (Users) getServletContext().getAttribute("users");
     }
 
 
@@ -84,7 +68,7 @@ public class CartServlet extends HttpServlet {
         if (path != null) {
             switch (path) {
                 case "/checkout":
-                    if (Misc.refreshUser(request, response, users, "/cart/checkout")) return;
+                    if (Misc.refreshUser(request, response, this.db.getUsers(), "/cart/checkout")) return;
                     request.setAttribute("stripe_pk", ((Properties) getServletContext().getAttribute("secrets")).getProperty("stripe.api.publishable.key"));
                     request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
                     break;
@@ -151,7 +135,7 @@ public class CartServlet extends HttpServlet {
             // add metadata
 
             // create a new order
-            newOrder = this.orders.addOrder(user.getId(), new Timestamp(System.currentTimeMillis()), OrderStatus.PENDING);
+            newOrder = this.db.getOrders().addOrder(user.getId(), new Timestamp(System.currentTimeMillis()), OrderStatus.PENDING);
 
             if (newOrder == null) {
                 throw new Exception("Failed to create order");
@@ -165,7 +149,7 @@ public class CartServlet extends HttpServlet {
 
             for (CartItem cartItem : cart.getCartItems()) {
                 try {
-                    this.orderLineItems.addOrderLineItem(newOrder.getId(), cartItem.getProduct().getId(), cartItem.getCartQuantity(), cartItem.getTotalPrice());
+                    this.db.getOrderLineItems().addOrderLineItem(newOrder.getId(), cartItem.getProduct().getId(), cartItem.getCartQuantity(), cartItem.getTotalPrice());
                 } catch (Exception e) {
                     throw new ServletException(e);
                 }
@@ -173,7 +157,7 @@ public class CartServlet extends HttpServlet {
 
             Invoice invoice;
             try {
-                invoice = this.invoices.addInvoice(newOrder.getId(), date, (float) userShoppingCart.getTotalPrice() * 100);
+                invoice = this.db.getInvoices().addInvoice(newOrder.getId(), date, (float) userShoppingCart.getTotalPrice() * 100);
             } catch (Exception e) {
                 throw new ServletException(e);
             }
@@ -194,7 +178,7 @@ public class CartServlet extends HttpServlet {
             // if there is an error, delete the order
             if (newOrder != null) {
                 try {
-                    this.orders.deleteOrder(newOrder.getId());
+                    this.db.getOrders().deleteOrder(newOrder.getId());
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -208,7 +192,7 @@ public class CartServlet extends HttpServlet {
             if (request.getParameter("productId") != null) {
 
                 try {
-                    Product product = this.products.getProduct(Integer.parseInt(request.getParameter("productId")));
+                    Product product = this.db.getProducts().getProduct(Integer.parseInt(request.getParameter("productId")));
                     if (product == null) {
                         response.sendError(404, "Product ID not found");
                         return;
@@ -256,7 +240,7 @@ public class CartServlet extends HttpServlet {
             for (Map.Entry<String, JsonElement> cartItem : payload.entrySet()) {
                 int productId = Integer.parseInt(cartItem.getKey());
                 int quantity = cartItem.getValue().getAsInt();
-                userShoppingCart.updateCartItem(this.products.getProduct(productId), quantity);
+                userShoppingCart.updateCartItem(this.db.getProducts().getProduct(productId), quantity);
             }
 
             response.setStatus(200);

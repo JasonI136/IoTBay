@@ -69,15 +69,15 @@ public class AdminIndexServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (Misc.userIsStaff(request, response, db.getUserManager(), "/admin")) return;
+        if (Misc.userIsStaff(request, response, db.getUsers(), "/admin")) return;
 
         int orderCount = 0;
         int userCount = 0;
         int productCount = 0;
         try {
-            orderCount = db.getOrderManager().getOrderCount();
-            userCount = db.getUserManager().getUserCount();
-            productCount = db.getProductManager().getProductCount();
+            orderCount = db.getOrders().getOrderCount();
+            userCount = db.getUsers().getUserCount();
+            productCount = db.getProducts().getProductCount();
         } catch (Exception e) {
             e.printStackTrace();
         }

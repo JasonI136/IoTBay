@@ -4,6 +4,8 @@
  */
 package iotbay.models.entities;
 
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
  * Represents a user's shopping cart
  * @author cmesina
  */
+@Data
 public class Cart implements Serializable {
 
     /**
@@ -24,22 +27,6 @@ public class Cart implements Serializable {
      */
     public Cart() {
         cartItems = new ArrayList<>();
-    }
-
-    /**
-     * Gets the list of cart items
-     * @return the list of cart items
-     */
-    public List<CartItem> getCartItems() {
-        return cartItems;
-    }
-
-    /**
-     * Sets the list of cart items
-     * @param cartItems the list of cart items
-     */
-    public void setCartItems(List<CartItem> cartItems) {
-        this.cartItems = cartItems;
     }
 
     /**

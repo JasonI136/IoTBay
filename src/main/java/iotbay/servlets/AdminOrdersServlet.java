@@ -28,14 +28,11 @@ import java.util.List;
  */
 public class AdminOrdersServlet extends HttpServlet {
 
-    private Orders orders;
-
     private DatabaseManager db;
 
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-        this.orders = (Orders) getServletContext().getAttribute("orders");
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
     }
 
@@ -79,11 +76,11 @@ public class AdminOrdersServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        if (Misc.userIsStaff(request, response, db.getUserManager(), "/admin/orders")) return;
+        if (Misc.userIsStaff(request, response, db.getUsers(), "/admin/orders")) return;
 
         List<Order> orders;
         try {
-            orders = this.orders.getOrders();
+            orders = this.db.getOrders().getOrders();
         } catch (Exception e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }

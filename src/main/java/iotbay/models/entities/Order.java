@@ -2,6 +2,7 @@ package iotbay.models.entities;
 
 import iotbay.database.DatabaseManager;
 import iotbay.models.enums.OrderStatus;
+import lombok.*;
 
 import java.io.Serializable;
 import java.sql.*;
@@ -9,6 +10,7 @@ import java.sql.*;
 /**
  * The order entity
  */
+@Data
 public class Order implements Serializable {
 
     private final transient DatabaseManager db;
@@ -49,86 +51,6 @@ public class Order implements Serializable {
         this.orderStatus = OrderStatus.valueOf(rs.getString("order_status"));
         this.stripePaymentIntentId = rs.getString("stripe_payment_intent_id");
         this.db = db;
-    }
-
-    /**
-     * Get the order id
-     * @return the order id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Set the order id
-     * @param id the order id
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
-     * Get the user id
-     * @return the user id
-     */
-    public int getUserId() {
-        return userId;
-    }
-
-    /**
-     * Set the user id
-     * @param userId the user id
-     */
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    /**
-     * Get the order date
-     * @return the order date
-     */
-    public Timestamp getOrderDate() {
-        return orderDate;
-    }
-
-    /**
-     * Set the order date
-     * @param orderDate the order date
-     */
-    public void setOrderDate(Timestamp orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    /**
-     * Get the order status
-     * @return the order status
-     */
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    /**
-     * Set the order status
-     * @param orderStatus the order status
-     */
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    /**
-     * Get the stripe payment method id
-     * @return the stripe payment method id
-     */
-    public String getStripePaymentIntentId() {
-        return stripePaymentIntentId;
-    }
-
-    /**
-     * Set the stripe payment method id
-     * @param stripePaymentIntentId the stripe payment method id
-     */
-    public void setStripePaymentIntentId(String stripePaymentIntentId) {
-        this.stripePaymentIntentId = stripePaymentIntentId;
     }
 
     /**

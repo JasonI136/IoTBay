@@ -4,6 +4,8 @@
  */
 package iotbay.models.entities;
 
+import lombok.*;
+
 import java.io.Serializable;
 import java.sql.ResultSet;
 
@@ -11,6 +13,7 @@ import java.sql.ResultSet;
  * Represents a category
  * @author cmesina
  */
+@Data
 public class Category implements Serializable {
 
     /**
@@ -42,22 +45,6 @@ public class Category implements Serializable {
     public Category(ResultSet rs) throws Exception {
         this.id = rs.getInt("id");
         this.categoryName = rs.getString("name");
-    }
-
-    /**
-     * Get the category ID
-     * @return The category ID
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Set the category ID
-     * @param id The category ID
-     */
-    public void setId(int id) {
-        this.id = id;
     }
 
     /**

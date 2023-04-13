@@ -28,13 +28,10 @@ public class UserServlet extends HttpServlet {
 
     DatabaseManager db;
 
-    Users users;
-
     @Override
     public void init() throws ServletException {
         super.init();
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
-        this.users = (Users) getServletContext().getAttribute("users");
     }
 
     /**
@@ -50,7 +47,7 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
         String path = request.getPathInfo();
         // refresh the user
-        if (Misc.refreshUser(request, response, users)) return;
+        if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
         if (path != null) {
             if (path.equals("/payments/add/success")) {
@@ -78,7 +75,7 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        if (Misc.refreshUser(request, response, users)) return;
+        if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
         String path = request.getPathInfo();
 
@@ -128,7 +125,7 @@ public class UserServlet extends HttpServlet {
             user.deletePaymentMethod(paymentMethod);
 
             // refresh user as payment methods have changed
-            if (Misc.refreshUser(request, response, users)) return;
+            if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
             response.sendRedirect(request.getContextPath() + "/user");
 
@@ -175,7 +172,7 @@ public class UserServlet extends HttpServlet {
                 user.addPaymentMethod(paymentMethod);
 
                 // refresh user as payment methods have changed
-                if (Misc.refreshUser(request, response, users)) return;
+                if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
                 response.sendRedirect(request.getContextPath() + "/user");
             } catch (Exception e) {

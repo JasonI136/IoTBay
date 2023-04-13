@@ -4,12 +4,15 @@
  */
 package iotbay.models.entities;
 
+import lombok.*;
+
 import java.io.Serializable;
 
 /**
  * Represents a cart item
  * @author cmesina
  */
+@Data
 public class CartItem implements Serializable {
 
     /**
@@ -26,38 +29,6 @@ public class CartItem implements Serializable {
      * Empty constructor
      */
     public CartItem() {
-    }
-
-    /**
-     * Gets the product of the cart item
-     * @return the product
-     */
-    public Product getProduct() {
-        return product;
-    }
-
-    /**
-     * Sets the product of the cart item
-     * @param product the product
-     */
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    /**
-     * Gets the quantity of the product in the cart
-     * @return the quantity
-     */
-    public int getCartQuantity() {
-        return cartQuantity;
-    }
-
-    /**
-     * Sets the quantity of the product in the cart
-     * @param cartQuantity the quantity
-     */
-    public void setCartQuantity(int cartQuantity) {
-        this.cartQuantity = cartQuantity;
     }
 
     /**

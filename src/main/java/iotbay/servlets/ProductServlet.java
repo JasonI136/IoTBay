@@ -23,15 +23,11 @@ public class ProductServlet extends HttpServlet {
 
     DatabaseManager db;
 
-    Products products;
-
-
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
 
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
-        this.products = (Products) getServletContext().getAttribute("products");
     }
 
 
@@ -86,7 +82,7 @@ public class ProductServlet extends HttpServlet {
             try {
                 int productId = Integer.parseInt(pathInfo.substring(1));
                 try {
-                    Product product = this.products.getProduct(productId);
+                    Product product = this.db.getProducts().getProduct(productId);
 
                     // Use Gson to serialize the product to JSON
                     Gson gson = new Gson();

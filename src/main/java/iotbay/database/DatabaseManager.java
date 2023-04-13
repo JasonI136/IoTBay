@@ -8,6 +8,10 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import iotbay.annotations.GlobalServletField;
 import iotbay.models.collections.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,6 +21,7 @@ import java.sql.*;
 /**
  * @author cmesina
  */
+@Getter
 public class DatabaseManager {
 
 
@@ -364,39 +369,39 @@ public class DatabaseManager {
 
     }
 
-    public Users getUserManager() {
-        return users;
-    }
-
-    public Products getProductManager() {
-        return products;
-    }
-
-    public Categories getCategoryManager() {
-        return categories;
-    }
-
-    public Orders getOrderManager() {
-        return orders;
-    }
-
-    public OrderLineItems getOrderLineItemManager() {
-        return orderLineItems;
-    }
-
-    public Payments getPaymentManager() {
-        return payments;
-    }
-
-    public Invoices getInvoiceManager() {
-        return invoices;
-    }
-
-    public Shipments getShipmentManager() {
-        return shipments;
-    }
-
-    public PaymentMethods getPaymentMethodManager() {
-        return paymentMethods;
-    }
+//    public Users getUsers() {
+//        return users;
+//    }
+//
+//    public Products getProducts() {
+//        return products;
+//    }
+//
+//    public Categories getCategories() {
+//        return categories;
+//    }
+//
+//    public Orders getOrders() {
+//        return orders;
+//    }
+//
+//    public OrderLineItems getOrderLineItems() {
+//        return orderLineItems;
+//    }
+//
+//    public Payments getPaymentManager() {
+//        return payments;
+//    }
+//
+//    public Invoices getInvoices() {
+//        return invoices;
+//    }
+//
+//    public Shipments getShipmentManager() {
+//        return shipments;
+//    }
+//
+//    public PaymentMethods getPaymentMethodManager() {
+//        return paymentMethods;
+//    }
 }

@@ -27,18 +27,12 @@ import java.util.*;
  */
 public class OrderTrackingServlet extends HttpServlet {
 
-    private Orders orders;
-
-    private OrderLineItems orderLineItems;
-
-    private Products products;
+    DatabaseManager db;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        this.orders = (Orders) getServletContext().getAttribute("orders");
-        this.orderLineItems = (OrderLineItems) getServletContext().getAttribute("orderLineItems");
-        this.products = (Products) getServletContext().getAttribute("products");
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
     }
 
 
@@ -105,10 +99,10 @@ public class OrderTrackingServlet extends HttpServlet {
         int orderID = Integer.parseInt(orderIDString);
 
         try {
-            Order order = this.orders.getOrder(orderID);
+            Order order = this.db.getOrders().getOrder(orderID);
             if (order != null) {
                 request.setAttribute("order", order);
-                ArrayList<OrderLineItem> orderLineItemsList = this.orderLineItems.getOrderLineItems(orderID);
+                ArrayList<OrderLineItem> orderLineItemsList = this.db.getOrderLineItems().getOrderLineItems(orderID);
                 request.setAttribute("orderLineItemsList", orderLineItemsList);
                 request.getRequestDispatcher("/WEB-INF/jsp/order.jsp").forward(request, response);
             } else {

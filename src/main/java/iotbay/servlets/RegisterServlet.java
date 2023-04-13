@@ -24,18 +24,16 @@ import java.util.Properties;
  * @author cmesina
  */
 public class RegisterServlet extends HttpServlet {
-    
-    Users users;
+
+    DatabaseManager db;
 
     private static final Logger logger = LogManager.getLogger(RegisterServlet.class);
 
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-        
-        Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
-        
-        this.users = (Users) getServletContext().getAttribute("users");
+
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
     }
 
     /**
@@ -132,7 +130,7 @@ public class RegisterServlet extends HttpServlet {
         newUser.setRegistrationDate(new java.sql.Timestamp(System.currentTimeMillis()));
         
         try {
-            this.users.registerUser(newUser);
+            this.db.getUsers().registerUser(newUser);
         } catch (Exception e) {
             if (e instanceof UserExistsException) {
                 request.setAttribute("error_title", "User already exists");
