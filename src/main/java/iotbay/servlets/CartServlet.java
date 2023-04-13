@@ -66,15 +66,12 @@ public class CartServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path != null) {
-            switch (path) {
-                case "/checkout":
-                    if (Misc.refreshUser(request, response, this.db.getUsers(), "/cart/checkout")) return;
-                    request.setAttribute("stripe_pk", ((Properties) getServletContext().getAttribute("secrets")).getProperty("stripe.api.publishable.key"));
-                    request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
-                    break;
-                default:
-                    response.sendError(404);
-                    break;
+            if (path.equals("/checkout")) {
+                if (Misc.refreshUser(request, response, this.db.getUsers(), "/cart/checkout")) return;
+                request.setAttribute("stripe_pk", ((Properties) getServletContext().getAttribute("secrets")).getProperty("stripe.api.publishable.key"));
+                request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
+            } else {
+                response.sendError(404);
             }
         } else {
             request.getRequestDispatcher("/WEB-INF/jsp/cart.jsp").forward(request, response);
@@ -211,15 +208,12 @@ public class CartServlet extends HttpServlet {
                         response.setStatus(200);
                     } catch (Exception e) {
                         response.sendError(400, "Invalid product id");
-                        return;
                     }
 
                 } catch (NumberFormatException e) {
                     response.sendError(400, "Invalid product id");
-                    return;
                 } catch (ProductNotFoundException e) {
                     response.sendError(404, "Product ID not found");
-                    return;
                 }
             }
         } catch (Exception e) {

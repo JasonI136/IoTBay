@@ -1,3 +1,5 @@
+-- noinspection SyntaxErrorForFile
+
 INSERT INTO CATEGORY (name) VALUES ('Temperature / Humidity / Air Pressure / Gas')
 INSERT INTO CATEGORY (name) VALUES ('Motion Sensor')
 INSERT INTO CATEGORY (name) VALUES ('Navigation Modules')

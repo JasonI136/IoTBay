@@ -34,7 +34,7 @@ public class Payment implements Serializable {
     private int paymentMethodId;
     private float amount;
 
-    public Payment() {};
+    public Payment() {}
 
     public Payment(ResultSet rs) throws Exception {
         this.id = rs.getInt("id");

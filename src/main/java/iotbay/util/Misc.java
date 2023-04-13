@@ -24,10 +24,11 @@ public class Misc {
     }
 
     /**
-     * Refreshes the user in the session
-     * @param request servlet request object
+     * Refreshes the user in the session.
+     *
+     * @param request  servlet request object
      * @param response servlet response object
-     * @param users Users collection
+     * @param users    Users collection
      * @return true if the user was not logged in, false otherwise.
      * @throws ServletException
      */
@@ -57,8 +58,17 @@ public class Misc {
         }
     }
 
-        public static boolean refreshUser(HttpServletRequest request, HttpServletResponse response, Users users, String redirectUrl) throws ServletException {
-            if (request.getSession().getAttribute("user") == null) {
+    /**
+     * Refreshes the user in the session with a redirect URL after login.
+     * @param request servlet request object
+     * @param response servlet response object
+     * @param users Users collection
+     * @param redirectUrl URL to redirect to after login
+     * @return true if the user was not logged in, false otherwise.
+     * @throws ServletException
+     */
+    public static boolean refreshUser(HttpServletRequest request, HttpServletResponse response, Users users, String redirectUrl) throws ServletException {
+        if (request.getSession().getAttribute("user") == null) {
             try {
                 response.sendRedirect(request.getContextPath() + "/login?redirect=" + redirectUrl);
             } catch (IOException e) {
@@ -84,6 +94,14 @@ public class Misc {
 
     }
 
+    /**
+     * Checks if the user is logged in and is a staff member.
+     * @param request servlet request object
+     * @param response servlet response object
+     * @param users Users collection
+     * @return true if the user is not logged in or is not a staff member, false otherwise.
+     * @throws ServletException
+     */
     public static boolean userIsStaff(HttpServletRequest request, HttpServletResponse response, Users users) throws ServletException {
         if (refreshUser(request, response, users)) return true;
 
@@ -101,6 +119,15 @@ public class Misc {
         }
     }
 
+    /**
+     * Checks if the user is logged in and is a staff member. Redirects to the specified URL after login.
+     * @param request servlet request object
+     * @param response servlet response object
+     * @param users Users collection
+     * @param redirectUrl URL to redirect to after login
+     * @return true if the user is not logged in or is not a staff member, false otherwise.
+     * @throws ServletException
+     */
     public static boolean userIsStaff(HttpServletRequest request, HttpServletResponse response, Users users, String redirectUrl) throws ServletException {
         if (refreshUser(request, response, users, redirectUrl)) return true;
 

@@ -42,7 +42,7 @@ public class Order implements Serializable {
 
     public Order(DatabaseManager db) {
         this.db = db;
-    };
+    }
 
     public Order(ResultSet rs, DatabaseManager db) throws Exception {
         this.id = rs.getInt("id");

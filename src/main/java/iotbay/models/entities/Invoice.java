@@ -33,7 +33,7 @@ public class Invoice implements Serializable {
     private Timestamp invoiceDate;
     private float amount;
 
-    public Invoice() {};
+    public Invoice() {}
 
     public Invoice(ResultSet rs) throws Exception {
         this.id = rs.getInt("id");
