@@ -66,7 +66,7 @@
                                 <i class="zmdi zmdi-shopping-cart zmdi-hc-5x mr-3" style="color: #6c7ae0"></i>
                                 <div>
                                     <h5 class="card-title mb-0">Total Orders</h5>
-                                    <p class="card-text">10,000</p>
+                                    <p class="card-text">${orderCount}</p>
                                     <!-- Chart for total orders -->
                                 </div>
                             </div>
@@ -79,7 +79,7 @@
                                 <i class="zmdi zmdi-account zmdi-hc-5x mr-3" style="color: #6c7ae0"></i>
                                 <div>
                                     <h5 class="card-title mb-0">Total Customers</h5>
-                                    <p class="card-text">5,000</p>
+                                    <p class="card-text">${userCount}</p>
                                     <!-- Chart for customer growth -->
                                 </div>
                             </div>
@@ -95,7 +95,7 @@
                                 <i class="zmdi zmdi-archive zmdi-hc-5x mr-3" style="color: #6c7ae0"></i>
                                 <div>
                                     <h5 class="card-title mb-0">Total Products</h5>
-                                    <p class="card-text">72</p>
+                                    <p class="card-text">${productCount}</p>
                                     <!-- Chart for total products -->
                                 </div>
                             </div>

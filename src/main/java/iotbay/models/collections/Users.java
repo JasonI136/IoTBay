@@ -60,6 +60,20 @@ public class Users {
         this.db = db;
     }
 
+    public int getUserCount() throws Exception {
+        try (Connection conn = db.getDbConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM USER_ACCOUNT");
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                } else {
+                    throw new Exception("Failed to get user count");
+                }
+            }
+        }
+
+    }
+
     /**
      * Registers a new user with an encrypted password and salt and adds it to the database.
      *

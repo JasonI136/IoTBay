@@ -4,6 +4,8 @@
  */
 package iotbay.servlets;
 
+import iotbay.database.DatabaseManager;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -16,6 +18,14 @@ import javax.servlet.http.HttpServletResponse;
  * @author jasonmba
  */
 public class AdminIndexServlet extends HttpServlet {
+
+    DatabaseManager db;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -55,6 +65,20 @@ public class AdminIndexServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int orderCount = 0;
+        int userCount = 0;
+        int productCount = 0;
+        try {
+            orderCount = db.getOrderManager().getOrderCount();
+            userCount = db.getUserManager().getUserCount();
+            productCount = db.getProductManager().getProductCount();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        request.setAttribute("orderCount", orderCount);
+        request.setAttribute("userCount", userCount);
+        request.setAttribute("productCount", productCount);
         request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-index.jsp").forward(request, response);
     }
 

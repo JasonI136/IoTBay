@@ -6,6 +6,8 @@ package iotbay.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import iotbay.annotations.GlobalServletField;
+import iotbay.models.collections.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +23,33 @@ public class DatabaseManager {
     protected HikariDataSource dataSource;
 
     private static final Logger logger = LogManager.getLogger(DatabaseManager.class);
+
+    @GlobalServletField("users")
+    private Users users;
+
+    @GlobalServletField("products")
+    private Products products;
+
+    @GlobalServletField("categories")
+    private Categories categories;
+
+    @GlobalServletField("orders")
+    private Orders orders;
+
+    @GlobalServletField("orderLineItems")
+    private OrderLineItems orderLineItems;
+
+    @GlobalServletField("payments")
+    private Payments payments;
+
+    @GlobalServletField("invoices")
+    private Invoices invoices;
+
+    @GlobalServletField("shipments")
+    private Shipments shipments;
+
+    @GlobalServletField("paymentMethods")
+    private PaymentMethods paymentMethods;
 
 
     /**
@@ -296,6 +325,15 @@ public class DatabaseManager {
 
         }
 
+        this.users = new Users(this);
+        this.products = new Products(this);
+        this.categories = new Categories(this);
+        this.orders = new Orders(this);
+        this.invoices = new Invoices(this);
+        this.payments = new Payments(this);
+        this.shipments = new Shipments(this);
+        this.paymentMethods = new PaymentMethods(this);
+        this.orderLineItems = new OrderLineItems(this, this.orders, this.products);
 
         logger.info("Database initialized.");
 
@@ -323,5 +361,41 @@ public class DatabaseManager {
             return rs.next();
         }
 
+    }
+
+    public Users getUserManager() {
+        return users;
+    }
+
+    public Products getProductManager() {
+        return products;
+    }
+
+    public Categories getCategoryManager() {
+        return categories;
+    }
+
+    public Orders getOrderManager() {
+        return orders;
+    }
+
+    public OrderLineItems getOrderLineItemManager() {
+        return orderLineItems;
+    }
+
+    public Payments getPaymentManager() {
+        return payments;
+    }
+
+    public Invoices getInvoiceManager() {
+        return invoices;
+    }
+
+    public Shipments getShipmentManager() {
+        return shipments;
+    }
+
+    public PaymentMethods getPaymentMethodManager() {
+        return paymentMethods;
     }
 }

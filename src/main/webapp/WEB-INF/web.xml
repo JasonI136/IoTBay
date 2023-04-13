@@ -3,7 +3,6 @@
     <servlet>
         <servlet-name>MainServlet</servlet-name>
         <servlet-class>iotbay.servlets.MainServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet>
         <servlet-name>RegisterServlet</servlet-name>
@@ -64,6 +63,11 @@
     <servlet>
         <servlet-name>OrderTrackingServlet</servlet-name>
         <servlet-class>iotbay.servlets.OrderTrackingServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InitServlet</servlet-name>
+        <servlet-class>iotbay.servlets.InitServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>

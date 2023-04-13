@@ -5,12 +5,12 @@
 package iotbay.servlets;
 
 import com.stripe.Stripe;
+import iotbay.annotations.GlobalServletField;
 import iotbay.database.DatabaseManager;
 import iotbay.jobs.HouseKeeper;
 import iotbay.models.collections.*;
 import iotbay.models.entities.Category;
 import iotbay.models.entities.Product;
-import iotbay.models.entities.Shipment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.*;
@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,8 +34,6 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 public class MainServlet extends HttpServlet {
 
-    private Properties appConfig;
-    private Properties secrets;
     private Products products;
     private Categories categories;
 
@@ -43,118 +42,8 @@ public class MainServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-
-
-        // Load the application configuration.
-        InputStream inputStream = getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
-
-        if (inputStream == null) {
-            throw new ServletException("app-config.properties not found.");
-        }
-
-        InputStream inputStreamSecrets = getServletContext().getResourceAsStream("/WEB-INF/secrets.properties");
-
-        if (inputStreamSecrets == null) {
-            throw new ServletException("secrets.properties not found.");
-        }
-
-        appConfig = new Properties();
-        secrets = new Properties();
-
-
-        try {
-            appConfig.load(inputStream);
-            secrets.load(inputStreamSecrets);
-        } catch (IOException err) {
-            throw new ServletException("Application configuration failed to load.");
-        }
-
-        // Initialise the database
-        DatabaseManager db;
-        try {
-            db = new DatabaseManager(
-                    appConfig.getProperty("database.url"),
-                    appConfig.getProperty("database.username"),
-                    appConfig.getProperty("database.password"),
-                    appConfig.getProperty("database.name")
-            );
-        } catch (Exception e) {
-            throw new ServletException("An error occurred whilst intialising the database: " + e.getMessage());
-        }
-
-        Users users = new Users(db);
-        this.products = new Products(db);
-        this.categories = new Categories(db);
-        Orders orders = new Orders(db);
-        OrderLineItems orderLineItems = new OrderLineItems(db, orders, this.products);
-        Payments payments = new Payments(db);
-        Invoices invoices = new Invoices(db);
-        Shipments shipments = new Shipments(db);
-        PaymentMethods paymentMethods = new PaymentMethods(db);
-
-        // Make the db object accessible from other servlets.
-        getServletContext().setAttribute("db", db);
-        // Make config accessible from other servlets.
-        getServletContext().setAttribute("appConfig", appConfig);
-        // Make secrets accessible from other servlets.
-        getServletContext().setAttribute("secrets", secrets);
-        // Make user manager accessible from other servlets.
-        getServletContext().setAttribute("users", users);
-
-        getServletContext().setAttribute("products", products);
-
-        getServletContext().setAttribute("categories", categories);
-
-        getServletContext().setAttribute("orders", orders);
-
-        getServletContext().setAttribute("orderLineItems", orderLineItems);
-
-        getServletContext().setAttribute("payments", payments);
-
-        getServletContext().setAttribute("invoices", invoices);
-
-        getServletContext().setAttribute("paymentMethods", paymentMethods);
-
-        getServletContext().setAttribute("shipments", shipments);
-
-        Stripe.apiKey = secrets.getProperty("stripe.api.key");
-
-        JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("orders", orders);
-        jobDataMap.put("payments", payments);
-        jobDataMap.put("invoices", invoices);
-        jobDataMap.put("paymentMethods", paymentMethods);
-        jobDataMap.put("orderLineItems", orderLineItems);
-
-        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-        Scheduler scheduler = null;
-        try {
-            scheduler = schedulerFactory.getScheduler();
-        } catch (SchedulerException e) {
-            throw new RuntimeException(e);
-        }
-        JobDetail job = newJob(HouseKeeper.class)
-                .withIdentity("housekeeper", "iotbay")
-                .usingJobData(jobDataMap)
-                .build();
-
-        Trigger trigger = newTrigger()
-                .withIdentity("housekeeper", "iotbay")
-                .startNow()
-                .withSchedule(simpleSchedule()
-                        .withIntervalInMinutes(1)
-                        .repeatForever())
-                .build();
-
-        try {
-            scheduler.start();
-            scheduler.scheduleJob(job, trigger);
-        } catch (Exception e) {
-            logger.error("Failed to start scheduler: " + e.getMessage());
-            System.exit(1);
-        }
-
-        logger.info("Application started.");
+        this.products = (Products) getServletContext().getAttribute("products");
+        this.categories = (Categories) getServletContext().getAttribute("categories");
 
     }
 

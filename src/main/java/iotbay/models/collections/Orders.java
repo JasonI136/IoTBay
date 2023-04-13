@@ -88,13 +88,13 @@ public class Orders {
         }
 
     }
-    
+
     public List<Order> getOrders() throws Exception {
-		List<Order> orderList = new ArrayList<>();
+        List<Order> orderList = new ArrayList<>();
 
-		String query;
+        String query;
 
-		query = "SELECT * FROM CUSTOMER_ORDER";
+        query = "SELECT * FROM CUSTOMER_ORDER";
 
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -106,8 +106,8 @@ public class Orders {
                 }
             }
         }
-		return orderList;
-	}
+        return orderList;
+    }
 
     public List<Order> getOrders(OrderStatus status) throws Exception {
         List<Order> orders = new ArrayList<>();
@@ -139,6 +139,22 @@ public class Orders {
 
                 if (affectedRows == 0) {
                     throw new Exception("Deleting order failed, no rows affected.");
+                }
+            }
+        }
+    }
+
+    public int getOrderCount() throws Exception {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM CUSTOMER_ORDER")) {
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    } else {
+                        throw new Exception("Counting orders failed, no rows returned.");
+                    }
                 }
             }
         }
