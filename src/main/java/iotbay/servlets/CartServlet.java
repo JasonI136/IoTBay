@@ -84,15 +84,7 @@ public class CartServlet extends HttpServlet {
         if (path != null) {
             switch (path) {
                 case "/checkout":
-                    try {
-                        Misc.refreshUser(request, users);
-                    } catch (UserNotLoggedInException | UserNotFoundException e) {
-                        request.getSession().setAttribute("redirect", "/cart/checkout");
-                        response.sendRedirect(getServletContext().getContextPath() + "/login");
-                        return;
-                    } catch (Exception e) {
-                        throw new ServletException(e);
-                    }
+                    if (Misc.refreshUser(request, response, users, "/cart/checkout")) return;
                     request.setAttribute("stripe_pk", ((Properties) getServletContext().getAttribute("secrets")).getProperty("stripe.api.publishable.key"));
                     request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
                     break;

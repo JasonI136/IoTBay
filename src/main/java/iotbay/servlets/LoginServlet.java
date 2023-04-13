@@ -63,6 +63,14 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // check if the user is already logged in
+        if (request.getSession().getAttribute("user") != null) {
+            response.sendRedirect(request.getContextPath() + "/user");
+            return;
+        }
+
+
+        request.getSession().setAttribute("redirect", request.getParameter("redirect"));
         request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
     }
 
@@ -101,7 +109,14 @@ public class LoginServlet extends HttpServlet {
 
                 logger.info("User " + user.getUsername() + " logged in.");
 
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+                String redirect = (String) request.getSession().getAttribute("redirect");
+                if (redirect != null) {
+                    response.sendRedirect(getServletContext().getContextPath() + redirect);
+                    return;
+                }
+
+                //request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+                response.sendRedirect(getServletContext().getContextPath() + "/user");
             } else {
                 response.setStatus(401);
                 request.setAttribute("error_title", "Login failed");
