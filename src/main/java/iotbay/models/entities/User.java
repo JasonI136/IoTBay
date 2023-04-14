@@ -165,6 +165,7 @@ public class User implements Serializable {
         this.phoneNumber = rs.getInt("phone_number");
         this.isStaff = rs.getBoolean("is_staff");
         this.stripeCustomerId = rs.getString("stripe_customer_id");
+        this.registrationDate = rs.getTimestamp("registration_date");
     }
 
     /**
@@ -182,23 +183,11 @@ public class User implements Serializable {
      * @param paymentMethod The payment method to add.
      * @throws SQLException if there is an error adding the payment method
      */
-    public void addPaymentMethod(PaymentMethod paymentMethod) throws SQLException {
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO PAYMENT_METHOD (stripe_payment_method_id, user_id, PAYMENT_METHOD_TYPE, CARD_LAST_4) VALUES (?, ?, ?, ?)")) {
-                stmt.setString(1, paymentMethod.getStripePaymentMethodId());
-                stmt.setInt(2, this.id);
-                stmt.setString(3, paymentMethod.getPaymentMethodType());
-                stmt.setInt(4, paymentMethod.getCardLast4());
-
-                int affectedRows = stmt.executeUpdate();
-                if (affectedRows == 1) {
-                    logger.info("Payment method " + paymentMethod.getStripePaymentMethodId() + " was added to the database.");
-                    this.paymentMethods.add(paymentMethod);
-                }
-            }
-        }
-
+    public void addPaymentMethod(PaymentMethod paymentMethod) throws Exception {
+        this.paymentMethods.add(this.db.getPaymentMethods().addPaymentMethod(paymentMethod, this));
     }
+
+
 
     /**
      * Deletes a payment method associated with the user.
@@ -206,19 +195,8 @@ public class User implements Serializable {
      * @param paymentMethod The payment method to delete.
      * @throws SQLException if there is an error deleting the payment method
      */
-    public void deletePaymentMethod(PaymentMethod paymentMethod) throws SQLException {
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM PAYMENT_METHOD WHERE id = ?")) {
-                stmt.setInt(1, paymentMethod.getId());
-                stmt.executeUpdate();
-
-                int affectedRows = stmt.executeUpdate();
-                if (affectedRows == 1) {
-                    logger.info("Payment method " + paymentMethod.getId() + " was deleted from the database.");
-                    this.paymentMethods.remove(paymentMethod);
-                }
-            }
-        }
+    public void deletePaymentMethod(PaymentMethod paymentMethod) throws Exception {
+        this.db.getPaymentMethods().deletePaymentMethod(paymentMethod);
     }
 
     /**
@@ -229,57 +207,11 @@ public class User implements Serializable {
      * @throws Exception if there is an error getting the payment method
      */
     public PaymentMethod getPaymentMethod(int paymentMethodId) throws Exception {
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PAYMENT_METHOD WHERE id = ?")) {
-                stmt.setInt(1, paymentMethodId);
-                ResultSet rs = stmt.executeQuery();
-
-                if (rs.next()) {
-                    return new PaymentMethod(rs);
-                }
-            }
-        }
-
-        return null;
+        return this.db.getPaymentMethods().getPaymentMethod(paymentMethodId);
     }
 
-    /**
-     * Gets a payment method associated with the user by its stripe id.
-     * @param stripePaymentMethodId The stripe id of the payment method to get.
-     * @return The payment method as a PaymentMethod object.
-     * @throws Exception if there is an error getting the payment method
-     */
-    public PaymentMethod getPaymentMethodByStripeId(String stripePaymentMethodId) throws Exception {
-
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PAYMENT_METHOD WHERE stripe_payment_method_id = ?")) {
-                stmt.setString(1, stripePaymentMethodId);
-                ResultSet rs = stmt.executeQuery();
-
-                if (rs.next()) {
-                    return new PaymentMethod(rs);
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public ArrayList<Order> getOrders() throws Exception {
-        ArrayList<Order> orders = new ArrayList<>();
-
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CUSTOMER_ORDER WHERE user_id = ?")) {
-                stmt.setInt(1, this.id);
-                ResultSet rs = stmt.executeQuery();
-
-                while (rs.next()) {
-                    orders.add(new Order(rs, this.db));
-                }
-            }
-        }
-
-        return orders;
+    public List<Order> getOrders() throws Exception {
+       return this.db.getOrders().getOrders(this.id);
     }
 
 }

@@ -128,6 +128,23 @@ public class Orders {
         return orders;
     }
 
+    public List<Order> getOrders(int userId) throws Exception {
+        ArrayList<Order> orders = new ArrayList<>();
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CUSTOMER_ORDER WHERE user_id = ?")) {
+                stmt.setInt(1, userId);
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    orders.add(new Order(rs, this.db));
+                }
+            }
+        }
+
+        return orders;
+    }
+
     public void deleteOrder(int id) throws Exception {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
