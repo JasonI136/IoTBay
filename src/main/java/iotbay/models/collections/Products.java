@@ -96,6 +96,22 @@ public class Products {
         return productList;
     }
 
+    public int getProductCount() throws Exception {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM PRODUCT"
+            )) {
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    } else {
+                        throw new Exception("Could not retrieve product count");
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Retrieves a product from the database.
      *

@@ -17,6 +17,9 @@ import org.apache.logging.log4j.Logger;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -58,6 +61,20 @@ public class Users {
      */
     public Users(DatabaseManager db) {
         this.db = db;
+    }
+
+    public int getUserCount() throws Exception {
+        try (Connection conn = db.getDbConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM USER_ACCOUNT");
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                } else {
+                    throw new Exception("Failed to get user count");
+                }
+            }
+        }
+
     }
 
     /**
@@ -116,7 +133,7 @@ public class Users {
         byte[] encryptedPassword = encryptPassword(password, salt);
 
         if (MessageDigest.isEqual(encryptedPassword, Base64.getDecoder().decode(user.getPassword()))) {
-            if (user.getIsStaff()) {
+            if (user.isStaff()) {
                 System.out.println("THIS IS AN ADMIN"); // print to console if user is staff
             }
             return user;
@@ -206,8 +223,8 @@ public class Users {
             this.checkUserExists(user);
 
             try (PreparedStatement addUserQuery = conn.prepareStatement(
-                    "INSERT INTO USER_ACCOUNT (username, password, password_salt, first_name, last_name, email, address, phone_number, stripe_customer_id) "
-                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO USER_ACCOUNT (username, password, password_salt, first_name, last_name, email, address, phone_number, stripe_customer_id, is_staff, registration_date) "
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             )) {
                 addUserQuery.setString(1, user.getUsername());
                 addUserQuery.setString(2, user.getPassword());
@@ -218,6 +235,9 @@ public class Users {
                 addUserQuery.setString(7, user.getAddress());
                 addUserQuery.setInt(8, user.getPhoneNumber());
                 addUserQuery.setString(9, user.getStripeCustomerId());
+                addUserQuery.setBoolean(10, user.isStaff());
+                addUserQuery.setTimestamp(11, user.getRegistrationDate());
+
 
                 int affectedRows = addUserQuery.executeUpdate();
                 if (affectedRows == 1) {

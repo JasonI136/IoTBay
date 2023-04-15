@@ -4,8 +4,8 @@
     Author     : jasonmba
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,9 +22,14 @@
             <div class="right-top-bar flex-w h-full">
 
 
-                <c:if test = "${sessionScope.user != null}">
+                <c:if test="${sessionScope.user != null}">
+                    <c:if test="${sessionScope.user.staff == true}">
+                        <a href="${pageContext.request.contextPath}/admin" class="flex-c-m trans-04 p-lr-25">
+                            <b>Admin</b>
+                        </a>
+                    </c:if>
                     <a href="${pageContext.request.contextPath}/user" class="flex-c-m trans-04 p-lr-25">
-                        ${sessionScope.user.firstName} ${sessionScope.user.lastName}
+                            ${sessionScope.user.firstName} ${sessionScope.user.lastName}
                     </a>
                     <a onClick="logoutFunction()" href="#" class="flex-c-m trans-04 p-lr-25 js-logout">
                         Logout
@@ -32,8 +37,7 @@
                 </c:if>
 
 
-
-                <c:if test = "${sessionScope.user == null}">
+                <c:if test="${sessionScope.user == null}">
                     <a href="${pageContext.request.contextPath}/login" class="flex-c-m trans-04 p-lr-25">
                         Login
                     </a>

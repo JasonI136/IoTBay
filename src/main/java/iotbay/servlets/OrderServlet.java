@@ -5,6 +5,7 @@
 package iotbay.servlets;
 
 import com.stripe.model.PaymentIntent;
+import iotbay.database.DatabaseManager;
 import iotbay.models.collections.Invoices;
 import iotbay.models.collections.OrderLineItems;
 import iotbay.models.collections.Orders;
@@ -31,22 +32,12 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class OrderServlet extends HttpServlet {
 
-    Orders orders;
-
-    Payments payments;
-
-    Invoices invoices;
-
-    OrderLineItems orderLineItems;
+    DatabaseManager db;
 
     @Override
     public void init() throws ServletException {
         super.init();
-
-        orders = (Orders) getServletContext().getAttribute("orders");
-        payments = (Payments) getServletContext().getAttribute("payments");
-        invoices = (Invoices) getServletContext().getAttribute("invoices");
-        orderLineItems = (OrderLineItems) getServletContext().getAttribute("orderLineItems");
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
     }
 
 

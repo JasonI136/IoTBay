@@ -28,13 +28,10 @@ public class UserServlet extends HttpServlet {
 
     DatabaseManager db;
 
-    Users users;
-
     @Override
     public void init() throws ServletException {
         super.init();
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
-        this.users = (Users) getServletContext().getAttribute("users");
     }
 
     /**
@@ -50,29 +47,14 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
         String path = request.getPathInfo();
         // refresh the user
-        try {
-            Misc.refreshUser(request, users);
-        } catch (UserNotLoggedInException | UserNotFoundException e) {
-            response.sendRedirect(getServletContext().getContextPath() + "/login");
-            return;
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-
-        String redirect = request.getSession().getAttribute("redirect") != null ? (String) request.getSession().getAttribute("redirect") : null;
-
-        if (redirect != null) {
-            request.getSession().removeAttribute("redirect");
-            response.sendRedirect(getServletContext().getContextPath() + redirect);
-            return;
-        }
+        //if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
         if (path != null) {
             if (path.equals("/payments/add/success")) {
                 addPaymentMethodSuccess(request, response);
-                return;
             } else {
-                response.sendError(400);
+                request.getSession().setAttribute("message", "Page not found");
+                response.sendError(404);
             }
         } else {
             request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
@@ -92,15 +74,6 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        try {
-            Misc.refreshUser(request, users);
-        } catch (UserNotLoggedInException | UserNotFoundException e) {
-            response.sendRedirect(getServletContext().getContextPath() + "/login");
-            return;
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
 
         String path = request.getPathInfo();
 
@@ -149,13 +122,6 @@ public class UserServlet extends HttpServlet {
             stripePaymentMethod.detach();
             user.deletePaymentMethod(paymentMethod);
 
-            // refresh user as payment methods have changed
-            try {
-                Misc.refreshUser(request, users);
-            } catch (Exception e) {
-                throw new ServletException(e);
-            }
-
             response.sendRedirect(request.getContextPath() + "/user");
 
         } catch (Exception e) {
@@ -199,13 +165,6 @@ public class UserServlet extends HttpServlet {
                 paymentMethod.setPaymentMethodType(stripePaymentMethod.getCard().getBrand());
                 paymentMethod.setCardLast4(Integer.parseInt(stripePaymentMethod.getCard().getLast4()));
                 user.addPaymentMethod(paymentMethod);
-
-                // refresh user as payment methods have changed
-                try {
-                    Misc.refreshUser(request, users);
-                } catch (Exception e) {
-                    throw new ServletException(e);
-                }
 
                 response.sendRedirect(request.getContextPath() + "/user");
             } catch (Exception e) {

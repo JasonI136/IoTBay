@@ -64,7 +64,7 @@ public class LogoutServlet extends HttpServlet {
         User user = (User) request.getSession().getAttribute("user");
 
         if (user != null) {
-            request.getSession().invalidate();
+            request.getSession().setAttribute("user", null);
             logger.info("User " + user.getUsername() + " logged out");
         }
 

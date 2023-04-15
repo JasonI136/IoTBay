@@ -6,6 +6,12 @@ package iotbay.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import iotbay.annotations.GlobalServletField;
+import iotbay.models.collections.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,12 +21,40 @@ import java.sql.*;
 /**
  * @author cmesina
  */
+@Getter
 public class DatabaseManager {
 
 
     protected HikariDataSource dataSource;
 
     private static final Logger logger = LogManager.getLogger(DatabaseManager.class);
+
+    @GlobalServletField("users")
+    private Users users;
+
+    @GlobalServletField("products")
+    private Products products;
+
+    @GlobalServletField("categories")
+    private Categories categories;
+
+    @GlobalServletField("orders")
+    private Orders orders;
+
+    @GlobalServletField("orderLineItems")
+    private OrderLineItems orderLineItems;
+
+    @GlobalServletField("payments")
+    private Payments payments;
+
+    @GlobalServletField("invoices")
+    private Invoices invoices;
+
+    @GlobalServletField("shipments")
+    private Shipments shipments;
+
+    @GlobalServletField("paymentMethods")
+    private PaymentMethods paymentMethods;
 
 
     /**
@@ -69,6 +103,7 @@ public class DatabaseManager {
                             + "phone_number                     INT,"
                             + "is_staff                         BOOLEAN,"
                             + "stripe_customer_id               VARCHAR(256),"
+                            + "registration_date                TIMESTAMP,"
                             + "PRIMARY KEY (id)"
                             + ")";
 
@@ -296,6 +331,15 @@ public class DatabaseManager {
 
         }
 
+        this.users = new Users(this);
+        this.products = new Products(this);
+        this.categories = new Categories(this);
+        this.orders = new Orders(this);
+        this.invoices = new Invoices(this);
+        this.payments = new Payments(this);
+        this.shipments = new Shipments(this);
+        this.paymentMethods = new PaymentMethods(this);
+        this.orderLineItems = new OrderLineItems(this, this.orders, this.products);
 
         logger.info("Database initialized.");
 
@@ -324,4 +368,40 @@ public class DatabaseManager {
         }
 
     }
+
+//    public Users getUsers() {
+//        return users;
+//    }
+//
+//    public Products getProducts() {
+//        return products;
+//    }
+//
+//    public Categories getCategories() {
+//        return categories;
+//    }
+//
+//    public Orders getOrders() {
+//        return orders;
+//    }
+//
+//    public OrderLineItems getOrderLineItems() {
+//        return orderLineItems;
+//    }
+//
+//    public Payments getPaymentManager() {
+//        return payments;
+//    }
+//
+//    public Invoices getInvoices() {
+//        return invoices;
+//    }
+//
+//    public Shipments getShipmentManager() {
+//        return shipments;
+//    }
+//
+//    public PaymentMethods getPaymentMethodManager() {
+//        return paymentMethods;
+//    }
 }

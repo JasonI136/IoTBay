@@ -5,14 +5,14 @@
 package iotbay.models.entities;
 
 import iotbay.database.DatabaseManager;
+import lombok.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +21,7 @@ import java.util.List;
  *
  * @author cmesina
  */
+@Data
 public class User implements Serializable {
 
     /**
@@ -127,6 +128,8 @@ public class User implements Serializable {
      */
     private List<PaymentMethod> paymentMethods;
 
+    private Timestamp registrationDate;
+
     /**
      * User
      * <br>
@@ -162,6 +165,7 @@ public class User implements Serializable {
         this.phoneNumber = rs.getInt("phone_number");
         this.isStaff = rs.getBoolean("is_staff");
         this.stripeCustomerId = rs.getString("stripe_customer_id");
+        this.registrationDate = rs.getTimestamp("registration_date");
     }
 
     /**
@@ -174,244 +178,16 @@ public class User implements Serializable {
     }
 
     /**
-     * Gets the user's id.
-     *
-     * @return The user's id.
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Sets the user's id
-     *
-     * @param id
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
-     * Gets the user's username.
-     *
-     * @return The user's username.
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Sets the user's username.
-     *
-     * @param username The user's username.
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /**
-     * Gets the user's password.
-     *
-     * @return The user's password.
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets the user's password.
-     *
-     * @param password The user's password in salted hash form.
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    /**
-     * Gets the user's password salt.
-     *
-     * @return The user's password salt.
-     */
-    public String getPasswordSalt() {
-        return passwordSalt;
-    }
-
-    /**
-     * Sets the password salt.
-     *
-     * @param passwordSalt The user's password salt.
-     */
-    public void setPasswordSalt(String passwordSalt) {
-        this.passwordSalt = passwordSalt;
-    }
-
-    /**
-     * Gets the user's first name.
-     *
-     * @return The user's first name.
-     */
-    public String getFirstName() {
-        return firstName;
-    }
-
-    /**
-     * Sets the user's first name.
-     *
-     * @param firstName The user's first name.
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     * Gets the user's last name.
-     *
-     * @return The user's last name.
-     */
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * Sets the user's last name.
-     *
-     * @param lastName The user's last name.
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    /**
-     * Gets the user's email address.
-     *
-     * @return The user's email address.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * Sets the user's email address.
-     *
-     * @param email The user's email address.
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * Gets the user's address.
-     *
-     * @return The user's address.
-     */
-    public String getAddress() {
-        return address;
-    }
-
-    /**
-     * Sets the user's address.
-     *
-     * @param address The user's address.
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    /**
-     * Gets the user's phone number.
-     *
-     * @return The user's phone number.
-     */
-    public int getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    /**
-     * Sets the user's phone number.
-     *
-     * @param phoneNumber The user's phone number.
-     */
-    public void setPhoneNumber(int phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    /**
-     * Gets whether the user is a staff member.
-     *
-     * @return Whether the user is a staff member.
-     */
-    public boolean getIsStaff() {
-        return isStaff;
-    }
-
-    /**
-     * Sets whether the user is a staff member.
-     *
-     * @param isStaff Whether the user is a staff member.
-     */
-    public void setIsStaff(boolean isStaff) {
-        this.isStaff = isStaff;
-    }
-
-    /**
-     * Gets the user's stripe customer id.
-     *
-     * @return The user's stripe customer id.
-     */
-    public List<PaymentMethod> getPaymentMethods() {
-        return paymentMethods;
-    }
-
-    /**
-     * Sets the user's payment methods.
-     *
-     * @param paymentMethods The user's payment methods.
-     */
-    public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
-        this.paymentMethods = paymentMethods;
-    }
-
-    /**
-     * Gets the user's stripe customer id.
-     *
-     * @return The user's stripe customer id.
-     */
-    public String getStripeCustomerId() {
-        return stripeCustomerId;
-    }
-
-    /**
-     * Sets the user's stripe customer id.
-     *
-     * @param stripeCustomerId The user's stripe customer id.
-     */
-    public void setStripeCustomerId(String stripeCustomerId) {
-        this.stripeCustomerId = stripeCustomerId;
-    }
-
-    /**
      * Adds a payment method associated with the user.
      *
      * @param paymentMethod The payment method to add.
      * @throws SQLException if there is an error adding the payment method
      */
-    public void addPaymentMethod(PaymentMethod paymentMethod) throws SQLException {
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO PAYMENT_METHOD (stripe_payment_method_id, user_id, PAYMENT_METHOD_TYPE, CARD_LAST_4) VALUES (?, ?, ?, ?)")) {
-                stmt.setString(1, paymentMethod.getStripePaymentMethodId());
-                stmt.setInt(2, this.id);
-                stmt.setString(3, paymentMethod.getPaymentMethodType());
-                stmt.setInt(4, paymentMethod.getCardLast4());
-
-                int affectedRows = stmt.executeUpdate();
-                if (affectedRows == 1) {
-                    logger.info("Payment method " + paymentMethod.getStripePaymentMethodId() + " was added to the database.");
-                    this.paymentMethods.add(paymentMethod);
-                }
-            }
-        }
-
+    public void addPaymentMethod(PaymentMethod paymentMethod) throws Exception {
+        this.paymentMethods.add(this.db.getPaymentMethods().addPaymentMethod(paymentMethod, this));
     }
+
+
 
     /**
      * Deletes a payment method associated with the user.
@@ -419,19 +195,8 @@ public class User implements Serializable {
      * @param paymentMethod The payment method to delete.
      * @throws SQLException if there is an error deleting the payment method
      */
-    public void deletePaymentMethod(PaymentMethod paymentMethod) throws SQLException {
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM PAYMENT_METHOD WHERE id = ?")) {
-                stmt.setInt(1, paymentMethod.getId());
-                stmt.executeUpdate();
-
-                int affectedRows = stmt.executeUpdate();
-                if (affectedRows == 1) {
-                    logger.info("Payment method " + paymentMethod.getId() + " was deleted from the database.");
-                    this.paymentMethods.remove(paymentMethod);
-                }
-            }
-        }
+    public void deletePaymentMethod(PaymentMethod paymentMethod) throws Exception {
+        this.db.getPaymentMethods().deletePaymentMethod(paymentMethod);
     }
 
     /**
@@ -442,57 +207,11 @@ public class User implements Serializable {
      * @throws Exception if there is an error getting the payment method
      */
     public PaymentMethod getPaymentMethod(int paymentMethodId) throws Exception {
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PAYMENT_METHOD WHERE id = ?")) {
-                stmt.setInt(1, paymentMethodId);
-                ResultSet rs = stmt.executeQuery();
-
-                if (rs.next()) {
-                    return new PaymentMethod(rs);
-                }
-            }
-        }
-
-        return null;
+        return this.db.getPaymentMethods().getPaymentMethod(paymentMethodId);
     }
 
-    /**
-     * Gets a payment method associated with the user by its stripe id.
-     * @param stripePaymentMethodId The stripe id of the payment method to get.
-     * @return The payment method as a PaymentMethod object.
-     * @throws Exception if there is an error getting the payment method
-     */
-    public PaymentMethod getPaymentMethodByStripeId(String stripePaymentMethodId) throws Exception {
-
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PAYMENT_METHOD WHERE stripe_payment_method_id = ?")) {
-                stmt.setString(1, stripePaymentMethodId);
-                ResultSet rs = stmt.executeQuery();
-
-                if (rs.next()) {
-                    return new PaymentMethod(rs);
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public ArrayList<Order> getOrders() throws Exception {
-        ArrayList<Order> orders = new ArrayList<>();
-
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CUSTOMER_ORDER WHERE user_id = ?")) {
-                stmt.setInt(1, this.id);
-                ResultSet rs = stmt.executeQuery();
-
-                while (rs.next()) {
-                    orders.add(new Order(rs, this.db));
-                }
-            }
-        }
-
-        return orders;
+    public List<Order> getOrders() throws Exception {
+       return this.db.getOrders().getOrders(this.id);
     }
 
 }

@@ -88,10 +88,6 @@
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "${pageContext.request.contextPath}/user";
-                    }
                 });
             </script>
         </c:if>

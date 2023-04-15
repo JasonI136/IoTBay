@@ -5,6 +5,7 @@
 package iotbay.models.entities;
 
 import iotbay.util.Misc;
+import lombok.*;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
@@ -14,6 +15,7 @@ import java.sql.ResultSet;
  *
  * @author cmesina
  */
+@Data
 public class Product implements Serializable {
     /**
      * The product ID
@@ -108,156 +110,12 @@ public class Product implements Serializable {
 
 
     /**
-     * Get the product category name
-     *
-     * @return The product category name
-     */
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    /**
      * Get the product category name without spaces
      *
      * @return The product category name without spaces
      */
     public String getCategoryNameNoSpace() {
         return this.getCategoryName().replaceAll("\\s", "").replaceAll("/", "");
-    }
-
-    /**
-     * Set the product category name
-     *
-     * @param categoryName The product category name
-     */
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    /**
-     * Get the product image URL
-     *
-     * @return The product image URL
-     */
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    /**
-     * Set the product image URL
-     *
-     * @param imageURL The product image URL
-     */
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
-    }
-
-    /**
-     * Get the product category ID
-     *
-     * @return The product category ID
-     */
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    /**
-     * Set the product category ID
-     *
-     * @param categoryId The product category ID
-     */
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    /**
-     * Get the product ID
-     *
-     * @return The product ID
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Set the product ID
-     *
-     * @param id The product ID
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
-     * Get the product name
-     *
-     * @return The product name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set the product name
-     *
-     * @param name The product name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Get the product description
-     *
-     * @return The product description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Set the product description
-     *
-     * @param description The product description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * Get the product price
-     *
-     * @return The product price
-     */
-    public double getPrice() {
-        return price;
-    }
-
-    /**
-     * Set the product price
-     *
-     * @param price The product price
-     */
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    /**
-     * Get the product quantity
-     *
-     * @return The product quantity
-     */
-    public int getQuantity() {
-        return quantity;
-    }
-
-    /**
-     * Set the product quantity
-     *
-     * @param quantity The product quantity
-     */
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
 }

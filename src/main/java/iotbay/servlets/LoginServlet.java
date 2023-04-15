@@ -4,6 +4,7 @@
  */
 package iotbay.servlets;
 
+import iotbay.database.DatabaseManager;
 import iotbay.models.collections.Users;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.entities.User;
@@ -24,6 +25,13 @@ import java.io.PrintWriter;
 public class LoginServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(LoginServlet.class);
+    DatabaseManager db;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        db = (DatabaseManager) getServletContext().getAttribute("db");
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -63,6 +71,14 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // check if the user is already logged in
+        if (request.getSession().getAttribute("user") != null) {
+            response.sendRedirect(request.getContextPath() + "/user");
+            return;
+        }
+
+
+        //request.getSession().setAttribute("login", request.getParameter("redirect"));
         request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
     }
 
@@ -78,8 +94,6 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Users users = (Users) getServletContext().getAttribute("users");
-
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -93,7 +107,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         try {
-            User user = users.authenticateUser(username, password);
+            User user = this.db.getUsers().authenticateUser(username, password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
                 request.setAttribute("success_title", "Login successful");
@@ -101,7 +115,14 @@ public class LoginServlet extends HttpServlet {
 
                 logger.info("User " + user.getUsername() + " logged in.");
 
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+                String redirect = (String) request.getSession().getAttribute("loginRedirect");
+                if (redirect != null) {
+                    response.sendRedirect(redirect);
+                    return;
+                }
+
+                //request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+                response.sendRedirect(getServletContext().getContextPath() + "/user");
             } else {
                 response.setStatus(401);
                 request.setAttribute("error_title", "Login failed");

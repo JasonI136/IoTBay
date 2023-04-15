@@ -27,17 +27,11 @@ public class ShopServlet extends HttpServlet {
     
     DatabaseManager db;
 
-    Products products;
-
-    Categories categories;
-
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
         
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
-        this.products = (Products) getServletContext().getAttribute("products");
-        this.categories = (Categories) getServletContext().getAttribute("categories");
     }
     
     
@@ -82,14 +76,14 @@ public class ShopServlet extends HttpServlet {
             throws ServletException, IOException {
         List<Product> products;
         try {
-            products = this.products.getProducts(100, 0, false);
+            products = this.db.getProducts().getProducts(100, 0, false);
         } catch (SQLException e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }
         
         List<Category> categories;
         try {
-            categories = this.categories.getCategories();
+            categories = this.db.getCategories().getCategories();
         } catch (Exception e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }

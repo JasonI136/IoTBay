@@ -1,12 +1,14 @@
 package iotbay.models.entities;
 
 import iotbay.database.DatabaseManager;
+import lombok.*;
 
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+@Data
 public class Shipment implements Serializable {
 //"CREATE TABLE SHIPMENT ("
 //                            + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
@@ -43,62 +45,6 @@ public class Shipment implements Serializable {
         this.trackingNumber = rs.getString("tracking_number");
         this.status = rs.getString("status");
         this.db = db;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getDispatchDate() {
-        return dispatchDate;
-    }
-
-    public void setDispatchDate(String dispatchDate) {
-        this.dispatchDate = dispatchDate;
-    }
-
-    public String getDeliveryDate() {
-        return deliveryDate;
-    }
-
-    public void setDeliveryDate(String deliveryDate) {
-        this.deliveryDate = deliveryDate;
-    }
-
-    public String getCourierName() {
-        return courierName;
-    }
-
-    public void setCourierName(String courierName) {
-        this.courierName = courierName;
-    }
-
-    public String getTrackingNumber() {
-        return trackingNumber;
-    }
-
-    public void setTrackingNumber(String trackingNumber) {
-        this.trackingNumber = trackingNumber;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public void update() throws Exception {
