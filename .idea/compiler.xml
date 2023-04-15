@@ -16,7 +16,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="IoTBay" options="-endorseddirs $PROJECT_DIR$/target/endorsed" />
+      <module name="IoTBay" options="" />
       <module name="IoTBay-maven" options="-endorseddirs $PROJECT_DIR$/target/endorsed" />
     </option>
   </component>
