@@ -53,6 +53,9 @@ public class DatabaseManager {
     @GlobalServletField("paymentMethods")
     private PaymentMethods paymentMethods;
 
+    @GlobalServletField("logs")
+    private Logs logs;
+
 
     /**
      * Creates a new instance of DatabaseManager
@@ -328,6 +331,33 @@ public class DatabaseManager {
 
         }
 
+//        <JDBC name="iotbay_logs" tableName="EVENT_LOG">
+//            <ConnectionFactory class="iotbay.database.StaticDatabaseManager" method="getConnection"/>
+//            <Column name="ID" pattern="%u"/>
+//            <Column name="TIMESTAMP" pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}"/>
+//            <Column name="LEVEL" pattern="%level"/>
+//            <Column name="MESSAGE" pattern="%msg"/>
+//        </JDBC>
+
+        if (!this.tableExists("EVENT_LOG")) {
+            logger.warn("Creating EVENT_LOG table");
+            String createTableQuery =
+                    "CREATE TABLE EVENT_LOG ("
+                            + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+                            + "timestamp                        TIMESTAMP,"
+                            + "level                            VARCHAR(256),"
+                            + "message                          VARCHAR(256),"
+                            + "PRIMARY KEY (id)"
+                            + ")";
+
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
+        }
+
         this.users = new Users(this);
         this.products = new Products(this);
         this.categories = new Categories(this);
@@ -337,6 +367,7 @@ public class DatabaseManager {
         this.shipments = new Shipments(this);
         this.paymentMethods = new PaymentMethods(this);
         this.orderLineItems = new OrderLineItems(this, this.orders, this.products);
+        this.logs = new Logs(this);
 
         logger.info("Database initialized.");
 

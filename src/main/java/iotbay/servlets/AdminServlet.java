@@ -2,6 +2,7 @@ package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
 import iotbay.models.entities.Category;
+import iotbay.models.entities.Log;
 import iotbay.models.entities.Order;
 import iotbay.models.entities.Product;
 
@@ -31,11 +32,27 @@ public class AdminServlet extends HttpServlet {
             case "/orders":
                 adminOrders(request, response);
                 return;
+            case "/logs":
+                adminLogs(request, response);
+                return;
             default:
                 request.getSession().setAttribute("message", "Page not found");
                 response.sendError(404);
                 return;
         }
+    }
+
+    private void adminLogs(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        List<Log> logs;
+        try {
+            logs = this.db.getLogs().getLogs(100, 0);
+        } catch (Exception e) {
+            throw new ServletException("Failed to query database: " + e.getMessage());
+        }
+
+        request.setAttribute("logs", logs);
+        request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-logs.jsp").forward(request, response);
     }
 
     private void adminIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 public class LogoutServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(MainServlet.class);
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -66,6 +67,7 @@ public class LogoutServlet extends HttpServlet {
         if (user != null) {
             request.getSession().setAttribute("user", null);
             logger.info("User " + user.getUsername() + " logged out");
+            iotbayLogger.info("User " + user.getUsername() + " logged out");
         }
 
         response.sendRedirect(getServletContext().getContextPath());

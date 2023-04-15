@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 public class LoginServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(LoginServlet.class);
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
     DatabaseManager db;
 
     @Override
@@ -114,6 +115,7 @@ public class LoginServlet extends HttpServlet {
                 request.setAttribute("success_msg", "Welcome " + user.getFirstName() + " " + user.getLastName() + "!");
 
                 logger.info("User " + user.getUsername() + " logged in.");
+                iotbayLogger.info("User " + user.getUsername() + " logged in.");
 
                 String redirect = (String) request.getSession().getAttribute("loginRedirect");
                 if (redirect != null) {
@@ -124,6 +126,8 @@ public class LoginServlet extends HttpServlet {
                 //request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
                 response.sendRedirect(getServletContext().getContextPath() + "/user");
             } else {
+                logger.info("User " + username + " failed to log in.");
+                iotbayLogger.info("User " + username + " failed to log in.");
                 response.setStatus(401);
                 request.setAttribute("error_title", "Login failed");
                 request.setAttribute("error_msg", "The username or password is incorrect.");
@@ -132,6 +136,8 @@ public class LoginServlet extends HttpServlet {
             }
         } catch (Exception e) {
             if (e instanceof UserNotFoundException) {
+                logger.info("User " + username + " failed to log in as the account does not exist.");
+                iotbayLogger.info("User " + username + " failed to log in as the account does not exist.");
                 response.setStatus(404);
                 request.setAttribute("error_title", "Account not found");
                 request.setAttribute("error_msg", "The account does not exist.");

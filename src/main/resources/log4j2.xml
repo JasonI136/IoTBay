@@ -7,6 +7,12 @@
         <File name="debug_file" fileName="logs/iotbay.log" append="false">
             <PatternLayout pattern="%d{HH-mm-ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
+        <JDBC name="iotbay_logs" tableName="EVENT_LOG">
+            <ConnectionFactory class="iotbay.database.StaticDatabaseManager" method="getConnection"/>
+            <Column name="TIMESTAMP" pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}" isUnicode="false"/>
+            <Column name="LEVEL" pattern="%level" isUnicode="false"/>
+            <Column name="MESSAGE" pattern="%msg" isUnicode="false"/>
+        </JDBC>
     </Appenders>
     <Loggers>
         <!--    <Logger name="com.zaxxer.hikari" level="trace">-->
@@ -16,5 +22,8 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="debug_file"/>
         </Root>
+        <Logger name="iotbayLogger" level="trace">
+            <AppenderRef ref="iotbay_logs"/>
+        </Logger>
     </Loggers>
 </Configuration>

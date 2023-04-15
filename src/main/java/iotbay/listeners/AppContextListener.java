@@ -3,6 +3,7 @@ package iotbay.listeners;
 import com.stripe.Stripe;
 import iotbay.annotations.GlobalServletField;
 import iotbay.database.DatabaseManager;
+import iotbay.database.StaticDatabaseManager;
 import iotbay.jobs.HouseKeeper;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
@@ -65,6 +66,8 @@ public class AppContextListener implements ServletContextListener {
                     appConfig.getProperty("database.password"),
                     appConfig.getProperty("database.name")
             );
+
+            StaticDatabaseManager.setInstance(db);
 
             for (Field dbField : db.getClass().getDeclaredFields()) {
                 if (dbField.isAnnotationPresent(GlobalServletField.class)) {

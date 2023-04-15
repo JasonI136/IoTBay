@@ -3,9 +3,13 @@ package iotbay.filters;
 import iotbay.database.DatabaseManager;
 import iotbay.models.entities.User;
 
+import iotbay.servlets.LoginServlet;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +17,9 @@ import java.util.List;
 public class AuthFilter implements Filter {
 
     DatabaseManager db;
+
+    private static final Logger logger = LogManager.getLogger(AuthFilter.class);
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
 
     private final List<ProtectedPath> protectedPaths = Arrays.asList(
             new ProtectedPath("/admin", true),
@@ -60,6 +67,8 @@ public class AuthFilter implements Filter {
                     return;
                 } else {
                     // If not, send 403
+                    logger.warn("User " + user.getUsername() + " tried to access " + reqPath + " but was not authorized");
+                    iotbayLogger.warn("User " + user.getUsername() + " tried to access " + reqPath + " but was not authorized");
                     req.getSession().setAttribute("message", "You are not authorized to view this page");
                     res.sendError(403);
                     return;

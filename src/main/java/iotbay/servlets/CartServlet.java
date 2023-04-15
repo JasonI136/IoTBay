@@ -37,6 +37,9 @@ import java.util.stream.Collectors;
 public class CartServlet extends HttpServlet {
 
     DatabaseManager db;
+
+    private static final Logger logger = LogManager.getLogger(CartServlet.class);
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
     /**
      * Initalises the servlet. Gets the database manager from the servlet context.
      *
@@ -164,6 +167,9 @@ public class CartServlet extends HttpServlet {
 
             newOrder.setStripePaymentIntentId(paymentIntent.getId());
             newOrder.update();
+
+            iotbayLogger.info("User " + user.getId() + " has initiated payment for new order " + newOrder.getId() + ".");
+            logger.info("User " + user.getId() + " has initiated payment for new order " + newOrder.getId() + ".");
 
             // send payment intent to client
             response.setContentType("application/json");

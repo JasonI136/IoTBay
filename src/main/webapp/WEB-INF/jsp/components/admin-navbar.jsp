@@ -47,6 +47,10 @@
                     <li class="${requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/users') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/admin/users">User Management</a>
                     </li>
+
+                    <li class="${requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/admin/logs') ? 'active-menu' : ''}">
+                        <a href="${pageContext.request.contextPath}/admin/logs">Logs</a>
+                    </li>
                 </ul>
             </div>	
 

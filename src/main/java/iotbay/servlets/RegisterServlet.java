@@ -29,6 +29,8 @@ public class RegisterServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(RegisterServlet.class);
 
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
+
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
@@ -133,6 +135,8 @@ public class RegisterServlet extends HttpServlet {
             this.db.getUsers().registerUser(newUser);
         } catch (Exception e) {
             if (e instanceof UserExistsException) {
+                logger.error("User " + username + " already exists.");
+                iotbayLogger.error("User with username " + username + " attempted to register but already exists.");
                 request.setAttribute("error_title", "User already exists");
                 request.setAttribute("error_msg", e.getMessage());
                 request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
@@ -142,6 +146,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         logger.info("User " + username + " has been registered.");
+        iotbayLogger.info("User " + username + " has been registered.");
 
         request.setAttribute("success_title", "Registration successful");
         request.setAttribute("success_msg", "You have successfully registered. Please login to continue.");

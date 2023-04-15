@@ -4,6 +4,7 @@ import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
 import iotbay.models.entities.Order;
 import iotbay.models.enums.OrderStatus;
+import iotbay.servlets.LoginServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.Job;
@@ -22,6 +23,7 @@ public class HouseKeeper implements Job {
     DatabaseManager db;
 
     private static final Logger logger = LogManager.getLogger(HouseKeeper.class);
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -59,6 +61,7 @@ public class HouseKeeper implements Job {
             // check if payment intent is paid
             if (paymentIntent.getStatus().equals("succeeded")) {
                 logger.info("Order {} has been paid for. Updating status to processing.", order.getId());
+                iotbayLogger.info("Received payment for order number {}. Updating status to processing.", order.getId());
                 db.getPayments().addPayment(
                         order.getId(),
                         new Timestamp(paymentIntent.getCreated()),
@@ -104,6 +107,7 @@ public class HouseKeeper implements Job {
 
             if (affectedRows > 0) {
                 logger.info("Deleted {} old pending orders", affectedRows);
+                iotbayLogger.info("Deleted {} old pending orders", affectedRows);
             }
         }
 

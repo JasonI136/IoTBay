@@ -19,6 +19,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
@@ -28,6 +30,9 @@ import java.io.IOException;
 public class UserServlet extends HttpServlet {
 
     DatabaseManager db;
+
+    private static final Logger logger = LogManager.getLogger(UserServlet.class);
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
 
     @Override
     public void init() throws ServletException {
@@ -124,6 +129,9 @@ public class UserServlet extends HttpServlet {
             stripePaymentMethod.detach();
             user.deletePaymentMethod(paymentMethod);
 
+            logger.info("User " + user.getId() + " removed a payment method");
+            iotbayLogger.info("User " + user.getId() + " removed a payment method");
+
             response.sendRedirect(request.getContextPath() + "/user");
 
         } catch (Exception e) {
@@ -167,6 +175,9 @@ public class UserServlet extends HttpServlet {
                 paymentMethod.setPaymentMethodType(stripePaymentMethod.getCard().getBrand());
                 paymentMethod.setCardLast4(Integer.parseInt(stripePaymentMethod.getCard().getLast4()));
                 user.addPaymentMethod(paymentMethod);
+
+                logger.info("User " + user.getId() + " added a new payment method");
+                iotbayLogger.info("User " + user.getId() + " added a new payment method");
 
                 response.sendRedirect(request.getContextPath() + "/user");
             } catch (Exception e) {
