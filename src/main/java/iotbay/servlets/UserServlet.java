@@ -19,6 +19,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 /**
@@ -45,22 +46,23 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getPathInfo();
+        String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
         // refresh the user
         //if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
-        if (path != null) {
-            if (path.equals("/payments/add/success")) {
+        switch (path) {
+            case "/payments/add/success":
                 addPaymentMethodSuccess(request, response);
-            } else {
-                request.getSession().setAttribute("message", "Page not found");
+                return;
+            case "/payments/add/cancel":
+                response.sendRedirect( getServletContext().getContextPath() + "/user");
+                return;
+            case "/":
+                request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
+                return;
+            default:
                 response.sendError(404);
-            }
-        } else {
-            request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
         }
-
-
     }
 
     /**

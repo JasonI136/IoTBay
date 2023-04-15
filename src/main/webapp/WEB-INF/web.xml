@@ -5,6 +5,10 @@
         <servlet-class>iotbay.servlets.MainServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>OrderTrackingServlet</servlet-name>
+        <servlet-class>iotbay.servlets.OrderTrackingServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>RegisterServlet</servlet-name>
         <servlet-class>iotbay.servlets.RegisterServlet</servlet-class>
     </servlet>
@@ -114,6 +118,10 @@
     <servlet-mapping>
         <servlet-name>AdminServlet</servlet-name>
         <url-pattern>/admin/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderTrackingServlet</servlet-name>
+        <url-pattern>/orderTracking</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -5,8 +5,8 @@ import iotbay.models.entities.Category;
 import iotbay.models.entities.Order;
 import iotbay.models.entities.Product;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;

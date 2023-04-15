@@ -1,12 +1,6 @@
 import iotbay.database.DatabaseManager;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.ejb.DependsOn;
-import javax.xml.crypto.Data;
-import java.io.IOException;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;

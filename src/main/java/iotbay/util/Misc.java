@@ -1,14 +1,5 @@
 package iotbay.util;
 
-import iotbay.exceptions.UserNotFoundException;
-import iotbay.exceptions.UserNotLoggedInException;
-import iotbay.models.collections.Users;
-import iotbay.models.entities.User;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

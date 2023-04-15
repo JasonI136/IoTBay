@@ -82,7 +82,6 @@ public class PaymentMethods {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM PAYMENT_METHOD WHERE id = ?")) {
                 stmt.setInt(1, paymentMethod.getId());
-                stmt.executeUpdate();
 
                 int affectedRows = stmt.executeUpdate();
                 if (affectedRows == 1) {
