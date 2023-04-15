@@ -47,7 +47,7 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
         String path = request.getPathInfo();
         // refresh the user
-        if (Misc.refreshUser(request, response, this.db.getUsers())) return;
+        //if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
         if (path != null) {
             if (path.equals("/payments/add/success")) {
@@ -74,8 +74,6 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
         String path = request.getPathInfo();
 
@@ -124,9 +122,6 @@ public class UserServlet extends HttpServlet {
             stripePaymentMethod.detach();
             user.deletePaymentMethod(paymentMethod);
 
-            // refresh user as payment methods have changed
-            if (Misc.refreshUser(request, response, this.db.getUsers())) return;
-
             response.sendRedirect(request.getContextPath() + "/user");
 
         } catch (Exception e) {
@@ -170,9 +165,6 @@ public class UserServlet extends HttpServlet {
                 paymentMethod.setPaymentMethodType(stripePaymentMethod.getCard().getBrand());
                 paymentMethod.setCardLast4(Integer.parseInt(stripePaymentMethod.getCard().getLast4()));
                 user.addPaymentMethod(paymentMethod);
-
-                // refresh user as payment methods have changed
-                if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
                 response.sendRedirect(request.getContextPath() + "/user");
             } catch (Exception e) {

@@ -67,7 +67,6 @@ public class CartServlet extends HttpServlet {
 
         if (path != null) {
             if (path.equals("/checkout")) {
-                if (Misc.refreshUser(request, response, this.db.getUsers(), "/cart/checkout")) return;
                 request.setAttribute("stripe_pk", ((Properties) getServletContext().getAttribute("secrets")).getProperty("stripe.api.publishable.key"));
                 request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
             } else {

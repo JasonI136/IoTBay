@@ -78,7 +78,7 @@ public class LoginServlet extends HttpServlet {
         }
 
 
-        request.getSession().setAttribute("redirect", request.getParameter("redirect"));
+        //request.getSession().setAttribute("login", request.getParameter("redirect"));
         request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
     }
 
@@ -115,9 +115,9 @@ public class LoginServlet extends HttpServlet {
 
                 logger.info("User " + user.getUsername() + " logged in.");
 
-                String redirect = (String) request.getSession().getAttribute("redirect");
+                String redirect = (String) request.getSession().getAttribute("loginRedirect");
                 if (redirect != null) {
-                    response.sendRedirect(getServletContext().getContextPath() + redirect);
+                    response.sendRedirect(redirect);
                     return;
                 }
 

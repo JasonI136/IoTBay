@@ -45,30 +45,28 @@
         <servlet-class>iotbay.servlets.OrderServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AdminIndexServlet</servlet-name>
-        <servlet-class>iotbay.servlets.AdminIndexServlet</servlet-class>
+        <servlet-name>AdminServlet</servlet-name>
+        <servlet-class>iotbay.servlets.AdminServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>AdminInventoryServlet</servlet-name>
-        <servlet-class>iotbay.servlets.AdminInventoryServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminOrdersServlet</servlet-name>
-        <servlet-class>iotbay.servlets.AdminOrdersServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminUsersServlet</servlet-name>
-        <servlet-class>iotbay.servlets.AdminUsersServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>OrderTrackingServlet</servlet-name>
-        <servlet-class>iotbay.servlets.OrderTrackingServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>InitServlet</servlet-name>
-        <servlet-class>iotbay.servlets.InitServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>iotbay.filters.AuthFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>MainFilter</filter-name>
+        <filter-class>iotbay.filters.MainFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>MainFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <listener>
+        <listener-class>iotbay.listeners.AppContextListener</listener-class>
+    </listener>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/</url-pattern>
@@ -114,24 +112,8 @@
         <url-pattern>/order/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AdminIndexServlet</servlet-name>
-        <url-pattern>/admin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminInventoryServlet</servlet-name>
-        <url-pattern>/admin/inventory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminOrdersServlet</servlet-name>
-        <url-pattern>/admin/orders</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminUsersServlet</servlet-name>
-        <url-pattern>/admin/users</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>OrderTrackingServlet</servlet-name>
-        <url-pattern>/orderTracking</url-pattern>
+        <servlet-name>AdminServlet</servlet-name>
+        <url-pattern>/admin/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
