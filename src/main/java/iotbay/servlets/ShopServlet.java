@@ -74,9 +74,12 @@ public class ShopServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int limit = request.getParameter("limit") != null ? Integer.parseInt(request.getParameter("limit")) : 10;
+        int offset = request.getParameter("offset") != null ? Integer.parseInt(request.getParameter("offset")) : 0;
+
         List<Product> products;
         try {
-            products = this.db.getProducts().getProducts(100, 0, false);
+            products = this.db.getProducts().getProducts(limit, offset, false);
         } catch (SQLException e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }
@@ -87,10 +90,36 @@ public class ShopServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }
+
+        int totalProducts = 0;
+        try {
+            totalProducts = this.db.getProducts().getProductCount();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        int numberOfPages = (int) Math.ceil((double) totalProducts / limit);
+        int currentPage = (int) Math.ceil((double) offset / limit) + 1;
+        int lastOffset = (numberOfPages - 1) * limit;
+        int nextOffset = 0;
+        int prevOffset = offset - limit;
+        // If we have less products than the limit, we are at the end of the list
+        if (products.size() < limit) {
+            nextOffset = -1;
+        } else {
+            // Otherwise, we can calculate the next offset
+            nextOffset = offset + limit;
+        }
         
         
         request.setAttribute("products", products);
         request.setAttribute("categories", categories);
+        request.setAttribute("limit", limit);
+        request.setAttribute("nextOffset", nextOffset);
+        request.setAttribute("prevOffset", prevOffset);
+        request.setAttribute("numberOfPages", numberOfPages);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("lastOffset", lastOffset);
         request.getRequestDispatcher("/WEB-INF/jsp/products.jsp").forward(request, response);
     }
 

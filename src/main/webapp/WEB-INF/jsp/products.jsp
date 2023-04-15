@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -128,6 +129,126 @@
                     </c:forEach>
 
                 </div>
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <%-- Handle the << and previous buttons.   --%>
+                        <c:choose>
+                            <%-- If the current page is the first page, disable the << and previous buttons. --%>
+                            <c:when test="${currentPage == 1}">
+                                <li class="page-item disabled"><a class="page-link" href="#"><<</a></li>
+                                <li class="page-item disabled"><a class="page-link" href="#">&lt;</a></li>
+                            </c:when>
+                            <%-- If the current page is not the first page, enable the << and previous buttons. --%>
+                            <c:otherwise>
+                                <li><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=0"><<</a></li>
+                                <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${prevOffset}">&lt;</a></li>
+                            </c:otherwise>
+                        </c:choose>
+
+                        <%-- Handle the page numbers. --%>
+                        <c:choose>
+                            <%-- If the current page is less than or equal to 2, display the first 5 pages. --%>
+                            <c:when test="${currentPage <= 2}">
+                                <c:choose>
+                                    <%-- If the number of pages is less than or equal to 5, display all the pages. --%>
+                                    <c:when test="${numberOfPages <= 5}">
+                                        <c:forEach var="i" begin="1" end="${numberOfPages}">
+                                            <c:choose>
+                                                <%-- If the current page is the same as the page number, highlight the page number. --%>
+                                                <c:when test="${i == currentPage}">
+                                                    <li class="page-item active"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                                </c:when>
+                                                <%-- If the current page is not the same as the page number, display the page number. --%>
+                                                <c:otherwise>
+                                                    <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </c:when>
+                                    <%-- If the number of pages is greater than 5, display the first 5 pages. --%>
+                                    <c:otherwise>
+                                        <c:forEach var="i" begin="1" end="5">
+                                            <c:choose>
+                                                <%-- If the current page is the same as the page number, highlight the page number. --%>
+                                                <c:when test="${i == currentPage}">
+                                                    <li class="page-item active"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                                </c:when>
+                                                <%-- If the current page is not the same as the page number, display the page number. --%>
+                                                <c:otherwise>
+                                                    <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:when>
+                            <%-- If we are near the end of the pages, display the last 5 pages. --%>
+                            <c:when test="${currentPage >= numberOfPages - 2}">
+                                <c:choose>
+                                    <%-- If the number of pages is less than or equal to 5, display all the pages. --%>
+                                    <c:when test="${numberOfPages <= 5}">
+                                        <c:forEach var="i" begin="1" end="${numberOfPages}">
+                                            <c:choose>
+                                                <%-- If the current page is the same as the page number, highlight the page number. --%>
+                                                <c:when test="${i == currentPage}">
+                                                    <li class="page-item active"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                                </c:when>
+                                                <%-- If the current page is not the same as the page number, display the page number. --%>
+                                                <c:otherwise>
+                                                    <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </c:when>
+                                    <%-- If the number of pages is greater than 5, display the last 5 pages. --%>
+                                    <c:otherwise>
+                                        <c:forEach var="i" begin="${numberOfPages - 4}" end="${numberOfPages}">
+                                            <c:choose>
+                                                <%-- If the current page is the same as the page number, highlight the page number. --%>
+                                                <c:when test="${i == currentPage}">
+                                                    <li class="page-item active"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                                </c:when>
+                                                <%-- If the current page is not the same as the page number, display the page number. --%>
+                                                <c:otherwise>
+                                                    <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:when>
+                            <%-- If we are greater than 2 pages, display the current page as the middle button --%>
+                            <c:when test="${currentPage > 2}">
+                                <%-- Display the last 2 pages before the current page. --%>
+                                 <c:forEach var="i" begin="${currentPage - 2}" end="${currentPage - 1}">
+                                    <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                </c:forEach>
+                                <%-- Display the current page. --%>
+                                <li class="page-item active"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(currentPage - 1) * limit}">${currentPage}</a></li>
+                                <%-- Display the next 2 pages after the current page. --%>
+                                <c:forEach var="i" begin="${currentPage + 1}" end="${currentPage + 2}">
+                                    <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}">${i}</a></li>
+                                </c:forEach>
+                            </c:when>
+
+                        </c:choose>
+
+                        <%-- Display the next and last buttons. --%>
+                        <c:choose>
+                            <%-- If the current page is the last page, disable the next and last buttons. --%>
+                            <c:when test="${currentPage == numberOfPages}">
+                                <li class="page-item disabled"><a class="page-link" href="#">&gt;</a></li>
+                                <li class="page-item disabled"><a class="page-link" href="#">>></a></li>
+                            </c:when>
+                            <%-- If the current page is not the last page, display the next and last buttons. --%>
+                            <c:otherwise>
+                                <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${nextOffset}">&gt;</a></li>
+                                <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${lastOffset}">>></a></li>
+                            </c:otherwise>
+                        </c:choose>
+                    </ul>
+                </nav>
 
 
             </div>
