@@ -79,20 +79,6 @@ public class Products {
             }
         }
 
-
-//        try (PreparedStatement stmt = this.db.prepareStatement(
-//                query,
-//                offset,
-//                limit
-//        )) {
-//
-//            try (ResultSet rs = stmt.executeQuery()) {
-//                while (rs.next()) {
-//                    Product product = new Product(rs);
-//                    productList.add(product);
-//                }
-//            }
-//        }
         return productList;
     }
 
@@ -101,6 +87,23 @@ public class Products {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT COUNT(*) FROM PRODUCT"
             )) {
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    } else {
+                        throw new Exception("Could not retrieve product count");
+                    }
+                }
+            }
+        }
+    }
+
+    public int getProductCount(String productName) throws Exception {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM PRODUCT WHERE name LIKE LOWER(?)"
+            )) {
+                stmt.setString(1, "%" + productName + "%");
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         return rs.getInt(1);
@@ -145,5 +148,35 @@ public class Products {
             }
         }
 
+    }
+
+    public List<Product> searchProduct(String productName, int limit, int offset) throws SQLException {
+        List<Product> productList = new ArrayList<>();
+
+        String query = "SELECT PRODUCT.id, PRODUCT.name, PRODUCT.description, "
+                + "PRODUCT.image_url, PRODUCT.price, PRODUCT.quantity, PRODUCT.category_id, "
+                + "category.name AS category_name "
+                + "FROM PRODUCT "
+                + "INNER JOIN CATEGORY "
+                + "ON PRODUCT.category_id = CATEGORY.id "
+                + "WHERE LOWER(PRODUCT.name) LIKE LOWER(?) "
+                + "ORDER BY PRODUCT.id "
+                + "OFFSET ? ROWS "
+                + "FETCH NEXT ? ROWS ONLY";
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, "%" + productName + "%");
+                stmt.setInt(2, offset);
+                stmt.setInt(3, limit);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        productList.add(new Product(rs));
+                    }
+                }
+            }
+        }
+
+        return productList;
     }
 }
