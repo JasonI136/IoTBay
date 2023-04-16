@@ -19,6 +19,8 @@ This project was developed as part of Assigment 1 & 2 for the 41025 Introduction
 stripe.api.key = sk_test_XXXXXXXXXXXXXXXXXXXXXXXX
 stripe.api.publishable.key = pk_test_XXXXXXXXXXXXXXXXXXXXXXXX
 ```
+**Ensure that there are no single or double quotes around the keys.**
+
 3. Open the project in Apache NetBeans.
 ![NetBeans](images/open_project.gif)
 4. Configure the project's java SDK in netbeans.
