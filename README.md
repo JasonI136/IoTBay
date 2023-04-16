@@ -33,4 +33,5 @@ stripe.api.publishable.key = pk_test_XXXXXXXXXXXXXXXXXXXXXXXX
 ![Clean and Build](images/build.gif)
 8. Run the project on the Payara Server. The project should be accessible at http://localhost:8080/IoTBay. NetBeans will automatically open the project in the browser.
 <br>
+
 ![Run Project](images/run.png)
