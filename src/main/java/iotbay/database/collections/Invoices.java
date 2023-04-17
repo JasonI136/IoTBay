@@ -1,18 +1,37 @@
-package iotbay.models.collections;
+package iotbay.database.collections;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.entities.Invoice;
+import iotbay.models.Invoice;
 
 import java.sql.*;
 
+/**
+ * Represents a collection of invoices
+ */
 public class Invoices {
+
+    /**
+     * An instance of the database manager
+     */
     DatabaseManager db;
 
+    /**
+     * Initializes the invoices collection with the database manager
+     * @param db an instance of the database manager
+     */
     public Invoices(DatabaseManager db) {
         this.db = db;
     }
 
-    public Invoice addInvoice(int orderId, Timestamp invoiceDate, float amount) throws Exception {
+    /**
+     * Adds an invoice to the database
+     * @param orderId the order id
+     * @param invoiceDate the invoice date
+     * @param amount the amount
+     * @return the invoice
+     * @throws SQLException if there is an error adding the invoice
+     */
+    public Invoice addInvoice(int orderId, Timestamp invoiceDate, float amount) throws SQLException {
         Invoice invoice = new Invoice();
         invoice.setOrderId(orderId);
         invoice.setInvoiceDate(invoiceDate);
@@ -30,7 +49,7 @@ public class Invoices {
                 int affectedRows = stmt.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new Exception("Creating invoice failed, no rows affected.");
+                    throw new SQLException("Creating order failed, no rows affected.");
                 }
 
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
@@ -47,7 +66,13 @@ public class Invoices {
         return invoice;
     }
 
-    public Invoice getInvoice(int id) throws Exception {
+    /**
+     * Gets an invoice by id
+     * @param id the invoice id
+     * @return the invoice, or null if not found
+     * @throws SQLException if there is an error getting the invoice
+     */
+    public Invoice getInvoice(int id) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT * FROM INVOICE WHERE id = ?")) {
@@ -57,16 +82,24 @@ public class Invoices {
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         return new Invoice(rs);
-                    } else {
-                        return null;
                     }
                 }
             }
         }
-        
+
+        return null;
+
     }
 
-    public void updateInvoice(int id, int orderId, Timestamp invoiceDate, float amount) throws Exception {
+    /**
+     * Updates an invoice
+     * @param id the invoice id
+     * @param orderId the order id
+     * @param invoiceDate the invoice date
+     * @param amount the amount
+     * @throws SQLException if there is an error updating the invoice
+     */
+    public void updateInvoice(int id, int orderId, Timestamp invoiceDate, float amount) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT * FROM INVOICE WHERE id = ?")) {
@@ -75,14 +108,19 @@ public class Invoices {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (!rs.next()) {
-                        throw new Exception("Updating invoice failed, no rows affected.");
+                        throw new SQLException("Updating invoice failed, no rows affected.");
                     }
                 }
             }
         }
     }
 
-    public void deleteInvoice(int id) throws Exception {
+    /**
+     * Deletes an invoice
+     * @param id the invoice id
+     * @throws SQLException if there is an error deleting the invoice
+     */
+    public void deleteInvoice(int id) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT * FROM INVOICE WHERE id = ?")) {
@@ -91,14 +129,19 @@ public class Invoices {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (!rs.next()) {
-                        throw new Exception("Deleting invoice failed, no rows affected.");
+                        throw new SQLException("Deleting invoice failed, no rows affected.");
                     }
                 }
             }
         }
     }
 
-    public void deleteInvoiceByOrderId(int orderId) throws Exception {
+    /**
+     * Deletes an invoice by order id
+     * @param orderId the order id
+     * @throws SQLException if there is an error deleting the invoice
+     */
+    public void deleteInvoiceByOrderId(int orderId) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "DELETE FROM INVOICE WHERE order_id = ?")) {
@@ -108,7 +151,7 @@ public class Invoices {
                 int affectedRows = stmt.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new Exception("Deleting invoice failed, no rows affected.");
+                    throw new SQLException("Deleting invoice failed, no rows affected.");
                 }
             }
         }

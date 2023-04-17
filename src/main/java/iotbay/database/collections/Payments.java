@@ -1,8 +1,7 @@
-package iotbay.models.collections;
+package iotbay.database.collections;
 
 import iotbay.database.DatabaseManager;
-import iotbay.exceptions.UserExistsException;
-import iotbay.models.entities.Payment;
+import iotbay.models.Payment;
 
 import java.sql.*;
 
@@ -10,13 +9,30 @@ import java.sql.*;
  * The payments collection
  */
 public class Payments {
+
+    /**
+     * An instance of the database manager
+     */
     DatabaseManager db;
 
+    /**
+     * Initializes the payments collection with the database manager
+     * @param db
+     */
     public Payments(DatabaseManager db) {
         this.db = db;
     }
 
-    public Payment addPayment(int invoiceId, Timestamp date, int paymentMethodId, float amount) throws Exception {
+    /**
+     * Adds a payment to the database
+     * @param invoiceId the invoice id
+     * @param date the date
+     * @param paymentMethodId the payment method id
+     * @param amount the amount
+     * @return a {@link iotbay.models.Payment} object
+     * @throws SQLException if there is an error adding the payment
+     */
+    public Payment addPayment(int invoiceId, Timestamp date, int paymentMethodId, float amount) throws SQLException {
         Payment payment = new Payment();
         payment.setInvoiceId(invoiceId);
         payment.setDate(date);
@@ -36,7 +52,7 @@ public class Payments {
                 int affectedRows = stmt.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new Exception("Creating payment failed, no rows affected.");
+                    throw new SQLException("Creating payment failed, no rows affected.");
                 }
 
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
@@ -53,7 +69,13 @@ public class Payments {
         return payment;
     }
 
-    public Payment getPayment(int id) throws Exception {
+    /**
+     * Gets a payment from the database
+     * @param id the payment id
+     * @return a {@link iotbay.models.Payment} object, or null if the payment does not exist.
+     * @throws SQLException if there is an error getting the payment
+     */
+    public Payment getPayment(int id) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT * FROM PAYMENT WHERE id = ?")) {
@@ -63,8 +85,6 @@ public class Payments {
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         new Payment(rs);
-                    } else {
-                        throw new Exception("Getting payment failed, no rows affected.");
                     }
                 }
 
@@ -74,7 +94,16 @@ public class Payments {
         return null;
     }
 
-    public void updatePayment(int id, int invoiceId, Timestamp date, int paymentMethodId, float amount) throws Exception {
+    /**
+     * Updates a payment in the database
+     * @param id the payment id
+     * @param invoiceId the invoice id
+     * @param date the date
+     * @param paymentMethodId the payment method id
+     * @param amount the amount
+     * @throws SQLException if there is an error updating the payment
+     */
+    public void updatePayment(int id, int invoiceId, Timestamp date, int paymentMethodId, float amount) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "UPDATE PAYMENT SET invoice_id = ?, date = ?, payment_method_id = ?, amount = ? WHERE id = ?")) {
@@ -87,14 +116,19 @@ public class Payments {
                 int affectedRows = stmt.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new Exception("Updating payment failed, no rows affected.");
+                    throw new SQLException("Updating payment failed, no rows affected.");
                 }
             }
         }
 
     }
 
-    public void deletePayment(int id) throws Exception {
+    /**
+     * Deletes a payment from the database
+     * @param id the payment id
+     * @throws SQLException if there is an error deleting the payment
+     */
+    public void deletePayment(int id) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "DELETE FROM PAYMENT WHERE id = ?")) {
@@ -103,7 +137,7 @@ public class Payments {
                 int affectedRows = stmt.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new Exception("Deleting payment failed, no rows affected.");
+                    throw new SQLException("Deleting payment failed, no rows affected.");
                 }
             }
         }

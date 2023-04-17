@@ -5,19 +5,17 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.collections.Users;
 import iotbay.exceptions.UserExistsException;
-import iotbay.models.entities.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import iotbay.models.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Properties;
 
 /**
  *

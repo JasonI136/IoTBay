@@ -7,7 +7,7 @@ package iotbay.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import iotbay.annotations.GlobalServletField;
-import iotbay.models.collections.*;
+import iotbay.database.collections.*;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,43 +16,79 @@ import java.io.*;
 import java.sql.*;
 
 /**
- * @author cmesina
+ * Represents the database manager
  */
 @Getter
 public class DatabaseManager {
 
 
+    /**
+     * The hikari data source
+     */
     protected HikariDataSource dataSource;
 
+    /**
+     * The logger
+     */
     private static final Logger logger = LogManager.getLogger(DatabaseManager.class);
 
+    /**
+     * An instance of the users collection
+     */
     @GlobalServletField("users")
     private Users users;
 
+    /**
+     * An instance of the products collection
+     */
     @GlobalServletField("products")
     private Products products;
 
+    /**
+     * An instance of the categories collection
+     */
     @GlobalServletField("categories")
     private Categories categories;
 
+    /**
+     * An instance of the orders collection
+     */
     @GlobalServletField("orders")
     private Orders orders;
 
+    /**
+     * An instance of the order line items collection
+     */
     @GlobalServletField("orderLineItems")
     private OrderLineItems orderLineItems;
 
+    /**
+     * An instance of the payments collection
+     */
     @GlobalServletField("payments")
     private Payments payments;
 
+    /**
+     * An instance of the invoices collection
+     */
     @GlobalServletField("invoices")
     private Invoices invoices;
 
+    /**
+     * An instance of the shipments collection
+     */
     @GlobalServletField("shipments")
     private Shipments shipments;
 
+    /**
+     * An instance of the payment methods collection
+     */
     @GlobalServletField("paymentMethods")
     private PaymentMethods paymentMethods;
 
+    /**
+     * An instance of the logs collection
+     */
     @GlobalServletField("logs")
     private Logs logs;
 
@@ -358,6 +394,7 @@ public class DatabaseManager {
 
         }
 
+        // Initialize DAOs
         this.users = new Users(this);
         this.products = new Products(this);
         this.categories = new Categories(this);
@@ -373,6 +410,11 @@ public class DatabaseManager {
 
     }
 
+    /**
+     * Gets a database connection from the connection pool.
+     *
+     * @return a database connection
+     */
     public Connection getDbConnection() {
         try {
             return this.dataSource.getConnection();
@@ -397,39 +439,4 @@ public class DatabaseManager {
 
     }
 
-//    public Users getUsers() {
-//        return users;
-//    }
-//
-//    public Products getProducts() {
-//        return products;
-//    }
-//
-//    public Categories getCategories() {
-//        return categories;
-//    }
-//
-//    public Orders getOrders() {
-//        return orders;
-//    }
-//
-//    public OrderLineItems getOrderLineItems() {
-//        return orderLineItems;
-//    }
-//
-//    public Payments getPaymentManager() {
-//        return payments;
-//    }
-//
-//    public Invoices getInvoices() {
-//        return invoices;
-//    }
-//
-//    public Shipments getShipmentManager() {
-//        return shipments;
-//    }
-//
-//    public PaymentMethods getPaymentMethodManager() {
-//        return paymentMethods;
-//    }
 }

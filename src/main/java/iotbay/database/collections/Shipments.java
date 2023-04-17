@@ -1,31 +1,37 @@
-package iotbay.models.collections;
+package iotbay.database.collections;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.entities.Shipment;
+import iotbay.models.Shipment;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
+/**
+ * Represents a collection of shipments
+ */
 public class Shipments {
-//    "CREATE TABLE SHIPMENT ("
-//                            + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
-//                            + "order_id                         INT,"
-//                            + "dispatch_date                    DATE,"
-//                            + "delivery_date                    DATE,"
-//                            + "courier_name                     VARCHAR(256),"
-//                            + "tracking_number                  VARCHAR(256),"
-//                            + "status                           VARCHAR(256),"
-//                            + "PRIMARY KEY (id),"
-//                            + "CONSTRAINT shipment_order_id_ref FOREIGN KEY (order_id) REFERENCES CUSTOMER_ORDER(id)"
-//                            + ")";
+
+    /**
+     * An instance of the database manager
+     */
     private final DatabaseManager db;
 
+    /**
+     * Initializes the shipments collection with the database manager
+     * @param db an instance of the database manager
+     */
     public Shipments(DatabaseManager db) {
         this.db = db;
     }
 
-    public void addShipment(Shipment shipment) throws Exception {
+    /**
+     * Adds a shipment to the database
+     * @param shipment the shipment to add
+     * @throws SQLException if there is an error adding the shipment
+     */
+    public void addShipment(Shipment shipment) throws SQLException {
         try (Connection conn = db.getDbConnection()) {
             try (PreparedStatement ps = conn.prepareStatement("INSERT INTO SHIPMENT (order_id, dispatch_date, delivery_date, courier_name, tracking_number, status) VALUES (?, ?, ?, ?, ?, ?)")) {
                 ps.setInt(1, shipment.getOrderId());
@@ -39,7 +45,12 @@ public class Shipments {
         }
     }
 
-    public void updateShipment(Shipment shipment) throws Exception {
+    /**
+     * Updates a shipment in the database
+     * @param shipment the shipment to update
+     * @throws SQLException if there is an error updating the shipment
+     */
+    public void updateShipment(Shipment shipment) throws SQLException {
         try (Connection conn = db.getDbConnection()) {
             try (PreparedStatement ps = conn.prepareStatement("UPDATE SHIPMENT SET order_id = ?, dispatch_date = ?, delivery_date = ?, courier_name = ?, tracking_number = ?, status = ? WHERE id = ?")) {
                 ps.setInt(1, shipment.getOrderId());
@@ -54,7 +65,12 @@ public class Shipments {
         }
     }
 
-    public void deleteShipment(int id) throws Exception {
+    /**
+     * Deletes a shipment from the database
+     * @param id the id of the shipment to delete
+     * @throws SQLException if there is an error deleting the shipment
+     */
+    public void deleteShipment(int id) throws SQLException {
         try (Connection conn = db.getDbConnection()) {
             try (PreparedStatement ps = conn.prepareStatement("DELETE FROM SHIPMENT WHERE id = ?")) {
                 ps.setInt(1, id);
@@ -63,7 +79,13 @@ public class Shipments {
         }
     }
 
-    public Shipment getShipment(int id) throws Exception {
+    /**
+     * Gets a shipment from the database
+     * @param id the id of the shipment to get
+     * @return the shipment, or null if it doesn't exist
+     * @throws SQLException if there is an error getting the shipment
+     */
+    public Shipment getShipment(int id) throws SQLException {
         try (Connection conn = db.getDbConnection()) {
             try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM SHIPMENT WHERE id = ?")) {
                 ps.setInt(1, id);

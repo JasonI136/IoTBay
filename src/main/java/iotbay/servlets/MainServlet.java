@@ -4,30 +4,21 @@
  */
 package iotbay.servlets;
 
-import com.stripe.Stripe;
-import iotbay.annotations.GlobalServletField;
 import iotbay.database.DatabaseManager;
-import iotbay.jobs.HouseKeeper;
-import iotbay.models.collections.*;
-import iotbay.models.entities.Category;
-import iotbay.models.entities.Product;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
-
+import iotbay.models.Category;
+import iotbay.models.Product;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Properties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
 /**
  * @author cmesina

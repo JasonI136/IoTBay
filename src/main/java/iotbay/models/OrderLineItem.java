@@ -1,12 +1,12 @@
-package iotbay.models.entities;
+package iotbay.models;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.enums.OrderStatus;
-import lombok.*;
+import iotbay.enums.OrderStatus;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 
 @Data
 public class OrderLineItem implements Serializable {
@@ -26,19 +26,47 @@ public class OrderLineItem implements Serializable {
 //                
 //        }
 
+    /**
+     * The database manager
+     */
     private final transient DatabaseManager db;
 
+    /**
+     * An instance of the order,
+     */
     private Order order;
+
+    /**
+     * An instance of the product
+     */
     private Product product;
+
+    /**
+     * The quantity of the product
+     */
     private int quantity;
 
+    /**
+     * The price of the product
+     */
     private double price;
 
+    /**
+     * The constructor for the OrderLineItem class.
+     *
+     * @param db The database manager.
+     */
     public OrderLineItem(DatabaseManager db) {
         this.db = db;
     }
 
-    public OrderLineItem(ResultSet rs, DatabaseManager db) throws Exception {
+    /**
+     * The constructor for the OrderLineItem class.
+     * @param rs The result set.
+     * @param db The database manager.
+     * @throws SQLException If there is an error with the SQL query.
+     */
+    public OrderLineItem(ResultSet rs, DatabaseManager db) throws SQLException {
         this.db = db;
         Order order = new Order(db);
         order.setId(rs.getInt("order_id"));

@@ -4,6 +4,7 @@ import com.stripe.Stripe;
 import iotbay.annotations.GlobalServletField;
 import iotbay.database.DatabaseManager;
 import iotbay.database.StaticDatabaseManager;
+import iotbay.exceptions.ConfigMissingException;
 import iotbay.jobs.HouseKeeper;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
@@ -16,120 +17,149 @@ import org.quartz.impl.StdSchedulerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+/**
+ * A listener that runs when the application starts up.
+ */
 public class AppContextListener implements ServletContextListener {
 
+    /**
+     * The servlet context
+     */
+    ServletContext scx;
+
+    /**
+     * The application configuration properties..
+     */
+    Properties appConfig;
+
+    /**
+     * The secrets properties.
+     */
+    Properties secrets;
+
+    /**
+     * The database manager
+     */
+    DatabaseManager db;
+
+    /**
+     * The logger for this class
+     */
     private static final Logger logger = LogManager.getLogger(AppContextListener.class);
+
+    /**
+     * Initialises the application configuration.
+     * @throws IOException if there is an error reading the configuration files.
+     * @throws ConfigMissingException if the configuration files are missing.
+     */
+    public void initConfig() throws IOException, ConfigMissingException {
+        InputStream inputStream = this.scx.getResourceAsStream("/WEB-INF/app-config.properties");
+
+        if (inputStream == null) {
+            throw new ConfigMissingException("app-config.properties not found. Please ensure that the file exists in the /WEB-INF directory.");
+        }
+
+        InputStream inputStreamSecrets = this.scx.getResourceAsStream("/WEB-INF/secrets.properties");
+
+        if (inputStreamSecrets == null) {
+            throw new ConfigMissingException("secrets.properties not found. Please ensure that the file exists in the /WEB-INF directory.");
+        }
+
+        this.appConfig = new Properties();
+        this.secrets = new Properties();
+
+
+        appConfig.load(inputStream);
+        secrets.load(inputStreamSecrets);
+
+    }
+
+    /**
+     * Initialises the database.
+     * @throws SQLException if there is an error connecting to the database.
+     * @throws ClassNotFoundException if the database driver is not found.
+     * @throws IllegalAccessException if there is an error accessing the database manager.
+     */
+    public void initDb() throws SQLException, ClassNotFoundException, IllegalAccessException {
+        this.db = new DatabaseManager(
+                appConfig.getProperty("database.url"),
+                appConfig.getProperty("database.username"),
+                appConfig.getProperty("database.password"),
+                appConfig.getProperty("database.name")
+        );
+
+        StaticDatabaseManager.setInstance(db);
+
+        for (Field dbField : db.getClass().getDeclaredFields()) {
+            if (dbField.isAnnotationPresent(GlobalServletField.class)) {
+                dbField.setAccessible(true);
+                this.scx.setAttribute(dbField.getName(), dbField.get(db));
+            }
+        }
+
+        this.scx.setAttribute("db", db);
+        this.scx.setAttribute("appConfig", appConfig);
+        this.scx.setAttribute("secrets", secrets);
+    }
+
+    /**
+     * Initialises the Stripe API.
+     */
+    public void initStripe() {
+        Stripe.apiKey = secrets.getProperty("stripe.api.key");
+    }
+
+    /**
+     * Initialises the scheduler.
+     * @throws SchedulerException if there is an error initialising the scheduler.
+     */
+    public void initScheduler() throws SchedulerException {
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("db", db);
+
+        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+        Scheduler scheduler = schedulerFactory.getScheduler();
+        JobDetail job = newJob(HouseKeeper.class)
+                .withIdentity("housekeeper", "iotbay")
+                .usingJobData(jobDataMap)
+                .build();
+
+        Trigger trigger = newTrigger()
+                .withIdentity("housekeeper", "iotbay")
+                .startNow()
+                .withSchedule(simpleSchedule()
+                        .withIntervalInMinutes(1)
+                        .repeatForever())
+                .build();
+
+        scheduler.start();
+        scheduler.scheduleJob(job, trigger);
+    }
+
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        ServletContext scx = sce.getServletContext();
-        InputStream inputStream = sce.getServletContext().getResourceAsStream("/WEB-INF/app-config.properties");
-
-        if (inputStream == null) {
-            logger.error("app-config.properties not found. Please ensure that the file exists in the /WEB-INF directory.");
-            //throw new ServletException("app-config.properties not found.");
-            scx.setAttribute("initError", "app-config.properties not found. Please ensure that the file exists in the /WEB-INF directory.");
-        }
-
-        InputStream inputStreamSecrets = sce.getServletContext().getResourceAsStream("/WEB-INF/secrets.properties");
-
-        if (inputStreamSecrets == null) {
-            logger.error("secrets.properties not found. Please ensure that the file exists in the /WEB-INF directory.");
-            scx.setAttribute("initError", "secrets.properties not found. Please ensure that the file exists in the /WEB-INF directory.");
-        }
-
-        Properties appConfig = new Properties();
-        Properties secrets = new Properties();
-
-
+        this.scx = sce.getServletContext();
         try {
-            appConfig.load(inputStream);
-            secrets.load(inputStreamSecrets);
-        } catch (IOException err) {
-            logger.error("Application configuration failed to load.");
-            //throw new ServletException("Application configuration failed to load.");
-            scx.setAttribute("initError", "Application configuration failed to load.");
-        }
-
-        // Initialise the database
-        DatabaseManager db;
-        try {
-            db = new DatabaseManager(
-                    appConfig.getProperty("database.url"),
-                    appConfig.getProperty("database.username"),
-                    appConfig.getProperty("database.password"),
-                    appConfig.getProperty("database.name")
-            );
-
-            StaticDatabaseManager.setInstance(db);
-
-            for (Field dbField : db.getClass().getDeclaredFields()) {
-                if (dbField.isAnnotationPresent(GlobalServletField.class)) {
-                    try {
-                        dbField.setAccessible(true);
-                        sce.getServletContext().setAttribute(dbField.getName(), dbField.get(db));
-                    } catch (IllegalAccessException e) {
-                        logger.error("An error occurred whilst intialising the database: " + e.getMessage());
-                        //throw new ServletException("An error occurred whilst intialising the database: " + e.getMessage());
-                        scx.setAttribute("initError", "An error occurred whilst intialising the database: " + e.getMessage());
-                    }
-                }
-            }
-
-            sce.getServletContext().setAttribute("db", db);
-            sce.getServletContext().setAttribute("appConfig", appConfig);
-            sce.getServletContext().setAttribute("secrets", secrets);
-
-            Stripe.apiKey = secrets.getProperty("stripe.api.key");
-
-            JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put("db", db);
-
-            SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-            Scheduler scheduler = null;
-            try {
-                scheduler = schedulerFactory.getScheduler();
-            } catch (SchedulerException e) {
-                //throw new RuntimeException(e);
-                logger.error("Failed to start scheduler: " + e.getMessage());
-            }
-            JobDetail job = newJob(HouseKeeper.class)
-                    .withIdentity("housekeeper", "iotbay")
-                    .usingJobData(jobDataMap)
-                    .build();
-
-            Trigger trigger = newTrigger()
-                    .withIdentity("housekeeper", "iotbay")
-                    .startNow()
-                    .withSchedule(simpleSchedule()
-                            .withIntervalInMinutes(1)
-                            .repeatForever())
-                    .build();
-
-            try {
-                scheduler.start();
-                scheduler.scheduleJob(job, trigger);
-            } catch (Exception e) {
-                logger.error("Failed to start scheduler: " + e.getMessage());
-                //throw new ServletException("Failed to start scheduler: " + e.getMessage());
-                scx.setAttribute("initError", "Failed to start scheduler: " + e.getMessage());
-            }
-
+            // These methods must be called in this order.
+            this.initConfig();
+            this.initDb();
+            this.initStripe();
+            this.initScheduler();
         } catch (Exception e) {
-            logger.error("An error occurred whilst intialising the database: " + e.getMessage());
-            //throw new ServletException("An error occurred whilst intialising the database: " + e.getMessage());
-            scx.setAttribute("initError", "An error occurred whilst intialising the database: " + e.getMessage());
+            logger.error("Application failed to start.", e);
+            scx.setAttribute("initError", e);
         }
 
         if (scx.getAttribute("initError") != null) {
             logger.error("Application started with critical errors. Please check the logs for more information.");
-            //throw new ServletException("Application failed to start.");
         } else {
             logger.info("Application started.");
         }
@@ -138,6 +168,6 @@ public class AppContextListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-
+        logger.info("Goodbye!");
     }
 }

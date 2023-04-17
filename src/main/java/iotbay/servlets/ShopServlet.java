@@ -5,11 +5,8 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.collections.Categories;
-import iotbay.models.entities.Category;
-import iotbay.models.entities.Product;
-import iotbay.models.collections.Products;
-
+import iotbay.models.Category;
+import iotbay.models.Product;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

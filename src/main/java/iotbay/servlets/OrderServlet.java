@@ -4,27 +4,14 @@
  */
 package iotbay.servlets;
 
-import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
-import iotbay.models.collections.Invoices;
-import iotbay.models.collections.OrderLineItems;
-import iotbay.models.collections.Orders;
-import iotbay.models.collections.Payments;
-import iotbay.models.entities.Cart;
-import iotbay.models.entities.CartItem;
-import iotbay.models.entities.Order;
-import iotbay.models.entities.User;
-import iotbay.models.entities.Invoice;
-import iotbay.models.enums.OrderStatus;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Date;
-import java.sql.Timestamp;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  *

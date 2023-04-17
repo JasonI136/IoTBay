@@ -2,12 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package iotbay.models.entities;
+package iotbay.models;
 
-import lombok.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Represents a category
@@ -42,7 +43,7 @@ public class Category implements Serializable {
      * @param rs The ResultSet to create the category from
      * @throws Exception If the ResultSet is invalid
      */
-    public Category(ResultSet rs) throws Exception {
+    public Category(ResultSet rs) throws SQLException {
         this.id = rs.getInt("id");
         this.categoryName = rs.getString("name");
     }

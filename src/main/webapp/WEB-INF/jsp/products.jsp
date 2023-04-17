@@ -43,9 +43,18 @@
         <section class="bg0 p-t-23 p-b-140">
             <div class="container">
                 <div class="p-b-10">
-                    <h3 class="ltext-103 cl5">
-                        Product Overview
-                    </h3>
+                    <c:choose>
+                        <c:when test="${empty searchName}">
+                            <h3 class="ltext-103 cl5">
+                                All Products
+                            </h3>
+                        </c:when>
+                        <c:otherwise>
+                            <h3 class="ltext-103 cl5">
+                                Search Results for: ${searchName}
+                            </h3>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
 
                 <div class="flex-w flex-sb-m p-b-52">
@@ -89,6 +98,10 @@
                 </div>
 
                 <div class="row isotope-grid" id="productList">
+
+                    <c:if test="${empty products}">
+                        No products found
+                    </c:if>
 
                     <c:forEach items="${products}" var="product">
                         <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${product.categoryNameNoSpace}">

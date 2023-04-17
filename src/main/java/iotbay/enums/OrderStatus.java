@@ -1,4 +1,4 @@
-package iotbay.models.enums;
+package iotbay.enums;
 
 public enum OrderStatus {
     PENDING("PENDING"),

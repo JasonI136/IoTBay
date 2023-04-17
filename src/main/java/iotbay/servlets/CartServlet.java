@@ -9,26 +9,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
-import iotbay.exceptions.ProductNotFoundException;
-import iotbay.exceptions.UserNotFoundException;
-import iotbay.exceptions.UserNotLoggedInException;
-import iotbay.models.collections.*;
-import iotbay.models.entities.*;
-import iotbay.models.enums.OrderStatus;
-import iotbay.util.Misc;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import iotbay.enums.OrderStatus;
+import iotbay.models.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +34,7 @@ public class CartServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(CartServlet.class);
     private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
+
     /**
      * Initalises the servlet. Gets the database manager from the servlet context.
      *
@@ -205,19 +200,14 @@ public class CartServlet extends HttpServlet {
                         response.sendError(400, "Invalid quantity");
                         return;
                     }
-                    try {
-                        this.initShoppingCart(request);
-                        Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
-                        userShoppingCart.addCartItem(product, quantity);
-                        response.setStatus(200);
-                    } catch (Exception e) {
-                        response.sendError(400, "Invalid product id");
-                    }
+
+                    this.initShoppingCart(request);
+                    Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
+                    userShoppingCart.addCartItem(product, quantity);
+                    response.setStatus(200);
 
                 } catch (NumberFormatException e) {
                     response.sendError(400, "Invalid product id");
-                } catch (ProductNotFoundException e) {
-                    response.sendError(404, "Product ID not found");
                 }
             }
         } catch (Exception e) {

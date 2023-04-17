@@ -1,8 +1,7 @@
-package iotbay.models.collections;
+package iotbay.database.collections;
 
 import iotbay.database.DatabaseManager;
-import iotbay.exceptions.ProductNotFoundException;
-import iotbay.models.entities.Product;
+import iotbay.models.Product;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -82,7 +81,12 @@ public class Products {
         return productList;
     }
 
-    public int getProductCount() throws Exception {
+    /**
+     * Gets the number of products in the database.
+     * @return the number of products in the database
+     * @throws SQLException if there is an error retrieving the number of products
+     */
+    public int getProductCount() throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT COUNT(*) FROM PRODUCT"
@@ -90,29 +94,35 @@ public class Products {
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         return rs.getInt(1);
-                    } else {
-                        throw new Exception("Could not retrieve product count");
                     }
                 }
             }
         }
+
+        return 0;
     }
 
-    public int getProductCount(String productName) throws Exception {
+    /**
+     * Gets the number of products in the database that match the given product name..
+     * @param productName the name of the product to search for
+     * @return the number of products in the database that match the given product name
+     * @throws SQLException if there is an error retrieving the number of products
+     */
+    public int getProductCount(String productName) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT COUNT(*) FROM PRODUCT WHERE name LIKE LOWER(?)"
+                    "SELECT COUNT(*) FROM PRODUCT WHERE LOWER(name) LIKE LOWER(?)"
             )) {
                 stmt.setString(1, "%" + productName + "%");
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         return rs.getInt(1);
-                    } else {
-                        throw new Exception("Could not retrieve product count");
                     }
                 }
             }
         }
+
+        return 0;
     }
 
     /**
@@ -121,9 +131,8 @@ public class Products {
      * @param productId the id of the product to retrieve
      * @return the product as a Product object
      * @throws SQLException             if there is an error retrieving the product
-     * @throws ProductNotFoundException if the product does not exist
      */
-    public Product getProduct(int productId) throws SQLException, ProductNotFoundException {
+    public Product getProduct(int productId) throws SQLException {
 
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
@@ -139,17 +148,25 @@ public class Products {
             )) {
                 stmt.setInt(1, productId);
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (!rs.next()) {
-                        throw new ProductNotFoundException("The product with id " + productId + " does not exist.");
+                    if (rs.next()) {
+                        return new Product(rs);
                     }
-
-                    return new Product(rs);
                 }
             }
         }
 
+        return null;
+
     }
 
+    /**
+     * Retrieves a list of products from the database that match the given product name.
+     * @param productName the name of the product to search for
+     * @param limit the number of products to retrieve
+     * @param offset the offset to start retrieving products from
+     * @return a list of {@link iotbay.models.Product} objects.
+     * @throws SQLException if there is an error retrieving the products
+     */
     public List<Product> searchProduct(String productName, int limit, int offset) throws SQLException {
         List<Product> productList = new ArrayList<>();
 

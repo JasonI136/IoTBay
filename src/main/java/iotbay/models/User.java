@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package iotbay.models.entities;
+package iotbay.models;
 
 import iotbay.database.DatabaseManager;
 import lombok.Data;
@@ -151,7 +151,7 @@ public class User implements Serializable {
      * @param rs A result set containing the user's data.
      * @throws Exception If the result set is invalid.
      */
-    public User(DatabaseManager db, ResultSet rs) throws Exception {
+    public User(DatabaseManager db, ResultSet rs) throws SQLException {
         this.db = db;
         this.paymentMethods = new ArrayList<>();
         this.id = rs.getInt("id");
@@ -210,6 +210,11 @@ public class User implements Serializable {
         return this.db.getPaymentMethods().getPaymentMethod(paymentMethodId);
     }
 
+    /**
+     * Gets all orders associated with the user.
+     * @return A list of orders.
+     * @throws Exception if there is an error getting the orders
+     */
     public List<Order> getOrders() throws Exception {
        return this.db.getOrders().getOrders(this.id);
     }

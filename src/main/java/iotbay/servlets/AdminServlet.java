@@ -1,13 +1,15 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.entities.Category;
-import iotbay.models.entities.Log;
-import iotbay.models.entities.Order;
-import iotbay.models.entities.Product;
+import iotbay.models.Category;
+import iotbay.models.Log;
+import iotbay.models.Order;
+import iotbay.models.Product;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -38,7 +40,6 @@ public class AdminServlet extends HttpServlet {
             default:
                 request.getSession().setAttribute("message", "Page not found");
                 response.sendError(404);
-                return;
         }
     }
 
@@ -46,7 +47,7 @@ public class AdminServlet extends HttpServlet {
 
         List<Log> logs;
         try {
-            logs = this.db.getLogs().getLogs(100, 0);
+            logs = this.db.getLogs().getLogs(100, 0, true);
         } catch (Exception e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }

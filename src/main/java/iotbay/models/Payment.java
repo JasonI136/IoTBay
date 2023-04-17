@@ -1,11 +1,10 @@
-package iotbay.models.entities;
+package iotbay.models;
 
-import lombok.*;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 @Data
@@ -28,15 +27,57 @@ public class Payment implements Serializable {
 //            
 //        }
 
+    /**
+     * The payment's unique id.
+     * <br>
+     * <br>
+     * <b>TABLE:</b> PAYMENT.id
+     */
     private int id;
+
+    /**
+     * The payment's invoice id.
+     * <br>
+     * <br>
+     * <b>TABLE:</b> PAYMENT.invoice_id
+     */
     private int invoiceId;
+
+    /**
+     * The payment's date.
+     * <br>
+     * <br>
+     * <b>TABLE:</b> PAYMENT.date
+     */
     private Timestamp date;
+
+    /**
+     * The payment's payment method id.
+     * <br>
+     * <br>
+     * <b>TABLE:</b> PAYMENT.payment_method_id
+     */
     private int paymentMethodId;
+
+    /**
+     * The payment's amount.
+     * <br>
+     * <br>
+     * <b>TABLE:</b> PAYMENT.amount
+     */
     private float amount;
 
+    /**
+     * Default constructor.
+     */
     public Payment() {}
 
-    public Payment(ResultSet rs) throws Exception {
+    /**
+     * Inintialise a new payment from a result set.
+     * @param rs The result set.
+     * @throws SQLException If the result set is invalid.
+     */
+    public Payment(ResultSet rs) throws SQLException {
         this.id = rs.getInt("id");
         this.invoiceId = rs.getInt("invoice_id");
         this.date = rs.getTimestamp("date");
@@ -44,12 +85,5 @@ public class Payment implements Serializable {
         this.amount = rs.getFloat("amount");
     }
 
-    public Payment(int id, int invoiceId, Timestamp date, int paymentMethodId, float amount) {
-        this.id = id;
-        this.invoiceId = invoiceId;
-        this.date = date;
-        this.paymentMethodId = paymentMethodId;
-        this.amount = amount;
-    }
 
 }

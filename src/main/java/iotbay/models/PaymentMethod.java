@@ -1,9 +1,10 @@
-package iotbay.models.entities;
+package iotbay.models;
 
-import lombok.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Represents a payment method
@@ -61,7 +62,7 @@ public class PaymentMethod implements Serializable {
      * @param rs The ResultSet to create the payment method from
      * @throws Exception  If the ResultSet is invalid
      */
-    public PaymentMethod(ResultSet rs) throws Exception {
+    public PaymentMethod(ResultSet rs) throws SQLException {
         this.id = rs.getInt("id");
         this.userId = rs.getInt("user_id");
         this.stripePaymentMethodId = rs.getString("stripe_payment_method_id");

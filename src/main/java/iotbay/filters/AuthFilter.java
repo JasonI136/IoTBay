@@ -1,9 +1,7 @@
 package iotbay.filters;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.entities.User;
-
-import iotbay.servlets.LoginServlet;
+import iotbay.models.User;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,22 +9,38 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A filter that checks if the user is logged in and authorized to view the page.
+ */
 public class AuthFilter implements Filter {
 
+    /**
+     * An instance of the database manager
+     */
     DatabaseManager db;
 
+    /**
+     * The logger for this class
+     */
     private static final Logger logger = LogManager.getLogger(AuthFilter.class);
+
+    /**
+     * The database logger for this class
+     */
     private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
 
+    /**
+     * A list of protected paths
+     */
     private final List<ProtectedPath> protectedPaths = Arrays.asList(
             new ProtectedPath("/admin", true),
             new ProtectedPath("/user", false),
             new ProtectedPath("/cart/checkout", false)
     );
-
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -55,7 +69,7 @@ public class AuthFilter implements Filter {
                     try {
                         user = this.db.getUsers().getUser(user.getUsername());
                         req.getSession().setAttribute("user", user);
-                    } catch (Exception e) {
+                    } catch (SQLException e) {
                         throw new ServletException(e);
                     }
                 }
@@ -78,11 +92,6 @@ public class AuthFilter implements Filter {
 
         // If the path is not protected, continue
         chain.doFilter(request, response);
-
-    }
-
-    @Override
-    public void destroy() {
 
     }
 

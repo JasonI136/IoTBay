@@ -2,13 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package iotbay.models.entities;
+package iotbay.models;
 
 import iotbay.util.Misc;
-import lombok.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Represents a product
@@ -88,24 +89,25 @@ public class Product implements Serializable {
         // Empty constructor
     }
 
-    public Product(ResultSet rs) {
-        try {
-            this.id = rs.getInt("id");
-            this.name = rs.getString("name");
-            // check if description is null
-            if (Misc.hasColumn(rs, "description")) {
-                this.description = rs.getString("description");
-            } else {
-                this.description = "";
-            }
-            this.imageURL = rs.getString("image_url");
-            this.price = rs.getDouble("price");
-            this.quantity = rs.getInt("quantity");
-            this.categoryId = rs.getInt("category_id");
-            this.categoryName = rs.getString("category_name");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+    /**
+     * Initialise the product with the given result set.
+     * @param rs The result set
+     * @throws SQLException If there is an error getting the data from the result set
+     */
+    public Product(ResultSet rs) throws SQLException {
+        this.id = rs.getInt("id");
+        this.name = rs.getString("name");
+        // check if description is null
+        if (Misc.hasColumn(rs, "description")) {
+            this.description = rs.getString("description");
+        } else {
+            this.description = "";
         }
+        this.imageURL = rs.getString("image_url");
+        this.price = rs.getDouble("price");
+        this.quantity = rs.getInt("quantity");
+        this.categoryId = rs.getInt("category_id");
+        this.categoryName = rs.getString("category_name");
     }
 
 

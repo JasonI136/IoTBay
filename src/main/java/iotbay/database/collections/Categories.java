@@ -1,7 +1,7 @@
-package iotbay.models.collections;
+package iotbay.database.collections;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.entities.Category;
+import iotbay.models.Category;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,11 +29,11 @@ public class Categories {
     }
 
     /**
-     * Retrieves all the categories from the database
-     * @return an ArrayList of categories
+     * Retrieves all the categories from the database.
+     * @return a list of {@link iotbay.models.Category} objects
      * @throws SQLException if there is an error retrieving the categories
      */
-    public List<Category> getCategories() throws Exception {
+    public List<Category> getCategories() throws SQLException {
         List<Category> categoryList = new ArrayList<>();
 
         String query = "SELECT * FROM CATEGORY";

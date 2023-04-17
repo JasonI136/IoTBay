@@ -5,18 +5,20 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.collections.Users;
 import iotbay.exceptions.UserNotFoundException;
-import iotbay.models.entities.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import iotbay.models.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.sql.SQLException;
 
 /**
  *
@@ -123,7 +125,6 @@ public class LoginServlet extends HttpServlet {
                     return;
                 }
 
-                //request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
                 response.sendRedirect(getServletContext().getContextPath() + "/user");
             } else {
                 logger.info("User " + username + " failed to log in.");
@@ -134,18 +135,15 @@ public class LoginServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
                
             }
-        } catch (Exception e) {
-            if (e instanceof UserNotFoundException) {
-                logger.info("User " + username + " failed to log in as the account does not exist.");
-                iotbayLogger.info("User " + username + " failed to log in as the account does not exist.");
-                response.setStatus(404);
-                request.setAttribute("error_title", "Account not found");
-                request.setAttribute("error_msg", "The account does not exist.");
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
-            } else {
-                throw new ServletException("Error: " + e.getMessage());
-            }
-
+        } catch (UserNotFoundException e) {
+            logger.info("User " + username + " failed to log in as the account does not exist.");
+            iotbayLogger.info("User " + username + " failed to log in as the account does not exist.");
+            response.setStatus(404);
+            request.setAttribute("error_title", "Account not found");
+            request.setAttribute("error_msg", "The account does not exist.");
+            request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+        } catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new ServletException(e);
         }
 
     }

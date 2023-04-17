@@ -1,23 +1,40 @@
-package iotbay.models.collections;
+package iotbay.database.collections;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.entities.Order;
-import iotbay.models.enums.OrderStatus;
+import iotbay.enums.OrderStatus;
+import iotbay.models.Order;
 
-import java.io.Serializable;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a collection of orders
+ */
 public class Orders {
 
+    /**
+     * An instance of the database manager
+     */
     DatabaseManager db;
 
+    /**
+     * Initializes the orders collection with the database manager
+     * @param db
+     */
     public Orders(DatabaseManager db) {
         this.db = db;
     }
 
-    public Order addOrder(int userId, Timestamp orderDate, OrderStatus orderStatus) throws Exception {
+    /**
+     * Adds an order to the database.
+     * @param userId the id of the user
+     * @param orderDate the date of the order
+     * @param orderStatus the status of the order
+     * @return an instance of the {@link iotbay.models.Order} object
+     * @throws SQLException if there is an error adding the order
+     */
+    public Order addOrder(int userId, Timestamp orderDate, OrderStatus orderStatus) throws SQLException {
         Order order = new Order(this.db);
         order.setUserId(userId);
         order.setOrderDate(orderDate);
@@ -35,7 +52,7 @@ public class Orders {
                 int affectedRows = stmt.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new Exception("Creating order failed, no rows affected.");
+                    throw new SQLException("Creating order failed, no rows affected.");
                 }
 
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
@@ -52,7 +69,15 @@ public class Orders {
         return order;
     }
 
-    public void updateOrder(int id, int userId, Timestamp orderDate, String orderStatus) throws Exception {
+    /**
+     * Updates an order in the database.
+     * @param id the id of the order
+     * @param userId the id of the user
+     * @param orderDate the date of the order
+     * @param orderStatus the status of the order
+     * @throws SQLException if there is an error updating the order
+     */
+    public void updateOrder(int id, int userId, Timestamp orderDate, String orderStatus) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "UPDATE CUSTOMER_ORDER SET user_id = ?, order_date = ?, order_status = ? WHERE id = ?")) {
@@ -64,13 +89,19 @@ public class Orders {
                 int affectedRows = stmt.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new Exception("Updating order failed, no rows affected.");
+                    throw new SQLException("Updating order failed, no rows affected.");
                 }
             }
         }
     }
 
-    public Order getOrder(int id) throws Exception {
+    /**
+     * Gets an order from the database.
+     * @param id the id of the order
+     * @return an instance of the {@link iotbay.models.Order} object
+     * @throws SQLException if there is an error getting the order
+     */
+    public Order getOrder(int id) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT * FROM CUSTOMER_ORDER WHERE id = ?")) {
@@ -80,16 +111,19 @@ public class Orders {
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         return new Order(rs, this.db);
-                    } else {
-                        return null;
                     }
                 }
             }
         }
-
+        return null;
     }
 
-    public List<Order> getOrders() throws Exception {
+    /**
+     * Gets all orders from the database.
+     * @return a list of {@link iotbay.models.Order} objects
+     * @throws SQLException if there is an error getting the orders
+     */
+    public List<Order> getOrders() throws SQLException {
         List<Order> orderList = new ArrayList<>();
 
         String query;
@@ -109,7 +143,13 @@ public class Orders {
         return orderList;
     }
 
-    public List<Order> getOrders(OrderStatus status) throws Exception {
+    /**
+     * Gets all orders from the database with a specific status.
+     * @param status the status of the order
+     * @return a list of {@link iotbay.models.Order} objects
+     * @throws SQLException if there is an error getting the orders
+     */
+    public List<Order> getOrders(OrderStatus status) throws SQLException {
         List<Order> orders = new ArrayList<>();
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
@@ -128,7 +168,13 @@ public class Orders {
         return orders;
     }
 
-    public List<Order> getOrders(int userId) throws Exception {
+    /**
+     * Gets all orders from the database for a specific user.
+     * @param userId the id of the user
+     * @return a list of {@link iotbay.models.Order} objects
+     * @throws SQLException if there is an error getting the orders
+     */
+    public List<Order> getOrders(int userId) throws SQLException {
         ArrayList<Order> orders = new ArrayList<>();
 
         try (Connection conn = this.db.getDbConnection()) {
@@ -145,7 +191,12 @@ public class Orders {
         return orders;
     }
 
-    public void deleteOrder(int id) throws Exception {
+    /**
+     * Deletes an order from the database.
+     * @param id the id of the order
+     * @throws SQLException if there is an error deleting the order
+     */
+    public void deleteOrder(int id) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "DELETE FROM CUSTOMER_ORDER WHERE id = ?")) {
@@ -155,13 +206,18 @@ public class Orders {
                 int affectedRows = stmt.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new Exception("Deleting order failed, no rows affected.");
+                    throw new SQLException("Deleting order failed, no rows affected.");
                 }
             }
         }
     }
 
-    public int getOrderCount() throws Exception {
+    /**
+     * Gets the number of orders in the database.
+     * @return the number of orders
+     * @throws SQLException if there is an error getting the number of orders
+     */
+    public int getOrderCount() throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT COUNT(*) FROM CUSTOMER_ORDER")) {
@@ -170,15 +226,11 @@ public class Orders {
                     if (rs.next()) {
                         return rs.getInt(1);
                     } else {
-                        throw new Exception("Counting orders failed, no rows returned.");
+                        return 0;
                     }
                 }
             }
         }
-    }
-
-    public DatabaseManager getDb() {
-        return db;
     }
 
 }

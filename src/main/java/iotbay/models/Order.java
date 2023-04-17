@@ -1,8 +1,8 @@
-package iotbay.models.entities;
+package iotbay.models;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.enums.OrderStatus;
-import lombok.*;
+import iotbay.enums.OrderStatus;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.*;
@@ -40,11 +40,21 @@ public class Order implements Serializable {
      */
     private String stripePaymentIntentId;
 
+    /**
+     * The constructor for the Order class.
+     * @param db The database manager.
+     */
     public Order(DatabaseManager db) {
         this.db = db;
     }
 
-    public Order(ResultSet rs, DatabaseManager db) throws Exception {
+    /**
+     * The constructor for the Order class.
+     * @param rs The result set.
+     * @param db The database manager.
+     * @throws SQLException If there is an error with the SQL query.
+     */
+    public Order(ResultSet rs, DatabaseManager db) throws SQLException {
         this.id = rs.getInt("id");
         this.userId = rs.getInt("user_id");
         this.orderDate = rs.getTimestamp("order_date");
@@ -55,9 +65,9 @@ public class Order implements Serializable {
 
     /**
      * Update the order in the database
-     * @throws Exception
+     * @throws SQLException If there is an error with the SQL query.
      */
-    public void update() throws Exception {
+    public void update() throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "UPDATE CUSTOMER_ORDER SET user_id = ?, order_date = ?, order_status = ?, stripe_payment_intent_id = ? WHERE id = ?")) {
@@ -71,7 +81,7 @@ public class Order implements Serializable {
                 int affectedRows = stmt.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new Exception("Updating order failed, no rows affected.");
+                    throw new SQLException("Updating order failed, no rows affected.");
                 }
 
             }

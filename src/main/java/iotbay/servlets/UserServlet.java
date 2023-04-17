@@ -9,12 +9,7 @@ import com.stripe.model.SetupIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import iotbay.database.DatabaseManager;
-import iotbay.exceptions.UserNotFoundException;
-import iotbay.exceptions.UserNotLoggedInException;
-import iotbay.models.entities.User;
-import iotbay.models.collections.Users;
-import iotbay.util.Misc;
-
+import iotbay.models.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -105,7 +100,7 @@ public class UserServlet extends HttpServlet {
         int paymentMethodId = Integer.parseInt(request.getParameter("paymentMethodId"));
         User user = (User) request.getSession().getAttribute("user");
 
-        iotbay.models.entities.PaymentMethod paymentMethod;
+        iotbay.models.PaymentMethod paymentMethod;
 
         try {
             paymentMethod = user.getPaymentMethod(paymentMethodId);
@@ -165,7 +160,7 @@ public class UserServlet extends HttpServlet {
             SetupIntent setupIntent = SetupIntent.retrieve(session.getSetupIntent());
             try {
                 User user = (User) request.getSession().getAttribute("user");
-                iotbay.models.entities.PaymentMethod paymentMethod = new iotbay.models.entities.PaymentMethod();
+                iotbay.models.PaymentMethod paymentMethod = new iotbay.models.PaymentMethod();
                 paymentMethod.setStripePaymentMethodId(setupIntent.getPaymentMethod());
                 paymentMethod.setUserId(user.getId());
 

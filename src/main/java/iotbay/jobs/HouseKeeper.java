@@ -1,10 +1,10 @@
 package iotbay.jobs;
 
+import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
-import iotbay.models.entities.Order;
-import iotbay.models.enums.OrderStatus;
-import iotbay.servlets.LoginServlet;
+import iotbay.enums.OrderStatus;
+import iotbay.models.Order;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.Job;
@@ -14,15 +14,29 @@ import org.quartz.JobExecutionException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A job runs at a specific interval to check for pending orders and delete old pending orders.
+ */
 public class HouseKeeper implements Job {
-    
+
+    /**
+     * An instance of the database manager
+     */
     DatabaseManager db;
 
+    /**
+     * The logger for this class
+     */
     private static final Logger logger = LogManager.getLogger(HouseKeeper.class);
+
+    /**
+     * The database logger for this class.
+     */
     private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
 
     @Override
@@ -32,18 +46,18 @@ public class HouseKeeper implements Job {
 
         try {
             checkStripePayments();
-        } catch (Exception e) {
+        } catch (SQLException | StripeException e) {
             logger.error("Error checking stripe payments", e);
         }
 
         try {
             deleteOldPendingOrders();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             logger.error("Error deleting old pending orders", e);
         }
     }
 
-    private void checkStripePayments() throws Exception {
+    private void checkStripePayments() throws SQLException, StripeException {
         // get orders with OrderStatus enum of PENDING
         List<Order> pendingOrders = db.getOrders().getOrders(OrderStatus.PENDING);
 
@@ -77,10 +91,10 @@ public class HouseKeeper implements Job {
     /**
      * Delete pending orders that are older than 5 minutes.
      */
-    private void deleteOldPendingOrders() throws Exception {
+    private void deleteOldPendingOrders() throws SQLException {
 
         // we need to delete the order line items and invoices first as there is a foreign key constraint.
-        try (Connection conn = db.getOrders().getDb().getDbConnection()) {
+        try (Connection conn = db.getDbConnection()) {
             String sql = "SELECT * FROM CUSTOMER_ORDER WHERE order_status = 'PENDING' AND {fn TIMESTAMPDIFF(SQL_TSI_MINUTE, order_date, CURRENT_TIMESTAMP)} > 5";
 
             try (ResultSet rs = conn.createStatement().executeQuery(sql)) {
@@ -92,7 +106,7 @@ public class HouseKeeper implements Job {
                 for (Order order : oldPendingOrders) {
                     try {
                         db.getOrderLineItems().deleteOrderLineItems(order.getId());
-                    } catch (Exception e) {
+                    } catch (SQLException e) {
                         logger.error("Error deleting order line items for order {}", order.getId(), e);
                     }
                     db.getInvoices().deleteInvoiceByOrderId(order.getId());
@@ -100,7 +114,7 @@ public class HouseKeeper implements Job {
             }
         }
 
-        try (Connection conn = db.getOrders().getDb().getDbConnection()) {
+        try (Connection conn = db.getDbConnection()) {
             String sql = "DELETE FROM CUSTOMER_ORDER WHERE order_status = 'PENDING' AND {fn TIMESTAMPDIFF(SQL_TSI_MINUTE, order_date, CURRENT_TIMESTAMP)} > 5";
 
             int affectedRows = conn.createStatement().executeUpdate(sql);

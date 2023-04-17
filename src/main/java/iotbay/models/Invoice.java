@@ -1,11 +1,10 @@
-package iotbay.models.entities;
+package iotbay.models;
 
-import lombok.*;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 @Data
@@ -28,14 +27,49 @@ public class Invoice implements Serializable {
 //        }
 
 
+    /**
+     * The invoice's unique id.
+     * <br>
+     * <br>
+     * <b>TABLE:</b> INVOICE.id
+     */
     private int id;
+
+    /**
+     * The invoice's order id.
+     * <br>
+     * <br>
+     * <b>TABLE:</b> INVOICE.order_id
+     */
     private int orderId;
+
+    /**
+     * The invoice's date.
+     * <br>
+     * <br>
+     * <b>TABLE:</b> INVOICE.invoice_date
+     */
     private Timestamp invoiceDate;
+
+    /**
+     * The invoice's amount.
+     * <br>
+     * <br>
+     * <b>TABLE:</b> INVOICE.amount
+     */
     private float amount;
 
+    /**
+     * Default constructor
+     */
     public Invoice() {}
 
-    public Invoice(ResultSet rs) throws Exception {
+    /**
+     * Initialises the invoice with the given result set.
+     * @param rs The result set.
+     * @throws SQLException If there is an error with the SQL query.
+     */
+    public Invoice(ResultSet rs) throws SQLException {
         this.id = rs.getInt("id");
         this.orderId = rs.getInt("order_id");
         this.invoiceDate = rs.getTimestamp("invoice_date");

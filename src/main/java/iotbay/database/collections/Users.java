@@ -2,15 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package iotbay.models.collections;
+package iotbay.database.collections;
 
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import iotbay.database.DatabaseManager;
 import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
-import iotbay.models.entities.PaymentMethod;
-import iotbay.models.entities.User;
+import iotbay.models.PaymentMethod;
+import iotbay.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,34 +60,42 @@ public class Users {
         this.db = db;
     }
 
-    public int getUserCount() throws Exception {
+    /**
+     * Gets the number of users in the database.
+     * @return the number of users in the database
+     * @throws SQLException if there is an error getting the user count
+     */
+    public int getUserCount() throws SQLException {
         try (Connection conn = db.getDbConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM USER_ACCOUNT");
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
-                } else {
-                    throw new Exception("Failed to get user count");
                 }
             }
         }
 
+        return 0;
     }
 
     /**
-     * Registers a new user with an encrypted password and salt and adds it to the database.
-     *
-     * @param newUser the new user to register
-     * @throws Exception if there is an error registering the user
+     * Registers a new user.
+     * @param newUser the user to register
+     * @throws SQLException if there is an error registering the user
+     * @throws UserExistsException if the user already exists
+     * @throws NoSuchAlgorithmException if the password encryption algorithm is not found
+     * @throws InvalidKeySpecException if the password encryption key is invalid
      */
-    public void registerUser(User newUser) throws Exception {
+    public void registerUser(User newUser) throws SQLException, UserExistsException, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] salt = this.createSalt();
         byte[] passwordHash = this.encryptPassword(newUser.getPassword(), salt);
 
         newUser.setPassword(Base64.getEncoder().encodeToString(passwordHash));
         newUser.setPasswordSalt(Base64.getEncoder().encodeToString(salt));
 
-        this.checkUserExists(newUser);
+        if (this.checkUserExists(newUser)) {
+            throw new UserExistsException("User already exists");
+        }
 
         createStripeCustomer(newUser);
 
@@ -98,9 +106,9 @@ public class Users {
      * Creates a customer in Stripe and sets the strip customer ID in the user object.
      *
      * @param newUser the user to create a Stripe customer for
-     * @throws Exception if there is an error creating the Stripe customer
+     * @throws SQLException if there is an error creating the Stripe customer
      */
-    private static void createStripeCustomer(User newUser) throws Exception {
+    private static void createStripeCustomer(User newUser) throws SQLException {
         Map<String, Object> params = new HashMap<>();
         params.put("email", newUser.getEmail());
         params.put("description", newUser.getFullName());
@@ -111,20 +119,26 @@ public class Users {
             stripeCustomer = Customer.create(params);
             newUser.setStripeCustomerId(stripeCustomer.getId());
         } catch (StripeException e) {
-            throw new Exception("Failed to create Stripe customer: " + e.getMessage());
+            throw new SQLException("Failed to create Stripe customer: " + e.getMessage());
         }
     }
 
     /**
-     * Authenticates a user by comparing the password hash and salt in the database with the password hash and salt of the user.
-     *
+     * Authenticates a user.
      * @param username the username of the user to authenticate
-     * @param password the hashed password of the user to authenticate
-     * @return the user if the authentication is successful, null otherwise
-     * @throws Exception if there is an error authenticating the user
+     * @param password the encrypted password of the user to authenticate
+     * @return the user if authentication is successful, null otherwise
+     * @throws SQLException if there is an error authenticating the user
+     * @throws UserNotFoundException if the user does not exist
+     * @throws NoSuchAlgorithmException if the password encryption algorithm is not found
+     * @throws InvalidKeySpecException if the password encryption key is invalid
      */
-    public User authenticateUser(String username, String password) throws Exception {
+    public User authenticateUser(String username, String password) throws SQLException, UserNotFoundException, NoSuchAlgorithmException, InvalidKeySpecException {
         User user = this.getUser(username);
+
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
+        }
 
         byte[] salt = Base64.getDecoder().decode(user.getPasswordSalt());
         byte[] encryptedPassword = encryptPassword(password, salt);
@@ -144,10 +158,9 @@ public class Users {
      *
      * @param username the username of the user to retrieve
      * @return the user as a User object
-     * @throws SQLException          if there is an error retrieving the user
-     * @throws UserNotFoundException if the user does not exist
+     * @throws SQLException if there is an error retrieving the user
      */
-    public User getUser(String username) throws Exception {
+    public User getUser(String username) throws SQLException {
 
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement userQueryStmt = conn.prepareStatement(
@@ -157,7 +170,7 @@ public class Users {
 
                 try (ResultSet userRs = userQueryStmt.executeQuery()) {
                     if (!userRs.next()) {
-                        throw new UserNotFoundException("The user with username " + username + " does not exist.");
+                        return null;
                     }
 
                     try (PreparedStatement userPaymentMethodsQueryStmt = conn.prepareStatement(
@@ -187,7 +200,13 @@ public class Users {
 
     }
 
-    private void checkUserExists(User user) throws Exception {
+    /**
+     * Checks if a user exists in the database.
+     * @param user the user to check
+     * @return true if the user exists, false otherwise
+     * @throws SQLException if there is an error checking if the user exists
+     */
+    private boolean checkUserExists(User user) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement checkUserQuery = conn.prepareStatement(
                     "SELECT COUNT(*) FROM USER_ACCOUNT WHERE username = ? OR email = ?"
@@ -198,9 +217,7 @@ public class Users {
                 try (ResultSet checkUserRs = checkUserQuery.executeQuery()) {
                     checkUserRs.next();
 
-                    if (checkUserRs.getInt(1) > 0) {
-                        throw new UserExistsException("The user with username " + user.getUsername() + " or email " + user.getEmail() + " already exists.");
-                    }
+                    return checkUserRs.getInt(1) > 0;
                 }
             }
         }
@@ -213,11 +230,13 @@ public class Users {
      * @throws SQLException        if there is an error adding the user
      * @throws UserExistsException if the user already exists
      */
-    private void addUser(User user) throws Exception {
+    private void addUser(User user) throws SQLException, UserExistsException {
 
         try (Connection conn = this.db.getDbConnection()) {
 
-            this.checkUserExists(user);
+            if (this.checkUserExists(user)) {
+                throw new UserExistsException("The user with username " + user.getUsername() + " already exists.");
+            }
 
             try (PreparedStatement addUserQuery = conn.prepareStatement(
                     "INSERT INTO USER_ACCOUNT (username, password, password_salt, first_name, last_name, email, address, phone_number, stripe_customer_id, is_staff, registration_date) "
@@ -265,16 +284,15 @@ public class Users {
      *
      * @param plainTextPassword the password to encrypt
      * @param salt              the salt to use for encryption
-     * @return the encrypted password as a byte array
+     * @return the encrypted password as a byte array.
+     * @throws NoSuchAlgorithmException if the algorithm is not found
+     * @throws InvalidKeySpecException  if the key is invalid
      */
-    private byte[] encryptPassword(String plainTextPassword, byte[] salt) {
-        try {
-            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-            SecretKey secretKey = keyFactory.generateSecret(new PBEKeySpec(plainTextPassword.toCharArray(), salt, iterations, 256));
-            return secretKey.getEncoded();
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException("Failed to encrypt password: " + e.getMessage());
-        }
+    private byte[] encryptPassword(String plainTextPassword, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+        SecretKey secretKey = keyFactory.generateSecret(new PBEKeySpec(plainTextPassword.toCharArray(), salt, iterations, 256));
+        return secretKey.getEncoded();
+
     }
 
 }
