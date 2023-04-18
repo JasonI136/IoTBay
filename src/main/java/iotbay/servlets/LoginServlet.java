@@ -4,18 +4,21 @@
  */
 package iotbay.servlets;
 
-import iotbay.models.collections.Users;
+import iotbay.database.DatabaseManager;
 import iotbay.exceptions.UserNotFoundException;
-import iotbay.models.entities.User;
+import iotbay.models.User;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.sql.SQLException;
 
 /**
  *
@@ -24,6 +27,14 @@ import java.io.PrintWriter;
 public class LoginServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(LoginServlet.class);
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
+    DatabaseManager db;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        db = (DatabaseManager) getServletContext().getAttribute("db");
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -63,6 +74,14 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // check if the user is already logged in
+        if (request.getSession().getAttribute("user") != null) {
+            response.sendRedirect(request.getContextPath() + "/user");
+            return;
+        }
+
+
+        //request.getSession().setAttribute("login", request.getParameter("redirect"));
         request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
     }
 
@@ -78,8 +97,6 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Users users = (Users) getServletContext().getAttribute("users");
-
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -93,32 +110,40 @@ public class LoginServlet extends HttpServlet {
         }
 
         try {
-            User user = users.authenticateUser(username, password);
+            User user = this.db.getUsers().authenticateUser(username, password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
                 request.setAttribute("success_title", "Login successful");
                 request.setAttribute("success_msg", "Welcome " + user.getFirstName() + " " + user.getLastName() + "!");
 
                 logger.info("User " + user.getUsername() + " logged in.");
+                iotbayLogger.info("User " + user.getUsername() + " logged in.");
 
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+                String redirect = (String) request.getSession().getAttribute("loginRedirect");
+                if (redirect != null) {
+                    response.sendRedirect(redirect);
+                    return;
+                }
+
+                response.sendRedirect(getServletContext().getContextPath() + "/user");
             } else {
+                logger.info("User " + username + " failed to log in.");
+                iotbayLogger.info("User " + username + " failed to log in.");
                 response.setStatus(401);
                 request.setAttribute("error_title", "Login failed");
                 request.setAttribute("error_msg", "The username or password is incorrect.");
                 request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
                
             }
-        } catch (Exception e) {
-            if (e instanceof UserNotFoundException) {
-                response.setStatus(404);
-                request.setAttribute("error_title", "Account not found");
-                request.setAttribute("error_msg", "The account does not exist.");
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
-            } else {
-                throw new ServletException("Error: " + e.getMessage());
-            }
-
+        } catch (UserNotFoundException e) {
+            logger.info("User " + username + " failed to log in as the account does not exist.");
+            iotbayLogger.info("User " + username + " failed to log in as the account does not exist.");
+            response.setStatus(404);
+            request.setAttribute("error_title", "Account not found");
+            request.setAttribute("error_msg", "The account does not exist.");
+            request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+        } catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new ServletException(e);
         }
 
     }

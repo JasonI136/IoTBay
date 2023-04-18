@@ -4,14 +4,14 @@
  */
 package iotbay.servlets;
 
-import iotbay.models.entities.User;
+import iotbay.models.User;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 public class LogoutServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(MainServlet.class);
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -64,8 +65,9 @@ public class LogoutServlet extends HttpServlet {
         User user = (User) request.getSession().getAttribute("user");
 
         if (user != null) {
-            request.getSession().invalidate();
+            request.getSession().setAttribute("user", null);
             logger.info("User " + user.getUsername() + " logged out");
+            iotbayLogger.info("User " + user.getUsername() + " logged out");
         }
 
         response.sendRedirect(getServletContext().getContextPath());

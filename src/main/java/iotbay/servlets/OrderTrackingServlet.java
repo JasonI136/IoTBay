@@ -3,22 +3,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package iotbay.servlets;
+
 import iotbay.database.DatabaseManager;
-import iotbay.models.collections.Orders;
-import iotbay.models.entities.OrderLineItem;
+import iotbay.models.Order;
+import iotbay.models.OrderLineItem;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import iotbay.models.collections.OrderLineItems;
-import iotbay.models.entities.Order;
-import iotbay.models.entities.Product;
-import iotbay.models.collections.Products;
-
-import java.sql.Array;
-import java.util.*;
+import java.util.List;
 
 
 /**
@@ -27,18 +23,12 @@ import java.util.*;
  */
 public class OrderTrackingServlet extends HttpServlet {
 
-    private Orders orders;
-
-    private OrderLineItems orderLineItems;
-
-    private Products products;
+    DatabaseManager db;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        this.orders = (Orders) getServletContext().getAttribute("orders");
-        this.orderLineItems = (OrderLineItems) getServletContext().getAttribute("orderLineItems");
-        this.products = (Products) getServletContext().getAttribute("products");
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
     }
 
 
@@ -105,10 +95,10 @@ public class OrderTrackingServlet extends HttpServlet {
         int orderID = Integer.parseInt(orderIDString);
 
         try {
-            Order order = this.orders.getOrder(orderID);
+            Order order = this.db.getOrders().getOrder(orderID);
             if (order != null) {
                 request.setAttribute("order", order);
-                ArrayList<OrderLineItem> orderLineItemsList = this.orderLineItems.getOrderLineItems(orderID);
+                List<OrderLineItem> orderLineItemsList = this.db.getOrderLineItems().getOrderLineItems(orderID);
                 request.setAttribute("orderLineItemsList", orderLineItemsList);
                 request.getRequestDispatcher("/WEB-INF/jsp/order.jsp").forward(request, response);
             } else {

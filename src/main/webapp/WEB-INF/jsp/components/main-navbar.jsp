@@ -26,23 +26,23 @@
             <!-- Menu desktop -->
             <div class="menu-desktop">
                 <ul class="main-menu">
-                    <li class="${(requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat("/") || requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath) ? 'active-menu' : ''}">
+                    <li class="${(requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat("/") || requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath) ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/">Home</a>
                     </li>
 
-                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/shop') ? 'active-menu' : ''}">
+                    <li class="${requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/shop') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/shop">Shop</a>
                     </li>
 
-                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/orderTracking') ? 'active-menu' : ''}">
+                    <li class="${requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/orderTracking') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/orderTracking">Track Order</a>
                     </li>
 
-                    <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/contactUs') ? 'active-menu' : ''}">
+                    <li class="${requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/contactUs') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/contactUs">Contact</a>
                     </li>
                     
-                     <li class="${requestScope['javax.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/aboutUs') ? 'active-menu' : ''}">
+                     <li class="${requestScope['jakarta.servlet.forward.request_uri'] == pageContext.request.contextPath.concat('/aboutUs') ? 'active-menu' : ''}">
                         <a href="${pageContext.request.contextPath}/aboutUs">About Us</a>
                     </li>
                 </ul>

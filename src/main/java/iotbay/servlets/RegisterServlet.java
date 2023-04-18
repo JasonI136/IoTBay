@@ -5,37 +5,35 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.collections.Users;
 import iotbay.exceptions.UserExistsException;
-import iotbay.models.entities.User;
+import iotbay.models.User;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Properties;
 
 /**
  *
  * @author cmesina
  */
 public class RegisterServlet extends HttpServlet {
-    
-    Users users;
+
+    DatabaseManager db;
 
     private static final Logger logger = LogManager.getLogger(RegisterServlet.class);
+
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
 
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-        
-        Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
-        
-        this.users = (Users) getServletContext().getAttribute("users");
+
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
     }
 
     /**
@@ -129,11 +127,14 @@ public class RegisterServlet extends HttpServlet {
         newUser.setEmail(emailAddress);
         newUser.setAddress(address);
         newUser.setPhoneNumber(phoneNumber);
+        newUser.setRegistrationDate(new java.sql.Timestamp(System.currentTimeMillis()));
         
         try {
-            this.users.registerUser(newUser);
+            this.db.getUsers().registerUser(newUser);
         } catch (Exception e) {
             if (e instanceof UserExistsException) {
+                logger.error("User " + username + " already exists.");
+                iotbayLogger.error("User with username " + username + " attempted to register but already exists.");
                 request.setAttribute("error_title", "User already exists");
                 request.setAttribute("error_msg", e.getMessage());
                 request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
@@ -143,6 +144,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         logger.info("User " + username + " has been registered.");
+        iotbayLogger.info("User " + username + " has been registered.");
 
         request.setAttribute("success_title", "Registration successful");
         request.setAttribute("success_msg", "You have successfully registered. Please login to continue.");

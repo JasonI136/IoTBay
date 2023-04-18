@@ -5,51 +5,41 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.collections.Categories;
-import iotbay.models.entities.Category;
-import iotbay.models.entities.Product;
-import iotbay.models.collections.Products;
+import iotbay.models.Category;
+import iotbay.models.Product;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 
 /**
- *
  * @author cmesina
  */
 public class ShopServlet extends HttpServlet {
-    
+
     DatabaseManager db;
-
-    Products products;
-
-    Categories categories;
 
     @Override
     public void init() throws ServletException {
         super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-        
+
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
-        this.products = (Products) getServletContext().getAttribute("products");
-        this.categories = (Categories) getServletContext().getAttribute("categories");
     }
-    
-    
+
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -59,7 +49,7 @@ public class ShopServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ProductServlet</title>");            
+            out.println("<title>Servlet ProductServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ProductServlet at " + request.getContextPath() + "</h1>");
@@ -69,44 +59,107 @@ public class ShopServlet extends HttpServlet {
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int limit = request.getParameter("limit") != null ? Integer.parseInt(request.getParameter("limit")) : 10;
+        int offset = request.getParameter("offset") != null ? Integer.parseInt(request.getParameter("offset")) : 0;
+        String searchNameParam = request.getParameter("searchName");
+
+        // If the search name is empty, redirect to the shop page.
+        if (searchNameParam != null) {
+            if (searchNameParam.trim().equals("")) {
+                response.sendRedirect(request.getContextPath() + "/shop");
+                return;
+            }
+        }
+
+
         List<Product> products;
         try {
-            products = this.products.getProducts(100, 0, false);
+            if (searchNameParam != null) {
+                products = this.db.getProducts().searchProduct(searchNameParam, limit, offset);
+            } else {
+                products = this.db.getProducts().getProducts(limit, offset, false);
+            }
+
         } catch (SQLException e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }
-        
+
         List<Category> categories;
         try {
-            categories = this.categories.getCategories();
+            categories = this.db.getCategories().getCategories();
         } catch (Exception e) {
             throw new ServletException("Failed to query database: " + e.getMessage());
         }
-        
-        
+
+        int totalProducts = 0;
+        try {
+            if (searchNameParam != null) {
+                totalProducts = this.db.getProducts().getProductCount(searchNameParam);
+            } else {
+                totalProducts = this.db.getProducts().getProductCount();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // Pagination logic
+
+        // Calculate the number of pages.
+        int numberOfPages = (int) Math.ceil((double) totalProducts / limit);
+
+        // Calculate the current page
+        int currentPage = (int) Math.ceil((double) offset / limit) + 1;
+
+        // Calculate the last offset
+        int lastOffset = (numberOfPages - 1) * limit;
+
+        // Calculate the next and previous offset
+        int nextOffset = 0;
+        int prevOffset = offset - limit;
+
+        // If we have less products than the limit, we are at the end of the list
+        if (products.size() < limit) {
+            nextOffset = -1;
+        } else {
+            // Otherwise, we can calculate the next offset
+            nextOffset = offset + limit;
+        }
+
         request.setAttribute("products", products);
         request.setAttribute("categories", categories);
+        request.setAttribute("limit", limit);
+        request.setAttribute("nextOffset", nextOffset);
+        request.setAttribute("prevOffset", prevOffset);
+        request.setAttribute("numberOfPages", numberOfPages);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("lastOffset", lastOffset);
+
+        // If we have a search name, pass it to the view.
+        if (searchNameParam != null) {
+            request.setAttribute("searchName", searchNameParam);
+        }
         request.getRequestDispatcher("/WEB-INF/jsp/products.jsp").forward(request, response);
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -122,6 +175,6 @@ public class ShopServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
+
 
 }

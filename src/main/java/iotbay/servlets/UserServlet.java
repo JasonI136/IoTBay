@@ -9,16 +9,14 @@ import com.stripe.model.SetupIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import iotbay.database.DatabaseManager;
-import iotbay.exceptions.UserNotFoundException;
-import iotbay.exceptions.UserNotLoggedInException;
-import iotbay.models.entities.User;
-import iotbay.models.collections.Users;
-import iotbay.util.Misc;
+import iotbay.models.User;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -28,13 +26,13 @@ public class UserServlet extends HttpServlet {
 
     DatabaseManager db;
 
-    Users users;
+    private static final Logger logger = LogManager.getLogger(UserServlet.class);
+    private static final Logger iotbayLogger = LogManager.getLogger("iotbayLogger");
 
     @Override
     public void init() throws ServletException {
         super.init();
         this.db = (DatabaseManager) getServletContext().getAttribute("db");
-        this.users = (Users) getServletContext().getAttribute("users");
     }
 
     /**
@@ -48,37 +46,23 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getPathInfo();
+        String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
         // refresh the user
-        try {
-            Misc.refreshUser(request, users);
-        } catch (UserNotLoggedInException | UserNotFoundException e) {
-            response.sendRedirect(getServletContext().getContextPath() + "/login");
-            return;
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
+        //if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
-        String redirect = request.getSession().getAttribute("redirect") != null ? (String) request.getSession().getAttribute("redirect") : null;
-
-        if (redirect != null) {
-            request.getSession().removeAttribute("redirect");
-            response.sendRedirect(getServletContext().getContextPath() + redirect);
-            return;
-        }
-
-        if (path != null) {
-            if (path.equals("/payments/add/success")) {
+        switch (path) {
+            case "/payments/add/success":
                 addPaymentMethodSuccess(request, response);
                 return;
-            } else {
-                response.sendError(400);
-            }
-        } else {
-            request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
+            case "/payments/add/cancel":
+                response.sendRedirect( getServletContext().getContextPath() + "/user");
+                return;
+            case "/":
+                request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
+                return;
+            default:
+                response.sendError(404);
         }
-
-
     }
 
     /**
@@ -92,15 +76,6 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        try {
-            Misc.refreshUser(request, users);
-        } catch (UserNotLoggedInException | UserNotFoundException e) {
-            response.sendRedirect(getServletContext().getContextPath() + "/login");
-            return;
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
 
         String path = request.getPathInfo();
 
@@ -125,7 +100,7 @@ public class UserServlet extends HttpServlet {
         int paymentMethodId = Integer.parseInt(request.getParameter("paymentMethodId"));
         User user = (User) request.getSession().getAttribute("user");
 
-        iotbay.models.entities.PaymentMethod paymentMethod;
+        iotbay.models.PaymentMethod paymentMethod;
 
         try {
             paymentMethod = user.getPaymentMethod(paymentMethodId);
@@ -149,12 +124,8 @@ public class UserServlet extends HttpServlet {
             stripePaymentMethod.detach();
             user.deletePaymentMethod(paymentMethod);
 
-            // refresh user as payment methods have changed
-            try {
-                Misc.refreshUser(request, users);
-            } catch (Exception e) {
-                throw new ServletException(e);
-            }
+            logger.info("User " + user.getId() + " removed a payment method");
+            iotbayLogger.info("User " + user.getId() + " removed a payment method");
 
             response.sendRedirect(request.getContextPath() + "/user");
 
@@ -189,7 +160,7 @@ public class UserServlet extends HttpServlet {
             SetupIntent setupIntent = SetupIntent.retrieve(session.getSetupIntent());
             try {
                 User user = (User) request.getSession().getAttribute("user");
-                iotbay.models.entities.PaymentMethod paymentMethod = new iotbay.models.entities.PaymentMethod();
+                iotbay.models.PaymentMethod paymentMethod = new iotbay.models.PaymentMethod();
                 paymentMethod.setStripePaymentMethodId(setupIntent.getPaymentMethod());
                 paymentMethod.setUserId(user.getId());
 
@@ -200,12 +171,8 @@ public class UserServlet extends HttpServlet {
                 paymentMethod.setCardLast4(Integer.parseInt(stripePaymentMethod.getCard().getLast4()));
                 user.addPaymentMethod(paymentMethod);
 
-                // refresh user as payment methods have changed
-                try {
-                    Misc.refreshUser(request, users);
-                } catch (Exception e) {
-                    throw new ServletException(e);
-                }
+                logger.info("User " + user.getId() + " added a new payment method");
+                iotbayLogger.info("User " + user.getId() + " added a new payment method");
 
                 response.sendRedirect(request.getContextPath() + "/user");
             } catch (Exception e) {

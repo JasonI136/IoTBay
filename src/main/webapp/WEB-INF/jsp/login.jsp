@@ -4,7 +4,7 @@
     Author     : cmesina
 --%>
 
-<%@page import="com.sun.xml.rpc.processor.modeler.j2ee.xml.paramValueType" %>
+
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -88,10 +88,6 @@
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "${pageContext.request.contextPath}/user";
-                    }
                 });
             </script>
         </c:if>

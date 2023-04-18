@@ -6,6 +6,9 @@ package iotbay.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import iotbay.annotations.GlobalServletField;
+import iotbay.database.collections.*;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,14 +16,81 @@ import java.io.*;
 import java.sql.*;
 
 /**
- * @author cmesina
+ * Represents the database manager
  */
+@Getter
 public class DatabaseManager {
 
 
+    /**
+     * The hikari data source
+     */
     protected HikariDataSource dataSource;
 
+    /**
+     * The logger
+     */
     private static final Logger logger = LogManager.getLogger(DatabaseManager.class);
+
+    /**
+     * An instance of the users collection
+     */
+    @GlobalServletField("users")
+    private Users users;
+
+    /**
+     * An instance of the products collection
+     */
+    @GlobalServletField("products")
+    private Products products;
+
+    /**
+     * An instance of the categories collection
+     */
+    @GlobalServletField("categories")
+    private Categories categories;
+
+    /**
+     * An instance of the orders collection
+     */
+    @GlobalServletField("orders")
+    private Orders orders;
+
+    /**
+     * An instance of the order line items collection
+     */
+    @GlobalServletField("orderLineItems")
+    private OrderLineItems orderLineItems;
+
+    /**
+     * An instance of the payments collection
+     */
+    @GlobalServletField("payments")
+    private Payments payments;
+
+    /**
+     * An instance of the invoices collection
+     */
+    @GlobalServletField("invoices")
+    private Invoices invoices;
+
+    /**
+     * An instance of the shipments collection
+     */
+    @GlobalServletField("shipments")
+    private Shipments shipments;
+
+    /**
+     * An instance of the payment methods collection
+     */
+    @GlobalServletField("paymentMethods")
+    private PaymentMethods paymentMethods;
+
+    /**
+     * An instance of the logs collection
+     */
+    @GlobalServletField("logs")
+    private Logs logs;
 
 
     /**
@@ -69,6 +139,7 @@ public class DatabaseManager {
                             + "phone_number                     INT,"
                             + "is_staff                         BOOLEAN,"
                             + "stripe_customer_id               VARCHAR(256),"
+                            + "registration_date                TIMESTAMP,"
                             + "PRIMARY KEY (id)"
                             + ")";
 
@@ -296,11 +367,54 @@ public class DatabaseManager {
 
         }
 
+//        <JDBC name="iotbay_logs" tableName="EVENT_LOG">
+//            <ConnectionFactory class="iotbay.database.StaticDatabaseManager" method="getConnection"/>
+//            <Column name="ID" pattern="%u"/>
+//            <Column name="TIMESTAMP" pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}"/>
+//            <Column name="LEVEL" pattern="%level"/>
+//            <Column name="MESSAGE" pattern="%msg"/>
+//        </JDBC>
+
+        if (!this.tableExists("EVENT_LOG")) {
+            logger.warn("Creating EVENT_LOG table");
+            String createTableQuery =
+                    "CREATE TABLE EVENT_LOG ("
+                            + "id                               INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+                            + "timestamp                        TIMESTAMP,"
+                            + "level                            VARCHAR(256),"
+                            + "message                          VARCHAR(256),"
+                            + "PRIMARY KEY (id)"
+                            + ")";
+
+            try (Connection conn = this.getDbConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createTableQuery);
+                }
+            }
+
+        }
+
+        // Initialize DAOs
+        this.users = new Users(this);
+        this.products = new Products(this);
+        this.categories = new Categories(this);
+        this.orders = new Orders(this);
+        this.invoices = new Invoices(this);
+        this.payments = new Payments(this);
+        this.shipments = new Shipments(this);
+        this.paymentMethods = new PaymentMethods(this);
+        this.orderLineItems = new OrderLineItems(this, this.orders, this.products);
+        this.logs = new Logs(this);
 
         logger.info("Database initialized.");
 
     }
 
+    /**
+     * Gets a database connection from the connection pool.
+     *
+     * @return a database connection
+     */
     public Connection getDbConnection() {
         try {
             return this.dataSource.getConnection();
@@ -324,4 +438,5 @@ public class DatabaseManager {
         }
 
     }
+
 }

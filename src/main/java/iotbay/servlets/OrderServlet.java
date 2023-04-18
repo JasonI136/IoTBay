@@ -4,26 +4,14 @@
  */
 package iotbay.servlets;
 
-import com.stripe.model.PaymentIntent;
-import iotbay.models.collections.Invoices;
-import iotbay.models.collections.OrderLineItems;
-import iotbay.models.collections.Orders;
-import iotbay.models.collections.Payments;
-import iotbay.models.entities.Cart;
-import iotbay.models.entities.CartItem;
-import iotbay.models.entities.Order;
-import iotbay.models.entities.User;
-import iotbay.models.entities.Invoice;
-import iotbay.models.enums.OrderStatus;
+import iotbay.database.DatabaseManager;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Date;
-import java.sql.Timestamp;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -31,22 +19,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OrderServlet extends HttpServlet {
 
-    Orders orders;
-
-    Payments payments;
-
-    Invoices invoices;
-
-    OrderLineItems orderLineItems;
+    DatabaseManager db;
 
     @Override
     public void init() throws ServletException {
         super.init();
-
-        orders = (Orders) getServletContext().getAttribute("orders");
-        payments = (Payments) getServletContext().getAttribute("payments");
-        invoices = (Invoices) getServletContext().getAttribute("invoices");
-        orderLineItems = (OrderLineItems) getServletContext().getAttribute("orderLineItems");
+        this.db = (DatabaseManager) getServletContext().getAttribute("db");
     }
 
 

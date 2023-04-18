@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -42,9 +43,18 @@
         <section class="bg0 p-t-23 p-b-140">
             <div class="container">
                 <div class="p-b-10">
-                    <h3 class="ltext-103 cl5">
-                        Product Overview
-                    </h3>
+                    <c:choose>
+                        <c:when test="${empty searchName}">
+                            <h3 class="ltext-103 cl5">
+                                All Products
+                            </h3>
+                        </c:when>
+                        <c:otherwise>
+                            <h3 class="ltext-103 cl5">
+                                Search Results for: ${searchName}
+                            </h3>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
 
                 <div class="flex-w flex-sb-m p-b-52">
@@ -77,13 +87,21 @@
                                 <i class="zmdi zmdi-search"></i>
                             </button>
 
-                            <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" id="searchInput"
-                                   placeholder="Search products...">
+                            <form method="get" action="${pageContext.request.contextPath}/shop">
+                                <input class="mtext-107 cl2 size-114 plh2 p-r-15" name="searchName" type="text"
+                                       id="searchInput"
+                                       placeholder="Search products..." value="${empty searchName ? '' : searchName}">
+                            </form>
+
                         </div>
                     </div>
                 </div>
 
                 <div class="row isotope-grid" id="productList">
+
+                    <c:if test="${empty products}">
+                        No products found
+                    </c:if>
 
                     <c:forEach items="${products}" var="product">
                         <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${product.categoryNameNoSpace}">
@@ -128,6 +146,158 @@
                     </c:forEach>
 
                 </div>
+
+                <c:set var="searchName" value="${empty searchName ? '' : '&searchName=' += searchName}"/>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+
+                        <%-- Handle the << and previous buttons.   --%>
+                        <c:choose>
+                            <%-- If the current page is the first page, disable the << and previous buttons. --%>
+                            <c:when test="${currentPage == 1}">
+                                <li class="page-item disabled"><a class="page-link" href="#"><<</a></li>
+                                <li class="page-item disabled"><a class="page-link" href="#">&lt;</a></li>
+                            </c:when>
+                            <%-- If the current page is not the first page, enable the << and previous buttons. --%>
+                            <c:otherwise>
+                                <li><a class="page-link"
+                                       href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=0${searchName}"><<</a>
+                                </li>
+                                <li class="page-item"><a class="page-link"
+                                                         href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${prevOffset}${searchName}">&lt;</a>
+                                </li>
+                            </c:otherwise>
+                        </c:choose>
+
+                        <%-- Handle the page numbers. --%>
+                        <c:choose>
+                            <%-- If the current page is less than or equal to 2, display the first 5 pages. --%>
+                            <c:when test="${currentPage <= 2}">
+                                <c:choose>
+                                    <%-- If the number of pages is less than or equal to 5, display all the pages. --%>
+                                    <c:when test="${numberOfPages <= 5}">
+                                        <c:forEach var="i" begin="1" end="${numberOfPages}">
+                                            <c:choose>
+                                                <%-- If the current page is the same as the page number, highlight the page number. --%>
+                                                <c:when test="${i == currentPage}">
+                                                    <li class="page-item active"><a class="page-link"
+                                                                                    href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                                    </li>
+                                                </c:when>
+                                                <%-- If the current page is not the same as the page number, display the page number. --%>
+                                                <c:otherwise>
+                                                    <li class="page-item"><a class="page-link"
+                                                                             href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                                    </li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </c:when>
+                                    <%-- If the number of pages is greater than 5, display the first 5 pages. --%>
+                                    <c:otherwise>
+                                        <c:forEach var="i" begin="1" end="5">
+                                            <c:choose>
+                                                <%-- If the current page is the same as the page number, highlight the page number. --%>
+                                                <c:when test="${i == currentPage}">
+                                                    <li class="page-item active"><a class="page-link"
+                                                                                    href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                                    </li>
+                                                </c:when>
+                                                <%-- If the current page is not the same as the page number, display the page number. --%>
+                                                <c:otherwise>
+                                                    <li class="page-item"><a class="page-link"
+                                                                             href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                                    </li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:when>
+                            <%-- If we are near the end of the pages, display the last 5 pages. --%>
+                            <c:when test="${currentPage >= numberOfPages - 2}">
+                                <c:choose>
+                                    <%-- If the number of pages is less than or equal to 5, display all the pages. --%>
+                                    <c:when test="${numberOfPages <= 5}">
+                                        <c:forEach var="i" begin="1" end="${numberOfPages}">
+                                            <c:choose>
+                                                <%-- If the current page is the same as the page number, highlight the page number. --%>
+                                                <c:when test="${i == currentPage}">
+                                                    <li class="page-item active"><a class="page-link"
+                                                                                    href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                                    </li>
+                                                </c:when>
+                                                <%-- If the current page is not the same as the page number, display the page number. --%>
+                                                <c:otherwise>
+                                                    <li class="page-item"><a class="page-link"
+                                                                             href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                                    </li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </c:when>
+                                    <%-- If the number of pages is greater than 5, display the last 5 pages. --%>
+                                    <c:otherwise>
+                                        <c:forEach var="i" begin="${numberOfPages - 4}" end="${numberOfPages}">
+                                            <c:choose>
+                                                <%-- If the current page is the same as the page number, highlight the page number. --%>
+                                                <c:when test="${i == currentPage}">
+                                                    <li class="page-item active"><a class="page-link"
+                                                                                    href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                                    </li>
+                                                </c:when>
+                                                <%-- If the current page is not the same as the page number, display the page number. --%>
+                                                <c:otherwise>
+                                                    <li class="page-item"><a class="page-link"
+                                                                             href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                                    </li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:when>
+                            <%-- If we are greater than 2 pages, display the current page as the middle button --%>
+                            <c:when test="${currentPage > 2}">
+                                <%-- Display the last 2 pages before the current page. --%>
+                                <c:forEach var="i" begin="${currentPage - 2}" end="${currentPage - 1}">
+                                    <li class="page-item"><a class="page-link"
+                                                             href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                    </li>
+                                </c:forEach>
+                                <%-- Display the current page. --%>
+                                <li class="page-item active"><a class="page-link"
+                                                                href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(currentPage - 1) * limit}${searchName}">${currentPage}</a>
+                                </li>
+                                <%-- Display the next 2 pages after the current page. --%>
+                                <c:forEach var="i" begin="${currentPage + 1}" end="${currentPage + 2}">
+                                    <li class="page-item"><a class="page-link"
+                                                             href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${(i - 1) * limit}${searchName}">${i}</a>
+                                    </li>
+                                </c:forEach>
+                            </c:when>
+
+                        </c:choose>
+
+                        <%-- Display the next and last buttons. --%>
+                        <c:choose>
+                            <%-- If the current page is the last page, disable the next and last buttons. --%>
+                            <c:when test="${currentPage == numberOfPages}">
+                                <li class="page-item disabled"><a class="page-link" href="#">&gt;</a></li>
+                                <li class="page-item disabled"><a class="page-link" href="#">>></a></li>
+                            </c:when>
+                            <%-- If the current page is not the last page, display the next and last buttons. --%>
+                            <c:otherwise>
+                                <li class="page-item"><a class="page-link"
+                                                         href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${nextOffset}${searchName}">&gt;</a>
+                                </li>
+                                <li class="page-item"><a class="page-link"
+                                                         href="${pageContext.request.contextPath}/shop?limit=${limit}&offset=${lastOffset}${searchName}">>></a>
+                                </li>
+                            </c:otherwise>
+                        </c:choose>
+                    </ul>
+                </nav>
 
 
             </div>
@@ -220,31 +390,6 @@
         <jsp:include page="components/footer.jsp"/>
     </footer>
 
-    <!-- SEARCH FUNCTIONALITY -->
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const productList = document.getElementById('productList');
-        const allProductsBtn = document.querySelector('.how-active1');
-
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.toLowerCase();
-
-            for (const product of productList.children) {
-                const name = product.innerText.toLowerCase();
-                if (name.includes(query)) {
-                    product.style.display = 'block';
-                    if (productList.firstChild !== product) {
-                        productList.insertBefore(product, productList.firstChild);
-                    }
-                } else {
-                    product.style.display = 'none';
-                }
-            }
-
-            // trigger click event on the "All Products" button
-            allProductsBtn.click();
-        });
-    </script>
 
     <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
 
