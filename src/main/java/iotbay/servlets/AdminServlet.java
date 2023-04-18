@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AdminServlet extends HttpServlet {
+
     DatabaseManager db;
 
     @Override
@@ -27,6 +28,9 @@ public class AdminServlet extends HttpServlet {
                 return;
             case "/users":
                 adminUsers(request, response);
+                return;
+            case "/inventory/add":
+                adminInventoryAdd(request, response);
                 return;
             case "/inventory":
                 adminInventory(request, response);
@@ -76,6 +80,10 @@ public class AdminServlet extends HttpServlet {
 
     private void adminUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-users.jsp").forward(request, response);
+    }
+
+    private void adminInventoryAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-inventory-add.jsp").forward(request, response);
     }
 
     private void adminInventory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
