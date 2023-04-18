@@ -77,12 +77,20 @@ public class AuthFilter implements Filter {
                 // Check if the user is authorized to view the page
                 if (path.isUserAllowed(user)) {
                     // If so, continue
+
+                    if (path.isStaffOnly()) {
+                        String logMessage = String.format("Staff member %s (%s) accessed %s", user.getId(), user.getUsername(), reqPath);
+                        logger.info(logMessage);
+                        iotbayLogger.info(logMessage);
+                    }
+
                     chain.doFilter(request, response);
                     return;
                 } else {
                     // If not, send 403
-                    logger.warn("User " + user.getUsername() + " tried to access " + reqPath + " but was not authorized");
-                    iotbayLogger.warn("User " + user.getUsername() + " tried to access " + reqPath + " but was not authorized");
+                    String logMessage = String.format("User %s (%s) tried to access %s but was not authorized", user.getId(), user.getUsername(), reqPath);
+                    logger.warn(logMessage);
+                    iotbayLogger.warn(logMessage);
                     req.getSession().setAttribute("message", "You are not authorized to view this page");
                     res.sendError(403);
                     return;
