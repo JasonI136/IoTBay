@@ -103,6 +103,29 @@ public class Users {
     }
 
     /**
+     * For JUnit testing only. Skips the creation of a Stripe customer.
+     * @deprecated - For JUnit testing only. Skips the creation of a Stripe customer.
+     * @param newUser the user to register
+     * @throws SQLException if there is an error registering the user
+     * @throws UserExistsException if the user already exists
+     * @throws NoSuchAlgorithmException if the password encryption algorithm is not found
+     * @throws InvalidKeySpecException if the password encryption key is invalid
+     */
+    public void registerUserTest(User newUser) throws SQLException, UserExistsException, NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] salt = this.createSalt();
+        byte[] passwordHash = this.encryptPassword(newUser.getPassword(), salt);
+
+        newUser.setPassword(Base64.getEncoder().encodeToString(passwordHash));
+        newUser.setPasswordSalt(Base64.getEncoder().encodeToString(salt));
+
+        if (this.checkUserExists(newUser)) {
+            throw new UserExistsException("User already exists");
+        }
+
+        this.addUser(newUser);
+    }
+
+    /**
      * Creates a customer in Stripe and sets the strip customer ID in the user object.
      *
      * @param newUser the user to create a Stripe customer for
