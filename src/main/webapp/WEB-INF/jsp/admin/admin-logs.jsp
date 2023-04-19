@@ -27,37 +27,35 @@
 
 
         <section class="bg0 p-t-104 p-b-116">
-
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
+                        <p class="text-muted">Displaying the latest 100 logs</p> <!-- Add this line -->
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <thead>
                                     <tr class="bg-dark text-white">
                                         <th scope="col" class="text-center" style="width: 10%">#</th>
-                                        <th scope="col" class="text-center" style="width: 10%">Time</th>
+                                        <th scope="col" class="text-center" style="width: 20%" class="text-center">Time</th>
                                         <th scope="col" class="text-center">Level</th>
                                         <th scope="col" class="text-center">Message</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <c:forEach var="logEntry" items="${logs}">
-                                        <tr
-                                                <c:choose>
-                                                    <c:when test="${logEntry.level == 'WARN'}">
-                                                        class="table-warning"
-                                                    </c:when>
-                                                    <c:when test="${logEntry.level == 'ERROR'}">
-                                                        class="table-danger"
-                                                    </c:when>
-                                                </c:choose>
+                                        <tr <c:choose>
+                                                <c:when test="${logEntry.level == 'WARN'}">
+                                                    class="table-warning"
+                                                </c:when>
+                                                <c:when test="${logEntry.level == 'ERROR'}">
+                                                    class="table-danger"
+                                                </c:when>
+                                            </c:choose>>
 
-                                        >
-                                            <td class="text-center">${logEntry.id}</td>
-                                            <td class="text-center">${logEntry.timestamp}</td>
-                                            <td>${logEntry.level}</td>
-                                            <td>${logEntry.message}</td>
+                                            <td class="text-center py-2">${logEntry.id}</td>
+                                            <td class="text-center py-2">${logEntry.timestamp.substring(0, 19)}</td>
+                                            <td class="text-center py-2"><b>${logEntry.level}</b></td>
+                                            <td class="py-2">${logEntry.message}</td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>
@@ -67,6 +65,7 @@
                 </div>
             </div>
         </section>
+
 
 
     </body>
