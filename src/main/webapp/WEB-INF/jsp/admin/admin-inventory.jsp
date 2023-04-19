@@ -194,7 +194,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <a href="#" class="btn btn-primary btn-floating">
+                    <a href="${pageContext.request.contextPath}/admin/inventory/add" class="btn btn-primary btn-floating">
                         <i class="fa fa-plus"></i>
                     </a>
                 </div>

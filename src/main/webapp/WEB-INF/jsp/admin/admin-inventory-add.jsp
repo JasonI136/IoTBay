@@ -36,12 +36,12 @@
         <!-- breadcrumb -->
         <div class="container">
             <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-                <a href="/admin" class="stext-109 cl8 hov-cl1 trans-04">
+                <a href="${pageContext.request.contextPath}/admin" class="stext-109 cl8 hov-cl1 trans-04">
                     Admin
                     <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                 </a>
 
-                <a href="/admin/inventory" class="stext-109 cl8 hov-cl1 trans-04">
+                <a href="${pageContext.request.contextPath}/admin/inventory" class="stext-109 cl8 hov-cl1 trans-04">
                     Inventory
                     <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                 </a>
@@ -71,6 +71,17 @@
                             </div>
                         </div>
 
+                        <div class="row" style="gap: 10px">
+                            <div class="col bor8 m-b-20 how-pos4-parent">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="productCategory" name="productCategory" required placeholder="Product Category">
+                                <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/list.svg" alt="ICON">
+                            </div>
+                            <div class="col bor8 m-b-20 how-pos4-parent">
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="number" id="productQuantity" name="productQuantity" required placeholder="Product Quantity">
+                                <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/hash.svg" alt="ICON">
+                            </div>
+                        </div>
+                            
                         <div class="row">
                             <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="productImage" name="productImage" required placeholder="Product Image URL">
@@ -78,13 +89,6 @@
                             </div>
                         </div>
 
-
-                        <div class="row">
-                            <div class="col bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="productCategory" name="productCategory" required placeholder="Product Category">
-                                <img class="how-pos4 pointer-none" src="${pageContext.request.contextPath}/public/images/icons/list.svg" alt="ICON">
-                            </div>
-                        </div>
 
                         <div class="row">
                             <div class="col bor8 m-b-20 how-pos4-parent">
