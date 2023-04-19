@@ -38,14 +38,14 @@
                             </c:otherwise>
                         </c:choose>
                     </c:if>
-                </c:if>
 
-                <a href="${pageContext.request.contextPath}/user" class="flex-c-m trans-04 p-lr-25">
-                    ${sessionScope.user.firstName} ${sessionScope.user.lastName}
-                </a>
-                <a onClick="logoutFunction()" href="#" class="flex-c-m trans-04 p-lr-25 js-logout">
-                    Logout
-                </a>
+                    <a href="${pageContext.request.contextPath}/user" class="flex-c-m trans-04 p-lr-25">
+                            ${sessionScope.user.firstName} ${sessionScope.user.lastName}
+                    </a>
+                    <a onClick="logoutFunction()" href="#" class="flex-c-m trans-04 p-lr-25 js-logout">
+                        Logout
+                    </a>
+                </c:if>
 
 
                 <c:if test="${sessionScope.user == null}">
