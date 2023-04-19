@@ -17,7 +17,7 @@
         <jsp:include page="../components/header-links.jsp"/>
 
     </head>
-    <body class="animsition stext-112 cl6 p-b-26">
+    <body class="animsition cl6 p-b-26">
 
         <header>
             <div class="container-menu-desktop">

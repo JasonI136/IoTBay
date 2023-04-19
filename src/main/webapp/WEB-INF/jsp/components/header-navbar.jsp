@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -24,17 +25,27 @@
 
                 <c:if test="${sessionScope.user != null}">
                     <c:if test="${sessionScope.user.staff == true}">
-                        <a href="${pageContext.request.contextPath}/admin" class="flex-c-m trans-04 p-lr-25">
-                            <b>Admin</b>
-                        </a>
+                        <c:choose>
+                            <c:when test="${not fn:startsWith(requestScope['jakarta.servlet.forward.request_uri'], pageContext.request.contextPath += '/admin')}">
+                                <a href="${pageContext.request.contextPath}/admin" class="flex-c-m trans-04 p-lr-25">
+                                    <b>Admin</b>
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${pageContext.request.contextPath}" class="flex-c-m trans-04 p-lr-25">
+                                    <b>Main Site</b>
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
                     </c:if>
-                    <a href="${pageContext.request.contextPath}/user" class="flex-c-m trans-04 p-lr-25">
-                            ${sessionScope.user.firstName} ${sessionScope.user.lastName}
-                    </a>
-                    <a onClick="logoutFunction()" href="#" class="flex-c-m trans-04 p-lr-25 js-logout">
-                        Logout
-                    </a>
                 </c:if>
+
+                <a href="${pageContext.request.contextPath}/user" class="flex-c-m trans-04 p-lr-25">
+                    ${sessionScope.user.firstName} ${sessionScope.user.lastName}
+                </a>
+                <a onClick="logoutFunction()" href="#" class="flex-c-m trans-04 p-lr-25 js-logout">
+                    Logout
+                </a>
 
 
                 <c:if test="${sessionScope.user == null}">

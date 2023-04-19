@@ -155,7 +155,7 @@ public class AppContextListener implements ServletContextListener {
             this.initScheduler();
         } catch (Exception e) {
             logger.error("Application failed to start.", e);
-            scx.setAttribute("initError", e);
+            scx.setAttribute("initError", e.getMessage());
         }
 
         if (scx.getAttribute("initError") != null) {

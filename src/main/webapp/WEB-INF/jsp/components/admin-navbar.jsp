@@ -13,7 +13,7 @@
     </head>
 
 
-    <div class="fixed-bottom">
+    <div class="fixed-bottom op-03">
         <div class="container-fluid">
             <hr class="hr-text" data-content="Currently In Admin Panel">
         </div>
@@ -54,12 +54,12 @@
                 </ul>
             </div>	
 
-            <!-- Icon header -->
-            <div class="wrap-icon-header flex-w flex-r-m">
-                <a class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11" >
-                    <i class="zmdi zmdi-accounts-list-alt"></i>
-                </a>
-            </div>
+<%--            <!-- Icon header -->--%>
+<%--            <div class="wrap-icon-header flex-w flex-r-m">--%>
+<%--                <a class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11" >--%>
+<%--                    <i class="zmdi zmdi-accounts-list-alt"></i>--%>
+<%--                </a>--%>
+<%--            </div>--%>
         </nav>
     </div>	
 
