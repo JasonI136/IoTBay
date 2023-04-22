@@ -4,8 +4,8 @@
     Author     : jasonmba
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,14 +14,14 @@
         <title>Cart</title>
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/public/images/icons/favicon.png"/>
 
-        <jsp:include page="components/header-links.jsp" />
+        <jsp:include page="components/header-links.jsp"/>
 
     </head>
     <body class="animsition">
         <header class="header-v4">
             <div class="container-menu-desktop">
-                <jsp:include page="components/header-navbar.jsp" />
-                <jsp:include page="components/main-navbar.jsp" />
+                <jsp:include page="components/header-navbar.jsp"/>
+                <jsp:include page="components/main-navbar.jsp"/>
             </div>
         </header>
         <!-- breadcrumb -->
@@ -79,7 +79,10 @@
                                                             <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
                                                                 <i class="fs-16 zmdi zmdi-minus"></i>
                                                             </div>
-                                                            <input class="mtext-104 cl3 txt-center num-product" id="cartItem-product-quantity" type="number" name="${cartItem.product.id}" value="${cartItem.cartQuantity}">
+                                                            <input class="mtext-104 cl3 txt-center num-product"
+                                                                   id="cartItem-product-quantity" type="number"
+                                                                   name="${cartItem.product.id}"
+                                                                   value="${cartItem.cartQuantity}">
                                                             <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
                                                                 <i class="fs-16 zmdi zmdi-plus"></i>
                                                             </div>
@@ -91,7 +94,8 @@
                                         </table>
                                     </div>
                                     <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-                                        <div class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10" onclick="updateCart()">
+                                        <div class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10"
+                                             onclick="updateCart()">
                                             Update Cart
                                         </div>
                                     </div>
@@ -150,12 +154,14 @@
 
                             <c:choose>
                                 <c:when test="${empty sessionScope.shoppingCart.cartItems}">
-                                    <button class="flex-c-m stext-101 cl0 size-116 bg2 bor14 p-lr-15 trans-04 pointer" disabled>
+                                    <button class="flex-c-m stext-101 cl0 size-116 bg2 bor14 p-lr-15 trans-04 pointer"
+                                            disabled>
                                         Proceed to Checkout
                                     </button>
                                 </c:when>
                                 <c:otherwise>
-                                    <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" onclick="location.href = '${pageContext.request.contextPath}/cart/checkout'">
+                                    <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+                                            onclick="location.href = '${pageContext.request.contextPath}/cart/checkout'">
                                         Proceed to Checkout
                                     </button>
                                 </c:otherwise>
@@ -169,7 +175,7 @@
         </div>
 
         <footer class="bg3 p-t-75 p-b-32">
-            <jsp:include page="components/footer.jsp" />
+            <jsp:include page="components/footer.jsp"/>
         </footer>
 
         <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
@@ -181,12 +187,12 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
         <script>
-                                        $(".js-select2").each(function () {
-                                            $(this).select2({
-                                                minimumResultsForSearch: 20,
-                                                dropdownParent: $(this).next('.dropDownSelect2')
-                                            });
-                                        })
+            $(".js-select2").each(function () {
+                $(this).select2({
+                    minimumResultsForSearch: 20,
+                    dropdownParent: $(this).next('.dropDownSelect2')
+                });
+            })
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
@@ -197,78 +203,78 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/parallax100/parallax100.js"></script>
         <script>
-                                        $('.parallax100').parallax100();
+            $('.parallax100').parallax100();
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
         <script>
-                                        $('.gallery-lb').each(function () { // the containers for all your galleries
-                                            $(this).magnificPopup({
-                                                delegate: 'a', // the selector for gallery item
-                                                type: 'image',
-                                                gallery: {
-                                                    enabled: true
-                                                },
-                                                mainClass: 'mfp-fade'
-                                            });
-                                        });
+            $('.gallery-lb').each(function () { // the containers for all your galleries
+                $(this).magnificPopup({
+                    delegate: 'a', // the selector for gallery item
+                    type: 'image',
+                    gallery: {
+                        enabled: true
+                    },
+                    mainClass: 'mfp-fade'
+                });
+            });
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/sweetalert/sweetalert.min.js"></script>
         <script>
-                                        $('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
-                                            e.preventDefault();
-                                        });
+            $('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
+                e.preventDefault();
+            });
 
-                                        $('.js-addwish-b2').each(function () {
-                                            var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-                                            $(this).on('click', function () {
-                                                swal(nameProduct, "is added to wishlist !", "success");
+            $('.js-addwish-b2').each(function () {
+                var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+                $(this).on('click', function () {
+                    swal(nameProduct, "is added to wishlist !", "success");
 
-                                                $(this).addClass('js-addedwish-b2');
-                                                $(this).off('click');
-                                            });
-                                        });
+                    $(this).addClass('js-addedwish-b2');
+                    $(this).off('click');
+                });
+            });
 
-                                        $('.js-addwish-detail').each(function () {
-                                            var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+            $('.js-addwish-detail').each(function () {
+                var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
 
-                                            $(this).on('click', function () {
-                                                swal(nameProduct, "is added to wishlist !", "success");
+                $(this).on('click', function () {
+                    swal(nameProduct, "is added to wishlist !", "success");
 
-                                                $(this).addClass('js-addedwish-detail');
-                                                $(this).off('click');
-                                            });
-                                        });
+                    $(this).addClass('js-addedwish-detail');
+                    $(this).off('click');
+                });
+            });
 
-                                        /*---------------------------------------------*/
+            /*---------------------------------------------*/
 
-                                        $('.js-addcart-detail').each(function () {
-                                            var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-                                            $(this).on('click', function () {
-                                                swal(nameProduct, "is added to cart !", "success");
-                                            });
-                                        });
+            $('.js-addcart-detail').each(function () {
+                var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
+                $(this).on('click', function () {
+                    swal(nameProduct, "is added to cart !", "success");
+                });
+            });
 
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script>
-                                        $('.js-pscroll').each(function () {
-                                            $(this).css('position', 'relative');
-                                            $(this).css('overflow', 'hidden');
-                                            var ps = new PerfectScrollbar(this, {
-                                                wheelSpeed: 1,
-                                                scrollingThreshold: 1000,
-                                                wheelPropagation: false,
-                                            });
+            $('.js-pscroll').each(function () {
+                $(this).css('position', 'relative');
+                $(this).css('overflow', 'hidden');
+                var ps = new PerfectScrollbar(this, {
+                    wheelSpeed: 1,
+                    scrollingThreshold: 1000,
+                    wheelPropagation: false,
+                });
 
-                                            $(window).on('resize', function () {
-                                                ps.update();
-                                            })
-                                        });
+                $(window).on('resize', function () {
+                    ps.update();
+                })
+            });
         </script>
 
         <script>
@@ -291,9 +297,35 @@
                         "Content-Type": "application/json"
                     }
                 }).then(response => {
-                    if (response.status == 200) {
-                        location.reload();
-                    }
+                    return response.json();
+                }).then(json => {
+                    Swal.fire({
+                        title: json.message,
+                        icon: json.statusCode === 200 ? 'success' : 'error',
+                        text: json.data,
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK',
+                        target: document.querySelector('#modal-content')
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                }).catch(error => {
+                    Swal.fire({
+                        title: "Error",
+                        icon: 'error',
+                        text: 'Something went wrong',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK',
+                        target: document.querySelector('#modal-content')
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
                 })
             }
 

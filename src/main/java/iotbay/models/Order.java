@@ -87,4 +87,8 @@ public class Order implements Serializable {
             }
         }
     }
+
+    public Invoice getInvoice() throws SQLException {
+        return this.db.getInvoices().getInvoiceByOrderId(this.getId());
+    }
 }

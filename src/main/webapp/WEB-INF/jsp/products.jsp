@@ -470,32 +470,44 @@
             $(this).on('click', function () {
                 addToCart(document.querySelector('#add-to-cart').value, document.querySelector('#quantity').value)
                     .then(response => {
-                        if (response.status === 200) {
-                            Swal.fire({
-                                title: 'Success!',
-                                icon: 'success',
-                                text: 'Item added to cart!',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK',
-                                target: document.querySelector('#modal-content')
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = "${pageContext.request.contextPath}/shop";
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error',
-                                icon: 'error',
-                                text: 'Item could not be added to cart.',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK',
-                                target: document.querySelector('#modal-content')
-                            });
-                        }
+                        return response.json();
+                    }).then(json => {
+                    if (json.statusCode === 200) {
+                        Swal.fire({
+                            title: json.message,
+                            icon: 'success',
+                            text: json.data,
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK',
+                            target: document.querySelector('#modal-content')
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "${pageContext.request.contextPath}/shop";
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: json.message,
+                            icon: 'error',
+                            text: json.data,
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK',
+                            target: document.querySelector('#modal-content')
+                        });
+                    }
+                }).catch(error => {
+                    Swal.fire({
+                        title: 'Error',
+                        icon: 'error',
+                        text: 'Something went wrong!',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK',
+                        target: document.querySelector('#modal-content')
                     });
+                });
             });
         });
 

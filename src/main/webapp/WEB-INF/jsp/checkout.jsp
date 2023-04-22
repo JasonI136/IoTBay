@@ -130,117 +130,159 @@
             </div>
         </div>
     </body>
-</html>
+    <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
 
+    <script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
 
-</body>
-<script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/popper.js"></script>
+    <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/bootstrap.min.js"></script>
 
-<script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/popper.js"></script>
-<script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/bootstrap.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
-<script>
-    $(".js-select2").each(function () {
-        $(this).select2({
-            minimumResultsForSearch: 20,
-            dropdownParent: $(this).next('.dropDownSelect2')
-        });
-    })
-</script>
-
-<script>
-    function updateCardNumber() {
-        var paymentMethodSelect = document.getElementById("payment-method");
-        var cardNumberInput = document.getElementById("card-number");
-        var selectedOption = paymentMethodSelect.options[paymentMethodSelect.selectedIndex];
-        var last4 = selectedOption.getAttribute("data-last4");
-        cardNumberInput.value = last4;
-    }
-</script>
-
-<script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-<script>
-    $('.js-pscroll').each(function () {
-        $(this).css('position', 'relative');
-        $(this).css('overflow', 'hidden');
-        var ps = new PerfectScrollbar(this, {
-            wheelSpeed: 1,
-            scrollingThreshold: 1000,
-            wheelPropagation: false,
-        });
-
-        $(window).on('resize', function () {
-            ps.update();
+    <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
+    <script>
+        $(".js-select2").each(function () {
+            $(this).select2({
+                minimumResultsForSearch: 20,
+                dropdownParent: $(this).next('.dropDownSelect2')
+            });
         })
-    });
-</script>
+    </script>
 
-<script>
-    var success = "${success}";
-    var error = "${error}";
+    <script>
+        function updateCardNumber() {
+            var paymentMethodSelect = document.getElementById("payment-method");
+            var cardNumberInput = document.getElementById("card-number");
+            var selectedOption = paymentMethodSelect.options[paymentMethodSelect.selectedIndex];
+            var last4 = selectedOption.getAttribute("data-last4");
+            cardNumberInput.value = last4;
+        }
+    </script>
 
-    if (success) {
-        swal.fire({
-            title: 'Welcome!',
-            icon: 'success',
-            text: 'Login successful!',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = "${pageContext.request.contextPath}/user";
-            }
+    <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script>
+        $('.js-pscroll').each(function () {
+            $(this).css('position', 'relative');
+            $(this).css('overflow', 'hidden');
+            var ps = new PerfectScrollbar(this, {
+                wheelSpeed: 1,
+                scrollingThreshold: 1000,
+                wheelPropagation: false,
+            });
+
+            $(window).on('resize', function () {
+                ps.update();
+            })
         });
+    </script>
 
-    }
+    <script>
+        var success = "${success}";
+        var error = "${error}";
 
-    if (error) {
-        swal.fire({
-            title: 'Error',
-            icon: 'error',
-            text: '${error}',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        });
-    }
-</script>
+        if (success) {
+            swal.fire({
+                title: 'Welcome!',
+                icon: 'success',
+                text: 'Login successful!',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "${pageContext.request.contextPath}/user";
+                }
+            });
 
-<script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
+        }
 
-<script src="${pageContext.request.contextPath}/public/js/main.js"></script>
+        if (error) {
+            swal.fire({
+                title: 'Error',
+                icon: 'error',
+                text: '${error}',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        }
+    </script>
 
-<script>
-    function checkOut() {
-        let paymentMethodId = document.getElementById("payment-method").value;
-        fetch("${pageContext.request.contextPath}/cart/checkout", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(response => {
-            if (response.status === 200) {
-                return response.json();
-            }
-        }).then(json => {
+    <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
+
+    <script src="${pageContext.request.contextPath}/public/js/main.js"></script>
+
+    <script>
+        function checkOut() {
+            let paymentMethodId = document.getElementById("payment-method").value;
             let stripe = Stripe('${stripe_pk}');
-            stripe.confirmCardPayment(json.client_secret, {
-                payment_method: paymentMethodId
-            }).then(function (result) {
-                if (result.error) {
-                    // Show error to your customer (e.g., insufficient funds)
+
+            fetch("${pageContext.request.contextPath}/cart/checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(response => {
+                return response.json();
+            }).then(json => {
+                if (json.statusCode === 200) {
+                    stripe.confirmCardPayment(json.data.client_secret, {
+                        payment_method: paymentMethodId
+                    }).then(function (result) {
+                        if (result.error) {
+                            // Show error to your customer (e.g., insufficient funds)
+                            Swal.fire({
+                                title: 'Payment Failed!',
+                                icon: 'error',
+                                text: result.error.message,
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "${pageContext.request.contextPath}/user";
+                                }
+                            });
+                        } else {
+                            // The payment has been processed!
+                            if (result.paymentIntent.status === 'succeeded') {
+                                Swal.fire({
+                                    title: 'Payment Successful!',
+                                    icon: 'success',
+                                    text: 'Your payment was successful.',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'OK',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // clear the cart
+                                        fetch("${pageContext.request.contextPath}/cart/clear", {
+                                            method: "DELETE",
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            }
+                                        }).then(response => {
+                                            return response.json();
+                                        }).then(json => {
+                                            if (json.statusCode === 200) {
+                                                window.location.href = "${pageContext.request.contextPath}/user";
+                                            }
+                                        }).catch(error => {
+                                            // ignore the cart clear error
+                                            window.location.href = "${pageContext.request.contextPath}/user";
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                } else {
                     Swal.fire({
-                        title: 'Payment Failed!',
+                        title: json.message,
                         icon: 'error',
-                        text: result.error.message,
+                        text: json.data,
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'OK',
@@ -249,25 +291,21 @@
                             window.location.href = "${pageContext.request.contextPath}/user";
                         }
                     });
-                } else {
-                    // The payment has been processed!
-                    if (result.paymentIntent.status === 'succeeded') {
-                        Swal.fire({
-                            title: 'Payment Successful!',
-                            icon: 'success',
-                            text: 'Your payment was successful.',
-                            showCancelButton: false,
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK',
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = "${pageContext.request.contextPath}/user";
-                            }
-                        });
-                    }
                 }
+            }).catch(error => {
+                Swal.fire({
+                    title: 'Error',
+                    icon: 'error',
+                    text: 'An error occurred while processing your payment.',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "${pageContext.request.contextPath}/user";
+                    }
+                });
             });
-        });
-    }
-</script>
+        }
+    </script>
 </html>

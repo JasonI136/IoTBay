@@ -196,4 +196,26 @@ public class Products {
 
         return productList;
     }
+
+    /**
+     * Updates a product in the database.
+     * @param product the product to update
+     * @throws SQLException if there is an error updating the product
+     */
+    public void updateProduct(Product product) throws SQLException {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "UPDATE PRODUCT SET name = ?, description = ?, image_url = ?, price = ?, quantity = ?, category_id = ? WHERE id = ?"
+            )) {
+                stmt.setString(1, product.getName());
+                stmt.setString(2, product.getDescription());
+                stmt.setString(3, product.getImageURL());
+                stmt.setDouble(4, product.getPrice());
+                stmt.setInt(5, product.getQuantity());
+                stmt.setInt(6, product.getCategoryId());
+                stmt.setInt(7, product.getId());
+                stmt.executeUpdate();
+            }
+        }
+    }
 }

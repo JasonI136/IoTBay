@@ -1,7 +1,9 @@
 package iotbay.database.collections;
 
 import iotbay.database.DatabaseManager;
+import iotbay.exceptions.ProductStockException;
 import iotbay.models.OrderLineItem;
+import iotbay.models.Product;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -48,10 +50,21 @@ public class OrderLineItems {
      * @return an instance of the {@link iotbay.models.OrderLineItem} object
      * @throws SQLException if there is an error adding the order line item
      */
-    public OrderLineItem addOrderLineItem(int orderId, int productId, int quantity, double price) throws SQLException {
+    public OrderLineItem addOrderLineItem(int orderId, int productId, int quantity, double price) throws SQLException, ProductStockException {
+        Product product = products.getProduct(productId);
+
+        if (product.getQuantity() == 0) {
+            throw new ProductStockException("Product is out of stock");
+        }
+
+        if (quantity > product.getQuantity()) {
+            throw new ProductStockException("Not enough stock for this order");
+        }
+
+
         OrderLineItem orderLineItem = new OrderLineItem(this.db);
         orderLineItem.setOrder(orders.getOrder(orderId));
-        orderLineItem.setProduct(products.getProduct(productId));
+        orderLineItem.setProduct(product);
         orderLineItem.setQuantity(quantity);
         orderLineItem.setPrice(price);
 

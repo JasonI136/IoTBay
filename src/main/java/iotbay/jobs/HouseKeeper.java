@@ -4,7 +4,10 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
 import iotbay.enums.OrderStatus;
+import iotbay.models.Invoice;
 import iotbay.models.Order;
+import iotbay.models.OrderLineItem;
+import iotbay.models.Product;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.Job;
@@ -76,8 +79,16 @@ public class HouseKeeper implements Job {
             if (paymentIntent.getStatus().equals("succeeded")) {
                 logger.info("Order {} has been paid for. Updating status to processing.", order.getId());
                 iotbayLogger.info("Received payment for order number {}. Updating status to processing.", order.getId());
+                Invoice invoice = order.getInvoice();
+                if (invoice == null) {
+                    logger.error("Invoice for order {} does not exist", order.getId());
+                    order.setOrderStatus(OrderStatus.EXCEPTION);
+                    order.update();
+                    continue;
+                }
+
                 db.getPayments().addPayment(
-                        order.getId(),
+                        invoice.getId(),
                         new Timestamp(paymentIntent.getCreated()),
                         db.getPaymentMethods().getPaymentMethod(paymentIntent.getPaymentMethod()).getId(),
                         paymentIntent.getAmount());
@@ -105,11 +116,23 @@ public class HouseKeeper implements Job {
 
                 for (Order order : oldPendingOrders) {
                     try {
-                        db.getOrderLineItems().deleteOrderLineItems(order.getId());
+                        List<OrderLineItem> lineItems = db.getOrderLineItems().getOrderLineItems(order.getId());
+                        for (OrderLineItem lineItem : lineItems) {
+                            // restore the product's stock levels
+                            Product product = this.db.getProducts().getProduct(lineItem.getProduct().getId());
+                            product.setQuantity(product.getQuantity() + lineItem.getQuantity());
+                            this.db.getProducts().updateProduct(product);
+                        }
+                        this.db.getOrderLineItems().deleteOrderLineItems(order.getId());
                     } catch (SQLException e) {
                         logger.error("Error deleting order line items for order {}", order.getId(), e);
                     }
-                    db.getInvoices().deleteInvoiceByOrderId(order.getId());
+                    try {
+                        db.getInvoices().deleteInvoiceByOrderId(order.getId());
+                    } catch (SQLException e) {
+                        logger.error("Error deleting invoice for order {}", order.getId(), e);
+                    }
+
                 }
             }
         }

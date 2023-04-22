@@ -10,7 +10,10 @@ import com.google.gson.JsonObject;
 import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
 import iotbay.enums.OrderStatus;
+import iotbay.exceptions.ProductStockException;
 import iotbay.models.*;
+import iotbay.models.httpResponses.GenericApiResponse;
+import iotbay.util.Misc;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,10 +22,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -112,6 +114,21 @@ public class CartServlet extends HttpServlet {
 
     }
 
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String path = request.getPathInfo();
+
+        if (path != null) {
+            if (path.equals("/clear")) {
+                this.clearCart(request, response);
+            } else {
+                response.sendError(400);
+            }
+        } else {
+            response.sendError(400);
+        }
+    }
+
     private void checkOut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         Timestamp date = new Timestamp(System.currentTimeMillis());
         Order newOrder = null;
@@ -131,7 +148,16 @@ public class CartServlet extends HttpServlet {
             newOrder = this.db.getOrders().addOrder(user.getId(), new Timestamp(System.currentTimeMillis()), OrderStatus.PENDING);
 
             if (newOrder == null) {
-                throw new Exception("Failed to create order");
+                logger.error("Failed to create new order for user " + user.getId() + ".");
+                Misc.sendJsonResponse(response,
+                        GenericApiResponse.<String>builder()
+                                .statusCode(500)
+                                .message("Internal server error")
+                                .data("There was an issue creating your order. You have not been charged.")
+                                .error(true)
+                                .build()
+                );
+                return;
             }
 
             Map<String, String> metadata = new HashMap<>();
@@ -140,19 +166,59 @@ public class CartServlet extends HttpServlet {
             // create the order line items
             Cart cart = (Cart) request.getSession().getAttribute("shoppingCart");
 
+            List<CartItem> cartItemsNotInStock = new ArrayList<>();
             for (CartItem cartItem : cart.getCartItems()) {
                 try {
                     this.db.getOrderLineItems().addOrderLineItem(newOrder.getId(), cartItem.getProduct().getId(), cartItem.getCartQuantity(), cartItem.getTotalPrice());
-                } catch (Exception e) {
-                    throw new ServletException(e);
+                } catch (ProductStockException e) {
+                    cartItemsNotInStock.add(cartItem);
+                } catch (SQLException e) {
+                    logger.error("Failed to create new order line items for order " + newOrder.getId() + ".");
+                    Misc.sendJsonResponse(response,
+                            GenericApiResponse.<String>builder()
+                                    .statusCode(500)
+                                    .message("Internal server error")
+                                    .data("There was an issue creating your order. You have not been charged.")
+                                    .error(true)
+                                    .build()
+                    );
+                    this.db.getOrders().deleteOrder(newOrder.getId());
+                    return;
                 }
+            }
+
+            if (cartItemsNotInStock.size() > 0) {
+                String cartItemsNotInStockString = cartItemsNotInStock.stream().map(CartItem::getProduct).map(Product::getName).collect(Collectors.joining(", "));
+                Misc.sendJsonResponse(response,
+                        GenericApiResponse.<String>builder()
+                                .statusCode(400)
+                                .message("Product(s) out of stock")
+                                .data("The following items are no longer in stock: " + cartItemsNotInStockString)
+                                .error(true)
+                                .build()
+                );
+                // delete the order
+                logger.warn("Failed to create new order line items for order " + newOrder.getId() + " due to product(s) out of stock.");
+                iotbayLogger.warn("Failed to create new order line items for order " + newOrder.getId() + " due to product(s) out of stock.");
+                this.db.getOrders().deleteOrder(newOrder.getId());
+                return;
             }
 
             Invoice invoice;
             try {
                 invoice = this.db.getInvoices().addInvoice(newOrder.getId(), date, (float) userShoppingCart.getTotalPrice() * 100);
             } catch (Exception e) {
-                throw new ServletException(e);
+                logger.error("Failed to create new invoice for order " + newOrder.getId() + ".");
+                Misc.sendJsonResponse(response,
+                        GenericApiResponse.<String>builder()
+                                .statusCode(500)
+                                .message("Internal server error")
+                                .data("There was an issue creating your order. You have not been charged.")
+                                .error(true)
+                                .build()
+                );
+                this.db.getOrders().deleteOrder(newOrder.getId());
+                return;
             }
 
             metadata.put("invoice_id", Integer.toString(invoice.getId()));
@@ -166,19 +232,46 @@ public class CartServlet extends HttpServlet {
             iotbayLogger.info("User " + user.getId() + " has initiated payment for new order " + newOrder.getId() + ".");
             logger.info("User " + user.getId() + " has initiated payment for new order " + newOrder.getId() + ".");
 
-            // send payment intent to client
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(new Gson().toJson(paymentIntent));
-        } catch (Exception e) {
-            // if there is an error, delete the order
-            if (newOrder != null) {
+            // decrement product stock
+            for (CartItem cartItem : cart.getCartItems()) {
                 try {
+                    // get the product but not from the cartItem as it may be out of stock. So get it from the database for the latest stock.
+                    Product product = db.getProducts().getProduct(cartItem.getProduct().getId());
+                    product.setQuantity(product.getQuantity() - cartItem.getCartQuantity());
+                    this.db.getProducts().updateProduct(product);
+                } catch (SQLException e) {
+                    logger.error("Failed to decrement product stock for product " + cartItem.getProduct().getId() + ".");
+                    Misc.sendJsonResponse(response,
+                            GenericApiResponse.<String>builder()
+                                    .statusCode(500)
+                                    .message("Error")
+                                    .data("There was an issue creating your order. You have not been charged.")
+                                    .error(true)
+                                    .build()
+                    );
+                    // rollback
+
+                    // delete the invoice
+                    this.db.getInvoices().deleteInvoice(invoice.getId());
+
+                    // delete the order line items
+                    this.db.getOrderLineItems().deleteOrderLineItems(newOrder.getId());
+
+                    // delete the order
                     this.db.getOrders().deleteOrder(newOrder.getId());
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+
+                    return;
                 }
             }
+
+            // send payment intent to client
+            Misc.sendJsonResponse(response,
+                    GenericApiResponse.<PaymentIntent>builder()
+                            .statusCode(200)
+                            .message("Payment intent created")
+                            .data(paymentIntent)
+                            .build());
+        } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
     }
@@ -189,31 +282,87 @@ public class CartServlet extends HttpServlet {
 
                 try {
                     Product product = this.db.getProducts().getProduct(Integer.parseInt(request.getParameter("productId")));
+                    // check if product exists
                     if (product == null) {
-                        response.sendError(404, "Product ID not found");
+                        Misc.sendJsonResponse(response,
+                                GenericApiResponse.<String>builder()
+                                        .statusCode(400)
+                                        .message("Product not found")
+                                        .data("This product does not exist. Please try again later.")
+                                        .error(true)
+                                        .build());
                         return;
                     }
 
+
                     int quantity = Integer.parseInt(request.getParameter("quantity"));
 
+                    // check if quantity is valid
                     if (quantity < 1) {
                         response.sendError(400, "Invalid quantity");
+                        return;
+                    }
+
+                    // check if product is in stock
+                    if (!productIsInStock(product, quantity)) {
+                        Misc.sendJsonResponse(response,
+                                GenericApiResponse.<String>builder()
+                                        .statusCode(400)
+                                        .message("Product not in stock")
+                                        .data("This product is not in stock or the quantity you have requested is not available.")
+                                        .error(true)
+                                        .build());
                         return;
                     }
 
                     this.initShoppingCart(request);
                     Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
                     userShoppingCart.addCartItem(product, quantity);
-                    response.setStatus(200);
+
+                    Misc.sendJsonResponse(response,
+                            GenericApiResponse.<String>builder()
+                                    .statusCode(200)
+                                    .message("Success")
+                                    .data("Item added to cart")
+                                    .error(false)
+                                    .build()
+                    );
 
                 } catch (NumberFormatException e) {
-                    response.sendError(400, "Invalid product id");
+                    Misc.sendJsonResponse(response,
+                            GenericApiResponse.<String>builder()
+                                    .statusCode(400)
+                                    .message("Invalid product ID")
+                                    .data("Invalid product ID")
+                                    .error(true)
+                                    .build()
+                    );
+                } catch (IOException e) {
+                    throw new ServletException(e.getMessage());
                 }
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
 
+    }
+
+    private void clearCart(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        request.getSession().removeAttribute("shoppingCart");
+        this.initShoppingCart(request);
+
+        try {
+            Misc.sendJsonResponse(response,
+                    GenericApiResponse.<String>builder()
+                            .statusCode(200)
+                            .message("Success")
+                            .data("Cart cleared")
+                            .error(false)
+                            .build()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void updateCart(HttpServletRequest request, HttpServletResponse response) throws ServletException {
@@ -225,13 +374,43 @@ public class CartServlet extends HttpServlet {
             this.initShoppingCart(request);
             Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
 
+            List<Product> productsNotInStock = new ArrayList<>();
             for (Map.Entry<String, JsonElement> cartItem : payload.entrySet()) {
                 int productId = Integer.parseInt(cartItem.getKey());
                 int quantity = cartItem.getValue().getAsInt();
-                userShoppingCart.updateCartItem(this.db.getProducts().getProduct(productId), quantity);
+
+                Product product = this.db.getProducts().getProduct(productId);
+
+                // check if product is in stock
+                if (!productIsInStock(product, quantity) && quantity > 0) {
+                    productsNotInStock.add(product);
+                    continue;
+                }
+
+                userShoppingCart.updateCartItem(product, quantity);
             }
 
-            response.setStatus(200);
+            if (productsNotInStock.size() > 0) {
+                String productsNotInStockString = productsNotInStock.stream().map(Product::getName).collect(Collectors.joining(", "));
+                Misc.sendJsonResponse(response,
+                        GenericApiResponse.<String>builder()
+                                .statusCode(400)
+                                .message("Products not in stock")
+                                .data("The following products are not in stock or the quantity you have requested is not available: " + productsNotInStockString + ". However, your cart has been updated with the items that are in stock.")
+                                .error(true)
+                                .build()
+                );
+                return;
+            }
+
+            Misc.sendJsonResponse(response,
+                    GenericApiResponse.<String>builder()
+                            .statusCode(200)
+                            .message("Success")
+                            .data("Cart updated")
+                            .error(false)
+                            .build()
+            );
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
@@ -248,6 +427,10 @@ public class CartServlet extends HttpServlet {
             userShoppingCart = new Cart();
             request.getSession().setAttribute("shoppingCart", userShoppingCart);
         }
+    }
+
+    private boolean productIsInStock(Product product, int desiredQuantity) {
+        return product.getQuantity() > 0 && desiredQuantity <= product.getQuantity();
     }
 
 }

@@ -92,6 +92,31 @@ public class Invoices {
     }
 
     /**
+     * Gets an invoice by order id
+     * @param orderId the order id
+     * @return the invoice, or null if not found
+     * @throws SQLException if there is an error getting the invoice
+     */
+    public Invoice getInvoiceByOrderId(int orderId) throws SQLException {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT * FROM INVOICE WHERE order_id = ?")) {
+
+                stmt.setInt(1, orderId);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new Invoice(rs);
+                    }
+                }
+            }
+        }
+
+        return null;
+
+    }
+
+    /**
      * Updates an invoice
      * @param id the invoice id
      * @param orderId the order id
@@ -150,7 +175,7 @@ public class Invoices {
 
                 int affectedRows = stmt.executeUpdate();
 
-                if (affectedRows == 0) {
+                if (affectedRows > 0) {
                     throw new SQLException("Deleting invoice failed, no rows affected.");
                 }
             }
