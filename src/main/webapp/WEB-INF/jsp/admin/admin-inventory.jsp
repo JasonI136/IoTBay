@@ -348,6 +348,7 @@
                         document.querySelector('#product-price').innerHTML = "$ " + json.price;
                         document.querySelector('#add-to-cart').value = json.id;
                         document.querySelector('#product-quantity').innerHTML = json.quantity;
+                        document.querySelector('#quantity').value = json.quantity;
                     });
         }
 
