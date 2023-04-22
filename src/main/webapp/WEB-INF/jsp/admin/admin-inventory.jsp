@@ -161,7 +161,7 @@
                                 <p class="stext-102 cl3 p-t-23" id="product-description">
 
                                 </p>
-
+                                <p class="stext-102 cl3 p-t-23">Quantity:&nbsp;&nbsp;<span id="product-quantity"></span></p>
                                 <div class="flex-w flex-r-m p-b-10">
                                     <div class="size-204 flex-w flex-m respon6-next">
                                         <div class="wrap-num-product flex-w m-r-20 m-tb-10">
@@ -347,6 +347,7 @@
                         document.querySelector('#product-description').innerHTML = json.description;
                         document.querySelector('#product-price').innerHTML = "$ " + json.price;
                         document.querySelector('#add-to-cart').value = json.id;
+                        document.querySelector('#product-quantity').innerHTML = json.quantity;
                     });
         }
 
