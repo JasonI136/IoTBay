@@ -7,12 +7,14 @@ package iotbay.servlets;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
 import iotbay.enums.OrderStatus;
 import iotbay.exceptions.ProductStockException;
 import iotbay.models.*;
 import iotbay.models.httpResponses.GenericApiResponse;
+import iotbay.util.CheckoutSession;
 import iotbay.util.Misc;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -122,7 +124,7 @@ public class CartServlet extends HttpServlet {
             if (path.equals("/clear")) {
                 this.clearCart(request, response);
             } else {
-                response.sendError(400);
+                response.sendError(404);
             }
         } else {
             response.sendError(400);
@@ -130,139 +132,13 @@ public class CartServlet extends HttpServlet {
     }
 
     private void checkOut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        Timestamp date = new Timestamp(System.currentTimeMillis());
-        Order newOrder = null;
         try {
             this.initShoppingCart(request);
             Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
             User user = (User) request.getSession().getAttribute("user");
 
-            // create stripe payment intent
-            Map<String, Object> params = new HashMap<>();
-            params.put("amount", (int) userShoppingCart.getTotalPrice() * 100);
-            params.put("currency", "aud");
-            params.put("customer", user.getStripeCustomerId());
-            // add metadata
-
-            // create a new order
-            newOrder = this.db.getOrders().addOrder(user.getId(), new Timestamp(System.currentTimeMillis()), OrderStatus.PENDING);
-
-            if (newOrder == null) {
-                logger.error("Failed to create new order for user " + user.getId() + ".");
-                Misc.sendJsonResponse(response,
-                        GenericApiResponse.<String>builder()
-                                .statusCode(500)
-                                .message("Internal server error")
-                                .data("There was an issue creating your order. You have not been charged.")
-                                .error(true)
-                                .build()
-                );
-                return;
-            }
-
-            Map<String, String> metadata = new HashMap<>();
-            metadata.put("order_id", Integer.toString(newOrder.getId()));
-
-            // create the order line items
-            Cart cart = (Cart) request.getSession().getAttribute("shoppingCart");
-
-            List<CartItem> cartItemsNotInStock = new ArrayList<>();
-            for (CartItem cartItem : cart.getCartItems()) {
-                try {
-                    this.db.getOrderLineItems().addOrderLineItem(newOrder.getId(), cartItem.getProduct().getId(), cartItem.getCartQuantity(), cartItem.getTotalPrice());
-                } catch (ProductStockException e) {
-                    cartItemsNotInStock.add(cartItem);
-                } catch (SQLException e) {
-                    logger.error("Failed to create new order line items for order " + newOrder.getId() + ".");
-                    Misc.sendJsonResponse(response,
-                            GenericApiResponse.<String>builder()
-                                    .statusCode(500)
-                                    .message("Internal server error")
-                                    .data("There was an issue creating your order. You have not been charged.")
-                                    .error(true)
-                                    .build()
-                    );
-                    this.db.getOrders().deleteOrder(newOrder.getId());
-                    return;
-                }
-            }
-
-            if (cartItemsNotInStock.size() > 0) {
-                String cartItemsNotInStockString = cartItemsNotInStock.stream().map(CartItem::getProduct).map(Product::getName).collect(Collectors.joining(", "));
-                Misc.sendJsonResponse(response,
-                        GenericApiResponse.<String>builder()
-                                .statusCode(400)
-                                .message("Product(s) out of stock")
-                                .data("The following items are no longer in stock: " + cartItemsNotInStockString)
-                                .error(true)
-                                .build()
-                );
-                // delete the order
-                logger.warn("Failed to create new order line items for order " + newOrder.getId() + " due to product(s) out of stock.");
-                iotbayLogger.warn("Failed to create new order line items for order " + newOrder.getId() + " due to product(s) out of stock.");
-                this.db.getOrders().deleteOrder(newOrder.getId());
-                return;
-            }
-
-            Invoice invoice;
-            try {
-                invoice = this.db.getInvoices().addInvoice(newOrder.getId(), date, (float) userShoppingCart.getTotalPrice() * 100);
-            } catch (Exception e) {
-                logger.error("Failed to create new invoice for order " + newOrder.getId() + ".");
-                Misc.sendJsonResponse(response,
-                        GenericApiResponse.<String>builder()
-                                .statusCode(500)
-                                .message("Internal server error")
-                                .data("There was an issue creating your order. You have not been charged.")
-                                .error(true)
-                                .build()
-                );
-                this.db.getOrders().deleteOrder(newOrder.getId());
-                return;
-            }
-
-            metadata.put("invoice_id", Integer.toString(invoice.getId()));
-            params.put("metadata", metadata);
-
-            PaymentIntent paymentIntent = PaymentIntent.create(params);
-
-            newOrder.setStripePaymentIntentId(paymentIntent.getId());
-            newOrder.update();
-
-            iotbayLogger.info("User " + user.getId() + " has initiated payment for new order " + newOrder.getId() + ".");
-            logger.info("User " + user.getId() + " has initiated payment for new order " + newOrder.getId() + ".");
-
-            // decrement product stock
-            for (CartItem cartItem : cart.getCartItems()) {
-                try {
-                    // get the product but not from the cartItem as it may be out of stock. So get it from the database for the latest stock.
-                    Product product = db.getProducts().getProduct(cartItem.getProduct().getId());
-                    product.setQuantity(product.getQuantity() - cartItem.getCartQuantity());
-                    this.db.getProducts().updateProduct(product);
-                } catch (SQLException e) {
-                    logger.error("Failed to decrement product stock for product " + cartItem.getProduct().getId() + ".");
-                    Misc.sendJsonResponse(response,
-                            GenericApiResponse.<String>builder()
-                                    .statusCode(500)
-                                    .message("Error")
-                                    .data("There was an issue creating your order. You have not been charged.")
-                                    .error(true)
-                                    .build()
-                    );
-                    // rollback
-
-                    // delete the invoice
-                    this.db.getInvoices().deleteInvoice(invoice.getId());
-
-                    // delete the order line items
-                    this.db.getOrderLineItems().deleteOrderLineItems(newOrder.getId());
-
-                    // delete the order
-                    this.db.getOrders().deleteOrder(newOrder.getId());
-
-                    return;
-                }
-            }
+            CheckoutSession checkoutSession = new CheckoutSession(userShoppingCart, user, this.db);
+            PaymentIntent paymentIntent = checkoutSession.initiateCheckout();
 
             // send payment intent to client
             Misc.sendJsonResponse(response,
@@ -271,8 +147,26 @@ public class CartServlet extends HttpServlet {
                             .message("Payment intent created")
                             .data(paymentIntent)
                             .build());
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+        } catch (SQLException | StripeException | IOException e) {
+            Misc.sendJsonResponse(response,
+                    GenericApiResponse.<String>builder()
+                            .statusCode(500)
+                            .message("Error")
+                            .data("There was an error processing your request. Please try again later.")
+                            .error(true)
+                            .build());
+        } catch (ProductStockException e) {
+            // only send product id and name. Use a map to store the product id and name
+            Map<Integer, String> outOfStockProducts = e.outOfStockProducts.stream().collect(Collectors.toMap(Product::getId, Product::getName));
+
+            Misc.sendJsonResponse(response,
+                    GenericApiResponse.<Map<Integer, String>>builder()
+                            .statusCode(400)
+                            .message("Product(s) out of stock")
+                            .data(outOfStockProducts)
+                            .error(true)
+                            .build());
+
         }
     }
 
@@ -351,18 +245,14 @@ public class CartServlet extends HttpServlet {
         request.getSession().removeAttribute("shoppingCart");
         this.initShoppingCart(request);
 
-        try {
-            Misc.sendJsonResponse(response,
-                    GenericApiResponse.<String>builder()
-                            .statusCode(200)
-                            .message("Success")
-                            .data("Cart cleared")
-                            .error(false)
-                            .build()
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Misc.sendJsonResponse(response,
+                GenericApiResponse.<String>builder()
+                        .statusCode(200)
+                        .message("Success")
+                        .data("Cart cleared")
+                        .error(false)
+                        .build()
+        );
     }
 
     private void updateCart(HttpServletRequest request, HttpServletResponse response) throws ServletException {

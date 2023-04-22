@@ -31,8 +31,9 @@ public class OrderLineItems {
 
     /**
      * Initializes the order line items collection with the database manager, orders collection and products collection.
-     * @param db an instance of the database manager
-     * @param orders an instance of the orders collection
+     *
+     * @param db       an instance of the database manager
+     * @param orders   an instance of the orders collection
      * @param products an instance of the products collection
      */
     public OrderLineItems(DatabaseManager db, Orders orders, Products products) {
@@ -43,10 +44,11 @@ public class OrderLineItems {
 
     /**
      * Adds an order line item to the database.
-     * @param orderId the id of the order
+     *
+     * @param orderId   the id of the order
      * @param productId the id of the product
-     * @param quantity the quantity of the product
-     * @param price the price of the product
+     * @param quantity  the quantity of the product
+     * @param price     the price of the product
      * @return an instance of the {@link iotbay.models.OrderLineItem} object
      * @throws SQLException if there is an error adding the order line item
      */
@@ -60,6 +62,9 @@ public class OrderLineItems {
         if (quantity > product.getQuantity()) {
             throw new ProductStockException("Not enough stock for this order");
         }
+
+        product.setQuantity(product.getQuantity() - quantity);
+        this.db.getProducts().updateProduct(product);
 
 
         OrderLineItem orderLineItem = new OrderLineItem(this.db);
@@ -92,7 +97,8 @@ public class OrderLineItems {
 
     /**
      * Gets an order line item from the database.
-     * @param orderId the id of the order
+     *
+     * @param orderId   the id of the order
      * @param productId the id of the product
      * @return an instance of the {@link iotbay.models.OrderLineItem} object
      * @throws SQLException if there is an error getting the order line item
@@ -100,7 +106,10 @@ public class OrderLineItems {
     public OrderLineItem getOrderLineItem(int orderId, int productId) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT * FROM ORDER_LINE_ITEM WHERE order_id = ? AND product_id = ?")) {
+                    "SELECT ORDER_LINE_ITEM.ORDER_ID, ORDER_LINE_ITEM.PRODUCT_ID, ORDER_LINE_ITEM.QUANTITY, ORDER_LINE_ITEM.PRICE, P.NAME AS \"PRODUCT_NAME\", P.IMAGE_URL AS \"PRODUCT_IMAGE\", P.PRICE AS \"PRODUCT_PRICE\", CO.USER_ID, CO.ORDER_DATE, CO.ORDER_STATUS  FROM ORDER_LINE_ITEM\n" +
+                            "INNER JOIN CUSTOMER_ORDER CO on ORDER_LINE_ITEM.ORDER_ID = CO.ID\n" +
+                            "INNER JOIN PRODUCT P on ORDER_LINE_ITEM.PRODUCT_ID = P.ID\n" +
+                            "WHERE ORDER_LINE_ITEM.ORDER_ID = ? AND ORDER_LINE_ITEM.PRODUCT_ID = ?")) {
 
                 stmt.setInt(1, orderId);
                 stmt.setInt(2, productId);
@@ -119,6 +128,7 @@ public class OrderLineItems {
 
     /**
      * Gets all the order line items for an order.
+     *
      * @param orderId the id of the order
      * @return a list of {@link iotbay.models.OrderLineItem} objects
      * @throws SQLException if there is an error getting the order line items
@@ -150,9 +160,10 @@ public class OrderLineItems {
 
     /**
      * Updates an order line item in the database.
-     * @param orderId the id of the order
+     *
+     * @param orderId   the id of the order
      * @param productId the id of the product
-     * @param quantity the quantity of the product
+     * @param quantity  the quantity of the product
      * @throws SQLException if there is an error updating the order line item
      */
     public void updateOrderLineItem(int orderId, int productId, int quantity) throws SQLException {
@@ -176,11 +187,21 @@ public class OrderLineItems {
 
     /**
      * Deletes an order line item from the database.
-     * @param orderId the id of the order
+     *
+     * @param orderId   the id of the order
      * @param productId the id of the product
      * @throws SQLException if there is an error deleting the order line item
      */
     public void deleteOrderLineItem(int orderId, int productId) throws SQLException {
+        OrderLineItem pr;
+        if ((pr = this.getOrderLineItem(orderId, productId)) == null) {
+            throw new SQLException("Order line item does not exist");
+        }
+
+        Product product = this.db.getProducts().getProduct(productId);
+        product.setQuantity(product.getQuantity() + pr.getQuantity());
+        this.db.getProducts().updateProduct(product);
+
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "DELETE FROM ORDER_LINE_ITEM WHERE order_id = ? AND product_id = ?")) {
@@ -199,22 +220,15 @@ public class OrderLineItems {
 
     /**
      * Deletes all the order line items for an order.
+     *
      * @param orderId the id of the order
      * @throws SQLException if there is an error deleting the order line items
      */
     public void deleteOrderLineItems(int orderId) throws SQLException {
-        try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(
-                    "DELETE FROM ORDER_LINE_ITEM WHERE order_id = ?")) {
+        List<OrderLineItem> orderLineItems = this.getOrderLineItems(orderId);
 
-                stmt.setInt(1, orderId);
-
-                int affectedRows = stmt.executeUpdate();
-
-                if (affectedRows == 0) {
-                    throw new SQLException("Deleting order line items failed, no rows affected.");
-                }
-            }
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            this.deleteOrderLineItem(orderId, orderLineItem.getProduct().getId());
         }
     }
 }

@@ -115,40 +115,12 @@ public class HouseKeeper implements Job {
                 }
 
                 for (Order order : oldPendingOrders) {
-                    try {
-                        List<OrderLineItem> lineItems = db.getOrderLineItems().getOrderLineItems(order.getId());
-                        for (OrderLineItem lineItem : lineItems) {
-                            // restore the product's stock levels
-                            Product product = this.db.getProducts().getProduct(lineItem.getProduct().getId());
-                            product.setQuantity(product.getQuantity() + lineItem.getQuantity());
-                            this.db.getProducts().updateProduct(product);
-                        }
-                        this.db.getOrderLineItems().deleteOrderLineItems(order.getId());
-                    } catch (SQLException e) {
-                        logger.error("Error deleting order line items for order {}", order.getId(), e);
-                    }
-                    try {
-                        db.getInvoices().deleteInvoiceByOrderId(order.getId());
-                    } catch (SQLException e) {
-                        logger.error("Error deleting invoice for order {}", order.getId(), e);
-                    }
-
+                    order.delete();
+                    logger.info("Deleted old pending order {}", order.getId());
+                    iotbayLogger.info("Deleted old pending order {}", order.getId());
                 }
             }
         }
-
-        try (Connection conn = db.getDbConnection()) {
-            String sql = "DELETE FROM CUSTOMER_ORDER WHERE order_status = 'PENDING' AND {fn TIMESTAMPDIFF(SQL_TSI_MINUTE, order_date, CURRENT_TIMESTAMP)} > 5";
-
-            int affectedRows = conn.createStatement().executeUpdate(sql);
-
-            if (affectedRows > 0) {
-                logger.info("Deleted {} old pending orders", affectedRows);
-                iotbayLogger.info("Deleted {} old pending orders", affectedRows);
-            }
-        }
-
-
     }
 
 }

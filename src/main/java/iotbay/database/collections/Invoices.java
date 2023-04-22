@@ -148,14 +148,13 @@ public class Invoices {
     public void deleteInvoice(int id) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT * FROM INVOICE WHERE id = ?")) {
+                    "DELETE FROM INVOICE WHERE id = ?")) {
 
                 stmt.setInt(1, id);
 
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (!rs.next()) {
-                        throw new SQLException("Deleting invoice failed, no rows affected.");
-                    }
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows != 1) {
+                    throw new SQLException("Deleting invoice failed, no rows affected.");
                 }
             }
         }

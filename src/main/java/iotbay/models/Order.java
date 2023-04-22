@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.*;
+import java.util.List;
 
 /**
  * The order entity
@@ -86,6 +87,16 @@ public class Order implements Serializable {
 
             }
         }
+    }
+
+    public void delete() throws SQLException {
+        Invoice invoice = this.db.getInvoices().getInvoiceByOrderId(this.getId());
+        if (invoice != null) {
+            this.db.getInvoices().deleteInvoice(invoice.getId());
+        }
+        this.db.getOrderLineItems().deleteOrderLineItems(this.getId());
+        this.db.getOrders().deleteOrder(this.getId());
+
     }
 
     public Invoice getInvoice() throws SQLException {
