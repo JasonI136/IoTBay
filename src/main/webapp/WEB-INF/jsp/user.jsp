@@ -284,9 +284,56 @@
                 const formData = new FormData(userDetailsForm);
                 console.log("Context path:", contextPath);
 
-                for (const pair of formData.entries()) {
-                    console.log(pair[0] + ', ' + pair[1]);
-                }
+                                        try {
+                                            const response = await fetch(contextPath + "/user/details/modify", {
+                                                method: "POST",
+                                                headers: {
+                                                    'Content-Type': 'application/json'
+                                                },
+                                                body: JSON.stringify({
+                                                    username: userDetailsForm.username.value,
+                                                    firstname: userDetailsForm.firstname.value,
+                                                    lastname: userDetailsForm.lastname.value,
+                                                    address: userDetailsForm.address.value,
+                                                    email: userDetailsForm.email.value,
+                                                    phone: userDetailsForm.phone.value
+                                                })
+                                            })
+                                            .then(response => {
+                                                if (!response.ok) {
+                                                    // Handle the error response
+                                                    return response.json().then(error => {
+                                                        throw new Error(error.message);
+                                                    });
+                                                }
+                                                return response.json();
+                                            })
+                                            .then(data => {
+                                            if (data.status === "success") {
+                                            // Display a success message
+                                            swal.fire({
+                                                title: 'Success',
+                                                icon: 'success',
+                                                text: "You're details have been updated",
+                                                showCancelButton: false,
+                                                confirmButtonColor: '#3085d6',
+                                                confirmButtonText: 'OK'
+                                            });
+                                        } else {
+                                            // Display an error message
+                                            swal.fire({
+                                            title: 'Error',
+                                            icon: 'error',
+                                            text: "Couldn't update details",
+                                            showCancelButton: false,
+                                            confirmButtonColor: '#3085d6',
+                                            confirmButtonText: 'OK'
+                                        });
+    }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error.message);
+                                            });
 
                 try {
                     const response = await fetch(contextPath + "/user/details/modify", {
@@ -335,7 +382,6 @@
 
 
         </script>
-
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>
     </body>
 </html>
