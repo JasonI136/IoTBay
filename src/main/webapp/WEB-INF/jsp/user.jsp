@@ -14,10 +14,10 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script>
-    var contextPath = "${pageContext.request.contextPath}";
-</script>
+            var contextPath = "${pageContext.request.contextPath}";
+        </script>
 
-        <jsp:include page="components/header-links.jsp" />
+        <jsp:include page="components/header-links.jsp"/>
     </head>
     <body>
         <header class="header-v4">
@@ -59,75 +59,91 @@
                             Your Account Details
                         </h4>
                         <form id="userDetailsForm" name="userDetailsForm">
-                        <div class="row">
-                            <div class="col bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username"
-                                       name="username" required placeholder="Your User Name" value='${user.username}'
-                                       data-context-path="${pageContext.request.contextPath}" disabled="disabled">
-                                <img class="how-pos4 pointer-none"
-                                     src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
+                            <div class="row">
+                                <div class="col bor8 m-b-20 how-pos4-parent">
+                                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username"
+                                           name="username" required placeholder="Your User Name"
+                                           value='${user.username}'
+                                           data-context-path="${pageContext.request.contextPath}" disabled="disabled">
+                                    <img class="how-pos4 pointer-none"
+                                         src="${pageContext.request.contextPath}/public/images/icons/user.svg"
+                                         alt="ICON">
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="row" style="gap: 10px">
-                            <div class="bor8 m-b-20 how-pos4-parent col">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="firstName"
-                                       name="firstname" required placeholder="Your First Name" value='${user.firstName}'
-                                        disabled="disabled">
-                                <img class="how-pos4 pointer-none"
-                                     src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
+                            <div class="row" style="gap: 10px">
+                                <div class="bor8 m-b-20 how-pos4-parent col">
+                                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="firstName"
+                                           name="firstname" required placeholder="Your First Name"
+                                           value='${user.firstName}'
+                                           disabled="disabled">
+                                    <img class="how-pos4 pointer-none"
+                                         src="${pageContext.request.contextPath}/public/images/icons/user.svg"
+                                         alt="ICON">
+                                </div>
+                                <div class="bor8 m-b-20 how-pos4-parent col">
+                                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="lastName"
+                                           name="lastname" required placeholder="Your Last Name"
+                                           value='${user.lastName}'
+                                           disabled="disabled">
+                                    <img class="how-pos4 pointer-none"
+                                         src="${pageContext.request.contextPath}/public/images/icons/user.svg"
+                                         alt="ICON">
+                                </div>
                             </div>
-                            <div class="bor8 m-b-20 how-pos4-parent col">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="lastName"
-                                       name="lastname" required placeholder="Your Last Name" value='${user.lastName}'
-                                        disabled="disabled">
-                                <img class="how-pos4 pointer-none"
-                                     src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
+
+                            <div class="row">
+                                <div class="col bor8 m-b-20 how-pos4-parent">
+                                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="email" id="email"
+                                           name="email"
+                                           required placeholder="Your Email" value='${user.email}' disabled="disabled">
+                                    <img class="how-pos4 pointer-none"
+                                         src="${pageContext.request.contextPath}/public/images/icons/at-sign.svg"
+                                         alt="ICON">
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="email" id="email" name="email"
-                                       required placeholder="Your Email" value='${user.email}'  disabled="disabled">
-                                <img class="how-pos4 pointer-none"
-                                     src="${pageContext.request.contextPath}/public/images/icons/at-sign.svg" alt="ICON">
+
+                            <div class="row">
+                                <div class="col bor8 m-b-20 how-pos4-parent">
+                                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="address"
+                                           name="address"
+                                           required placeholder="Your Address" value='${user.address}'
+                                           disabled="disabled">
+                                    <img class="how-pos4 pointer-none"
+                                         src="${pageContext.request.contextPath}/public/images/icons/map-pin.svg"
+                                         alt="ICON">
+                                </div>
                             </div>
-                        </div>
 
 
-                        <div class="row">
-                            <div class="col bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="address" name="address"
-                                       required placeholder="Your Address" value='${user.address}'  disabled="disabled">
-                                <img class="how-pos4 pointer-none"
-                                     src="${pageContext.request.contextPath}/public/images/icons/map-pin.svg" alt="ICON">
+                            <div class="row">
+                                <div class="col bor8 m-b-20 how-pos4-parent">
+                                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="tel" id="phone"
+                                           name="phone"
+                                           required placeholder="Your Phone Number" value='${user.phoneNumber}'
+                                           disabled="disabled">
+                                    <img class="how-pos4 pointer-none"
+                                         src="${pageContext.request.contextPath}/public/images/icons/phone.svg"
+                                         alt="ICON">
+                                </div>
                             </div>
-                        </div>
 
-
-                        <div class="row">
-                            <div class="col bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="tel" id="phone" name="phone"
-                                       required placeholder="Your Phone Number" value='${user.phoneNumber}'  disabled="disabled">
-                                <img class="how-pos4 pointer-none"
-                                     src="${pageContext.request.contextPath}/public/images/icons/phone.svg" alt="ICON">
+                            <div class="row" id="editBtn">
+                                <button href=""
+                                        class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
+                                        onclick="toggleEdit()" type="button">
+                                    Edit Account Details
+                                </button>
                             </div>
-                        </div>
-
-                        <div class="row" id="editBtn">
-                            <button href="" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
-                                    onclick="toggleEdit()" type="button">
-                                Edit Account Details
-                            </button>
-                        </div>
-                        <div class="row" style="margin-top: 15px; display: none;" id="updateBtn">
-                            <button href="" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
-                                    onclick="updateAccountDetails()" type="button">
-                                Update Details
-                            </button>
-                        </div>
-                    </form>
+                            <div class="row" style="margin-top: 15px; display: none;" id="updateBtn">
+                                <button href=""
+                                        class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
+                                        onclick="updateAccountDetails()" type="button">
+                                    Update Details
+                                </button>
+                            </div>
+                        </form>
                         <hr>
                         <h4 class="mtext-105 cl2 txt-center p-b-30">
                             Payment Methods
@@ -141,11 +157,15 @@
                         <c:forEach items="${sessionScope.user.paymentMethods}" var="paymentmethod">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mtext-105 cl2 p-b-30"><b>${paymentmethod.paymentMethodType.toUpperCase()}</b> ${paymentmethod.cardLast4} </h6>
+                                    <h6 class="mtext-105 cl2 p-b-30">
+                                        <b>${paymentmethod.paymentMethodType.toUpperCase()}</b> ${paymentmethod.cardLast4}
+                                    </h6>
                                 </div>
                                 <div class="col-md-6">
-                                    <form action="${pageContext.request.contextPath}/user/payments/remove" method="post" onsubmit="return confirm('Are you sure you want to delete this payment method?')">
-                                        <button type="submit" name="paymentMethodId" value="${paymentmethod.id}" class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
+                                    <form action="${pageContext.request.contextPath}/user/payments/remove" method="post"
+                                          onsubmit="return confirm('Are you sure you want to delete this payment method?')">
+                                        <button type="submit" name="paymentMethodId" value="${paymentmethod.id}"
+                                                class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
                                             Delete
                                         </button>
                                     </form>
@@ -169,8 +189,9 @@
                         <c:forEach var="order" items="${sessionScope.user.orders}">
                             <div class="row">
                                 <form class="col" method="post" action="orderTracking">
-                                    <button type="submit" name="orderid" value="${order.id}" class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
-                                    ${order.id} | ${order.orderDate} | ${order.orderStatus.toString()}
+                                    <button type="submit" name="orderid" value="${order.id}"
+                                            class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
+                                            ${order.id} | ${order.orderDate} | ${order.orderStatus.toString()}
                                     </button>
                                 </form>
 
@@ -204,115 +225,115 @@
 
         <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
         <script>
-                                        $(".js-select2").each(function () {
-                                            $(this).select2({
-                                                minimumResultsForSearch: 20,
-                                                dropdownParent: $(this).next('.dropDownSelect2')
-                                            });
-                                        })
+            $(".js-select2").each(function () {
+                $(this).select2({
+                    minimumResultsForSearch: 20,
+                    dropdownParent: $(this).next('.dropDownSelect2')
+                });
+            })
         </script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script>
-                                        $('.js-pscroll').each(function () {
-                                            $(this).css('position', 'relative');
-                                            $(this).css('overflow', 'hidden');
-                                            var ps = new PerfectScrollbar(this, {
-                                                wheelSpeed: 1,
-                                                scrollingThreshold: 1000,
-                                                wheelPropagation: false,
-                                            });
+            $('.js-pscroll').each(function () {
+                $(this).css('position', 'relative');
+                $(this).css('overflow', 'hidden');
+                var ps = new PerfectScrollbar(this, {
+                    wheelSpeed: 1,
+                    scrollingThreshold: 1000,
+                    wheelPropagation: false,
+                });
 
-                                            $(window).on('resize', function () {
-                                                ps.update();
-                                            })
-                                        });
+                $(window).on('resize', function () {
+                    ps.update();
+                })
+            });
         </script>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKFWBqlKAGCeS1rMVoaNlwyayu0e0YRes"></script>
         <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
 
         <script>
-                                        function toggleEdit() {
-                                        $('#updateBtn').toggle();
-                                        if ($('#editBtn button').text().trim() == "Edit Account Details"){
-                                            $('#editBtn button').text("Cancel");
-                                        } else {
-                                            $('#editBtn button').text("Edit Account Details");
-                                        }
-                                        
-                                            var inputs = document.getElementsByTagName("input");
-                                            for (var i = 0; i < inputs.length; i++) {
-                                                if (inputs[i].getAttribute("disabled")) {
-                                                    inputs[i].removeAttribute("disabled");
-                                                } else {
-                                                    inputs[i].setAttribute("disabled", "disabled");
-                                                }
-                                            }
-                                        }
-                                        </script>
-                                        <script>
-                                        async function updateAccountDetails() {
-                                        $('#updateBtn').toggle();
-                                        $('#editBtn button').text("Edit Account Details");
+            function toggleEdit() {
+                $('#updateBtn').toggle();
+                const editBtn = $('#editBtn button');
+                if (editBtn.text().trim() === "Edit Account Details") {
+                    editBtn.text("Cancel");
+                } else {
+                    editBtn.text("Edit Account Details");
+                }
 
-                                        const userDetailsForm = document.getElementById("userDetailsForm");
-                                        const formData = new FormData(userDetailsForm);
-                                        console.log("Context path:", contextPath);
+                const inputs = document.getElementsByTagName("input");
+                for (let i = 0; i < inputs.length; i++) {
+                    if (inputs[i].getAttribute("disabled")) {
+                        inputs[i].removeAttribute("disabled");
+                    } else {
+                        inputs[i].setAttribute("disabled", "disabled");
+                    }
+                }
+            }
+        </script>
+        <script>
+            async function updateAccountDetails() {
+                $('#updateBtn').toggle();
+                $('#editBtn button').text("Edit Account Details");
 
-                                        for (var pair of formData.entries()) {
-                                            console.log(pair[0] + ', ' + pair[1]);
-                                        }
+                const userDetailsForm = document.getElementById("userDetailsForm");
+                const formData = new FormData(userDetailsForm);
+                console.log("Context path:", contextPath);
 
-                                        try {
-                                            const response = await fetch(contextPath + "/userdetails", {
-                                                method: "POST",
-                                                headers: {
-                                                    'Content-Type': 'application/json'
-                                                },
-                                                body: JSON.stringify({
-                                                    username: userDetailsForm.username.value,
-                                                    firstname: userDetailsForm.firstname.value,
-                                                    lastname: userDetailsForm.lastname.value,
-                                                    address: userDetailsForm.address.value,
-                                                    email: userDetailsForm.email.value,
-                                                    phone: userDetailsForm.phone.value
-                                                })
-                                            })
-                                            .then(response => {
-                                                if (!response.ok) {
-                                                    // Handle the error response
-                                                    return response.json().then(error => {
-                                                        throw new Error(error.message);
-                                                    });
-                                                }
-                                                return response.json();
-                                            })
-                                            .then(data => {
-                                                // Handle the success response
-                                            })
-                                            .catch(error => {
-                                                console.error('Error:', error.message);
-                                            });
+                for (const pair of formData.entries()) {
+                    console.log(pair[0] + ', ' + pair[1]);
+                }
 
-                                        } catch (error) {
-                                            console.error("Error:", error);
-                                        }
+                try {
+                    const response = await fetch(contextPath + "/user/details/modify", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: userDetailsForm.username.value,
+                            firstname: userDetailsForm.firstname.value,
+                            lastname: userDetailsForm.lastname.value,
+                            address: userDetailsForm.address.value,
+                            email: userDetailsForm.email.value,
+                            phone: userDetailsForm.phone.value
+                        })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                // Handle the error response
+                                return response.json().then(error => {
+                                    throw new Error(error.message);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Handle the success response
+                        })
+                        .catch(error => {
+                            console.error('Error:', error.message);
+                        });
 
-                                        var inputs = document.getElementsByTagName("input");
-                                        for (var i = 0; i < inputs.length; i++) {
-                                            if (inputs[i].getAttribute("disabled")) {
-                                                inputs[i].removeAttribute("disabled");
-                                            } else {
-                                                inputs[i].setAttribute("disabled", "disabled");
-                                            }
-                                        }
-                                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+
+                var inputs = document.getElementsByTagName("input");
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].getAttribute("disabled")) {
+                        inputs[i].removeAttribute("disabled");
+                    } else {
+                        inputs[i].setAttribute("disabled", "disabled");
+                    }
+                }
+            }
 
 
-                                        
         </script>
 
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>

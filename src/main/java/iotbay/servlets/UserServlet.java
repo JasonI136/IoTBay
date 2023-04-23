@@ -4,12 +4,16 @@
  */
 package iotbay.servlets;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.stripe.model.PaymentMethod;
 import com.stripe.model.SetupIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import iotbay.database.DatabaseManager;
 import iotbay.models.User;
+import iotbay.models.httpResponses.GenericApiResponse;
+import iotbay.util.Misc;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @author cmesina
@@ -55,7 +60,7 @@ public class UserServlet extends HttpServlet {
                 addPaymentMethodSuccess(request, response);
                 return;
             case "/payments/add/cancel":
-                response.sendRedirect( getServletContext().getContextPath() + "/user");
+                response.sendRedirect(getServletContext().getContextPath() + "/user");
                 return;
             case "/":
                 request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
@@ -87,12 +92,77 @@ public class UserServlet extends HttpServlet {
                 case "/payments/remove":
                     removePaymentMethod(request, response);
                     return;
+                case "/details/modify":
+                    updateUserDetails(request, response);
+                    return;
                 default:
                     response.sendError(404);
             }
         }
 
 
+    }
+
+    private void updateUserDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        try {
+            Gson gson = new Gson();
+            JsonObject requestData = gson.fromJson(request.getReader(), JsonObject.class);
+
+            String username = requestData.get("username").getAsString();
+            String firstname = requestData.get("firstname").getAsString();
+            String lastname = requestData.get("lastname").getAsString();
+            String address = requestData.get("address").getAsString();
+            String email = requestData.get("email").getAsString();
+            String phone = requestData.get("phone").getAsString();
+
+
+            User user = (User) request.getSession().getAttribute("user");
+            if (user.getUsername() != username && this.db.getUsers().getUser(username) == null) {
+                user.setUsername(username);
+            }
+
+            if (username != null && firstname != null && address != null && email != null && phone != null && phone != null) {
+                user.setFirstName(firstname);
+                user.setLastName(lastname);
+                user.setAddress(address);
+                user.setEmail(email);
+                int number = Integer.parseInt(phone);
+                user.setPhoneNumber(number);
+                this.db.getUsers().updateUser(user);
+            }
+
+            Misc.sendJsonResponse(response,
+                    GenericApiResponse.<String>builder()
+                            .statusCode(200)
+                            .message("Success")
+                            .data("Details updated successfully")
+                            .error(false)
+                            .build()
+            );
+//            response.getWriter().write("{\"status\": \"success\"}");
+        } catch (SQLException | IOException e) {
+            logger.error(e);
+
+            Misc.sendJsonResponse(response,
+                    GenericApiResponse.<String>builder()
+                            .statusCode(500)
+                            .message("Error")
+                            .data(e.getMessage())
+                            .error(false)
+                            .build()
+            );
+        } catch (NumberFormatException e) {
+            logger.error(e);
+
+            Misc.sendJsonResponse(response,
+                    GenericApiResponse.<String>builder()
+                            .statusCode(400)
+                            .message("Error")
+                            .data("Invalid phone number")
+                            .error(false)
+                            .build()
+            );
+        }
     }
 
     private void removePaymentMethod(HttpServletRequest request, HttpServletResponse response) throws ServletException {
