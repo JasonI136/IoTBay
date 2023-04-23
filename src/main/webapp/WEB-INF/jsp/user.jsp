@@ -284,102 +284,64 @@
                 const formData = new FormData(userDetailsForm);
                 console.log("Context path:", contextPath);
 
-                try {
-                    const response = await fetch(contextPath + "/user/details/modify", {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            username: userDetailsForm.username.value,
-                            firstname: userDetailsForm.firstname.value,
-                            lastname: userDetailsForm.lastname.value,
-                            address: userDetailsForm.address.value,
-                            email: userDetailsForm.email.value,
-                            phone: userDetailsForm.phone.value
-                        })
+                await fetch(contextPath + "/user/details/modify", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: userDetailsForm.username.value,
+                        firstname: userDetailsForm.firstname.value,
+                        lastname: userDetailsForm.lastname.value,
+                        address: userDetailsForm.address.value,
+                        email: userDetailsForm.email.value,
+                        phone: userDetailsForm.phone.value
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                // Handle the error response
-                                return response.json().then(error => {
-                                    throw new Error(error.message);
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.statusCode === 200) {
-                                // Display a success message
-                                swal.fire({
-                                    title: 'Success',
-                                    icon: 'success',
-                                    text: "You're details have been updated",
-                                    showCancelButton: false,
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'OK'
-                                });
-                            } else {
-                                // Display an error message
-                                swal.fire({
-                                    title: 'Error',
-                                    icon: 'error',
-                                    text: "Couldn't update details",
-                                    showCancelButton: false,
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error.message);
-                        });
-
-                    try {
-                        const response = await fetch(contextPath + "/user/details/modify", {
-                            method: "POST",
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                username: userDetailsForm.username.value,
-                                firstname: userDetailsForm.firstname.value,
-                                lastname: userDetailsForm.lastname.value,
-                                address: userDetailsForm.address.value,
-                                email: userDetailsForm.email.value,
-                                phone: userDetailsForm.phone.value
-                            })
-                        })
-                            .then(response => {
-                                if (!response.ok) {
-                                    // Handle the error response
-                                    return response.json().then(error => {
-                                        throw new Error(error.message);
-                                    });
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                // Handle the success response
-                            })
-                            .catch(error => {
-                                console.error('Error:', error.message);
+                })
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.statusCode === 200) {
+                            // Display a success message
+                            swal.fire({
+                                title: 'Success',
+                                icon: 'success',
+                                text: "You're details have been updated",
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
                             });
-
-                    } catch (error) {
-                        console.error("Error:", error);
-                    }
-
-                    var inputs = document.getElementsByTagName("input");
-                    for (var i = 0; i < inputs.length; i++) {
-                        if (inputs[i].getAttribute("disabled")) {
-                            inputs[i].removeAttribute("disabled");
                         } else {
-                            inputs[i].setAttribute("disabled", "disabled");
+                            // Display an error message
+                            swal.fire({
+                                title: data.message,
+                                icon: 'error',
+                                text: data.data,
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                            });
                         }
+                    })
+                    .catch(error => {
+                        swal.fire({
+                            title: 'Error',
+                            icon: 'error',
+                            text: "An unexpected error occurred",
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+
+                var inputs = document.getElementsByTagName("input");
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].getAttribute("disabled")) {
+                        inputs[i].removeAttribute("disabled");
+                    } else {
+                        inputs[i].setAttribute("disabled", "disabled");
                     }
-                } catch (error) {
-                    console.error("Error:", error);
                 }
             }
 
