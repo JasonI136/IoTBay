@@ -13,6 +13,9 @@
         <title>User</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script>
+    var contextPath = "${pageContext.request.contextPath}";
+</script>
 
         <jsp:include page="components/header-links.jsp" />
     </head>
@@ -55,11 +58,12 @@
                         <h4 class="mtext-105 cl2 txt-center p-b-30">
                             Your Account Details
                         </h4>
+                        <form id="userDetailsForm" name="userDetailsForm">
                         <div class="row">
                             <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username"
                                        name="username" required placeholder="Your User Name" value='${user.username}'
-                                       disabled>
+                                       data-context-path="${pageContext.request.contextPath}" disabled="disabled">
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
@@ -68,15 +72,15 @@
                         <div class="row" style="gap: 10px">
                             <div class="bor8 m-b-20 how-pos4-parent col">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="firstName"
-                                       name="firstName" required placeholder="Your First Name" value='${user.firstName}'
-                                       disabled>
+                                       name="firstname" required placeholder="Your First Name" value='${user.firstName}'
+                                        disabled="disabled">
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
                             <div class="bor8 m-b-20 how-pos4-parent col">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="lastName"
-                                       name="lastName" required placeholder="Your Last Name" value='${user.lastName}'
-                                       disabled>
+                                       name="lastname" required placeholder="Your Last Name" value='${user.lastName}'
+                                        disabled="disabled">
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">
                             </div>
@@ -85,7 +89,7 @@
                         <div class="row">
                             <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="email" id="email" name="email"
-                                       required placeholder="Your Email" value='${user.email}' disabled>
+                                       required placeholder="Your Email" value='${user.email}'  disabled="disabled">
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/at-sign.svg" alt="ICON">
                             </div>
@@ -95,7 +99,7 @@
                         <div class="row">
                             <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="address" name="address"
-                                       required placeholder="Your Address" value='${user.address}' disabled>
+                                       required placeholder="Your Address" value='${user.address}'  disabled="disabled">
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/map-pin.svg" alt="ICON">
                             </div>
@@ -105,19 +109,25 @@
                         <div class="row">
                             <div class="col bor8 m-b-20 how-pos4-parent">
                                 <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="tel" id="phone" name="phone"
-                                       required placeholder="Your Phone Number" value='${user.phoneNumber}' disabled>
+                                       required placeholder="Your Phone Number" value='${user.phoneNumber}'  disabled="disabled">
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/phone.svg" alt="ICON">
                             </div>
                         </div>
 
-                        <div class="row">
+                        <div class="row" id="editBtn">
                             <button href="" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
-                                    onclick="toggleEdit()">
+                                    onclick="toggleEdit()" type="button">
                                 Edit Account Details
                             </button>
                         </div>
-
+                        <div class="row" style="margin-top: 15px; display: none;" id="updateBtn">
+                            <button href="" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
+                                    onclick="updateAccountDetails()" type="button">
+                                Update Details
+                            </button>
+                        </div>
+                    </form>
                         <hr>
                         <h4 class="mtext-105 cl2 txt-center p-b-30">
                             Payment Methods
@@ -226,6 +236,13 @@
 
         <script>
                                         function toggleEdit() {
+                                        $('#updateBtn').toggle();
+                                        if ($('#editBtn button').text().trim() == "Edit Account Details"){
+                                            $('#editBtn button').text("Cancel");
+                                        } else {
+                                            $('#editBtn button').text("Edit Account Details");
+                                        }
+                                        
                                             var inputs = document.getElementsByTagName("input");
                                             for (var i = 0; i < inputs.length; i++) {
                                                 if (inputs[i].getAttribute("disabled")) {
@@ -235,6 +252,67 @@
                                                 }
                                             }
                                         }
+                                        </script>
+                                        <script>
+                                        async function updateAccountDetails() {
+                                        $('#updateBtn').toggle();
+                                        $('#editBtn button').text("Edit Account Details");
+
+                                        const userDetailsForm = document.getElementById("userDetailsForm");
+                                        const formData = new FormData(userDetailsForm);
+                                        console.log("Context path:", contextPath);
+
+                                        for (var pair of formData.entries()) {
+                                            console.log(pair[0] + ', ' + pair[1]);
+                                        }
+
+                                        try {
+                                            const response = await fetch(contextPath + "/userdetails", {
+                                                method: "POST",
+                                                headers: {
+                                                    'Content-Type': 'application/json'
+                                                },
+                                                body: JSON.stringify({
+                                                    username: userDetailsForm.username.value,
+                                                    firstname: userDetailsForm.firstname.value,
+                                                    lastname: userDetailsForm.lastname.value,
+                                                    address: userDetailsForm.address.value,
+                                                    email: userDetailsForm.email.value,
+                                                    phone: userDetailsForm.phone.value
+                                                })
+                                            })
+                                            .then(response => {
+                                                if (!response.ok) {
+                                                    // Handle the error response
+                                                    return response.json().then(error => {
+                                                        throw new Error(error.message);
+                                                    });
+                                                }
+                                                return response.json();
+                                            })
+                                            .then(data => {
+                                                // Handle the success response
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error.message);
+                                            });
+
+                                        } catch (error) {
+                                            console.error("Error:", error);
+                                        }
+
+                                        var inputs = document.getElementsByTagName("input");
+                                        for (var i = 0; i < inputs.length; i++) {
+                                            if (inputs[i].getAttribute("disabled")) {
+                                                inputs[i].removeAttribute("disabled");
+                                            } else {
+                                                inputs[i].setAttribute("disabled", "disabled");
+                                            }
+                                        }
+                                    }
+
+
+                                        
         </script>
 
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>

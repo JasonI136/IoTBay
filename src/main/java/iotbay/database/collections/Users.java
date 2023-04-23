@@ -289,6 +289,33 @@ public class Users {
 
 
     }
+    
+    public void updateUser(User user) throws SQLException {
+
+    try (Connection conn = this.db.getDbConnection()) {
+
+        try (PreparedStatement updateUserQuery = conn.prepareStatement(
+                "UPDATE USER_ACCOUNT SET username = ?, first_name = ?, last_name = ?, email = ?, address = ?, phone_number = ? "
+                        + "WHERE id = ?"
+        )) {
+            updateUserQuery.setString(1, user.getUsername());
+            updateUserQuery.setString(2, user.getFirstName());
+            updateUserQuery.setString(3, user.getLastName());
+            updateUserQuery.setString(4, user.getEmail());
+            updateUserQuery.setString(5, user.getAddress());
+            updateUserQuery.setInt(6, user.getPhoneNumber());
+            updateUserQuery.setInt(7, user.getId());
+
+            int affectedRows = updateUserQuery.executeUpdate();
+            if (affectedRows == 1) {
+                logger.info("User " + user.getUsername() + " updated in the database.");
+            } else {
+                throw new SQLException("Failed to update user in the database.");
+            }
+        }
+    }
+}
+
 
     /**
      * Generates a random salt for the password encryption.

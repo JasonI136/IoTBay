@@ -52,6 +52,10 @@
         <servlet-name>AdminServlet</servlet-name>
         <servlet-class>iotbay.servlets.AdminServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UserDetailsServlet</servlet-name>
+        <servlet-class>iotbay.servlets.UserDetailsServlet</servlet-class>
+    </servlet>
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>iotbay.filters.AuthFilter</filter-class>
@@ -122,6 +126,10 @@
     <servlet-mapping>
         <servlet-name>OrderTrackingServlet</servlet-name>
         <url-pattern>/orderTracking</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserDetailsServlet</servlet-name>
+        <url-pattern>/userdetails</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
