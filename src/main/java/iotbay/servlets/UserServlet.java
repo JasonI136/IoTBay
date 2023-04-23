@@ -121,7 +121,7 @@ public class UserServlet extends HttpServlet {
                 user.setUsername(username);
             }
 
-            if (username != null && firstname != null && address != null && email != null && phone != null) {
+            if (firstname != null && address != null && email != null && phone != null && lastname != null) {
                 user.setFirstName(firstname);
                 user.setLastName(lastname);
                 user.setAddress(address);
