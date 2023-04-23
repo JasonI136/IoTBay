@@ -15,7 +15,7 @@
         <jsp:include page="../components/header-links.jsp"/>
 
     </head>
-    <body class="animsition cl6 p-b-26">
+    <body class="animsition stext-112 cl6 p-b-26">
 
         <header>
             <div class="container-menu-desktop">
@@ -25,77 +25,77 @@
         </header>
 
 
-        <section class="bg0 p-t-104 p-b-116">
+        <div class="container-fluid">
+            <section class="bg0 p-t-104 p-b-20">
+                <div>
+                    <div class=" bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
+                        <div class="container">
+                            <h1>Manage User Access</h1>    
+                        </div>
 
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card rounded-lg shadow admin-user-card">
-                            <div class="card-body pb-4">
-                                <h5 class="card-title">{firstname} {lastname}</h5>
-                                <p class="card-text"><b>Email:</b> {email}</p>
-                                <p class="card-text"><b>Location:</b> {location}</p>
-                                <p class="card-text"><b>Phone:</b> {phone}</p>
-                                <p class="card-text"><b>Orders:</b> {order amount}</p>
-                                <div class="d-flex justify-content-end">
-                                    <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer mt-3">
-                                        View Profile
-                                    </button>
+
+                        <div class="container mt-4 pb-3">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form class="form-inline float-right">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control mr-2" id="orderNumber" placeholder="Enter User ID">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card rounded-lg shadow admin-user-card">
-                            <div class="card-body pb-4">
-                                <h5 class="card-title">{firstname} {lastname}</h5>
-                                <p class="card-text"><b>Email:</b> {email}</p>
-                                <p class="card-text"><b>Location:</b> {location}</p>
-                                <p class="card-text"><b>Phone:</b> {phone}</p>
-                                <p class="card-text"><b>Orders:</b> {order amount}</p>
-                                <div class="d-flex justify-content-end">
-                                    <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer mt-3">
-                                        View Profile
-                                    </button>
+                        <section class="section-table bg0">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-bordered">
+                                                <thead>
+                                                    <tr class="bg-dark text-white">
+                                                        <th scope="col" class="text-center" style="width: 10%">User ID</th>
+                                                        <th scope="col" class="text-center" style="width: 10%">Name</th>
+                                                        <th scope="col" class="text-center">Email</th>
+                                                        <th scope="col" class="text-center">Phone</th>
+                                                        <th scope="col" class="text-center">Address</th>
+                                                        <th scope="col" class="text-center">Position</th>
+                                                        <th scope="col" class="text-center">Status</th>                                                                                                                                                                 
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                <c:forEach var="order" items="${orders}" varStatus="status">
+                                                   <!-- <tr class="${status.index % 2 == 0 ? 'table-primary' : 'table-secondary'}">
+                                                        <td class="text-center">${order.id}</td>
+                                                        <td class="text-center">${order.userId}</td>
+                                                        <td>${order.orderDate}</td>
+                                                        <td class="text-center">
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    ${order.orderStatus}
+                                                                </button>
+                                                                <div class="dropdown-menu" aria-labelledby="statusDropdown">
+                                                                    <a class="dropdown-item" href="#" value="pending">Active</a>
+                                                                    <a class="dropdown-item" href="#" value="processing">Inactive</a>                                                     
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><button class="btn btn-primary">Save</button></td> -->
+                                                    </tr>
+                                                </c:forEach>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card rounded-lg shadow admin-user-card">
-                            <div class="card-body pb-4">
-                                <h5 class="card-title">{firstname} {lastname}</h5>
-                                <p class="card-text"><b>Email:</b> {email}</p>
-                                <p class="card-text"><b>Location:</b> {location}</p>
-                                <p class="card-text"><b>Phone:</b> {phone}</p>
-                                <p class="card-text"><b>Orders:</b> {order amount}</p>
-                                <div class="d-flex justify-content-end">
-                                    <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer mt-3">
-                                        View Profile
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card rounded-lg shadow admin-user-card">
-                            <div class="card-body pb-4">
-                                <h5 class="card-title">{firstname} {lastname}</h5>
-                                <p class="card-text"><b>Email:</b> {email}</p>
-                                <p class="card-text"><b>Location:</b> {location}</p>
-                                <p class="card-text"><b>Phone:</b> {phone}</p>
-                                <p class="card-text"><b>Orders:</b> {order amount}</p>
-                                <div class="d-flex justify-content-end">
-                                    <button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer mt-3">
-                                        View Profile
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
-            </div>
-        </section>
+
+
+            </section>
+        </div>
 
 
     </body>
