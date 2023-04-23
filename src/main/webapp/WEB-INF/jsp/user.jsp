@@ -291,7 +291,27 @@
                                                 return response.json();
                                             })
                                             .then(data => {
-                                                // Handle the success response
+                                            if (data.status === "success") {
+                                            // Display a success message
+                                            swal.fire({
+                                                title: 'Success',
+                                                icon: 'success',
+                                                text: "You're details have been updated",
+                                                showCancelButton: false,
+                                                confirmButtonColor: '#3085d6',
+                                                confirmButtonText: 'OK'
+                                            });
+                                        } else {
+                                            // Display an error message
+                                            swal.fire({
+                                            title: 'Error',
+                                            icon: 'error',
+                                            text: "Couldn't update details",
+                                            showCancelButton: false,
+                                            confirmButtonColor: '#3085d6',
+                                            confirmButtonText: 'OK'
+                                        });
+    }
                                             })
                                             .catch(error => {
                                                 console.error('Error:', error.message);
@@ -314,7 +334,6 @@
 
                                         
         </script>
-
         <script src="${pageContext.request.contextPath}/public/js/main.js"></script>
     </body>
 </html>
