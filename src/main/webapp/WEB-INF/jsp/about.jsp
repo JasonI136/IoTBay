@@ -4,19 +4,23 @@
     Author     : jasonmba
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+              crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+                crossorigin="anonymous"></script>
 
 
         <title>About Us</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <jsp:include page="components/header-links.jsp" />
+        <jsp:include page="components/common-header-html.jsp"/>
 
     </head>
     <body class="animsition">
@@ -24,21 +28,19 @@
         <!-- Header -->
         <header class="header-v4">
             <div class="container-menu-desktop">
-                <jsp:include page="components/header-navbar.jsp" />
-                <jsp:include page="components/main-navbar.jsp" />
+                <jsp:include page="components/header-navbar.jsp"/>
+                <jsp:include page="components/main-navbar.jsp"/>
             </div>
         </header>
 
 
-
-
-
         <!-- Title page -->
-        <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('${pageContext.request.contextPath}/public/images/bg-orders.jpg');">
+        <section class="bg-img1 txt-center p-lr-15 p-tb-92"
+                 style="background-image: url('${pageContext.request.contextPath}/public/images/bg-orders.jpg');">
             <h2 class="ltext-105 cl0 txt-center">
                 About IoTBay
             </h2>
-        </section>	
+        </section>
 
 
         <!-- Content page -->
@@ -53,7 +55,11 @@
 
                             <p class="stext-113 cl6 p-b-26">
 
-                                IoTBay - Internet of Things Bay -  is the culmination of 30 years in information technology business. Dennis & Brian built the business based on the simple principles of impeccable service and passion for technology, we are also known for the wonderful brick and mortar store located in Sydney. Exceeding peoples expectations is our aim, and where else better to do so than on one of the world’s most technologically advanced cities!
+                                IoTBay - Internet of Things Bay - is the culmination of 30 years in information
+                                technology business. Dennis & Brian built the business based on the simple principles of
+                                impeccable service and passion for technology, we are also known for the wonderful brick
+                                and mortar store located in Sydney. Exceeding peoples expectations is our aim, and where
+                                else better to do so than on one of the world’s most technologically advanced cities!
                             </p>
 
                             <p class="stext-113 cl6 p-b-26">
@@ -61,7 +67,8 @@
                             </p>
 
                             <p class="stext-113 cl6 p-b-26">
-                                Any questions? Let us know in store, by email at iotbay@sales.com or phone +61 861 654 222
+                                Any questions? Let us know in store, by email at iotbay@sales.com or phone +61 861 654
+                                222
                             </p>
                         </div>
                     </div>
@@ -81,7 +88,8 @@
 
                             <div class="bor16 p-l-29 p-b-9 m-t-22">
                                 <p class="stext-114 cl6 p-r-40 p-b-11">
-                                    The most important single aspect of software development is to be clear about what you are trying to build.
+                                    The most important single aspect of software development is to be clear about what
+                                    you are trying to build.
                                 </p>
 
                                 <span class="stext-111 cl8">
@@ -102,11 +110,11 @@
                     -->
                 </div>
             </div>
-        </section>	
+        </section>
 
         <!-- Footer -->
         <footer class="bg3 p-t-75 p-b-32">
-            <jsp:include page="components/footer.jsp" />
+            <jsp:include page="components/footer.jsp"/>
         </footer>
 
 
@@ -117,47 +125,7 @@
             </span>
         </div>
 
-        <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
-
-        <script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
-
-        <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/popper.js"></script>
-        <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/bootstrap.min.js"></script>
-
-        <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
-        <script>
-            $(".js-select2").each(function () {
-                $(this).select2({
-                    minimumResultsForSearch: 20,
-                    dropdownParent: $(this).next('.dropDownSelect2')
-                });
-            })
-        </script>
-
-
-        <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
-
-        <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
-
-        <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-        <script>
-            $('.js-pscroll').each(function () {
-                $(this).css('position', 'relative');
-                $(this).css('overflow', 'hidden');
-                var ps = new PerfectScrollbar(this, {
-                    wheelSpeed: 1,
-                    scrollingThreshold: 1000,
-                    wheelPropagation: false,
-                });
-
-                $(window).on('resize', function () {
-                    ps.update();
-                })
-            });
-        </script>
-        <script src="${pageContext.request.contextPath}/public/js/map-custom.js"></script>
-
-        <script src="${pageContext.request.contextPath}/public/js/main.js"></script>
+        <jsp:include page="components/common-footer-html.jsp"/>
 
     </body>
 </html>

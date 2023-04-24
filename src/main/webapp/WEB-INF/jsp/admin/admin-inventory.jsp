@@ -4,7 +4,7 @@
     Author     : jasonmba
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,7 +12,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <jsp:include page="../components/header-links.jsp"/>
+        <jsp:include page="../components/common-header-html.jsp"/>
 
     </head>
     <body class="animsition">
@@ -44,7 +44,7 @@
                         <c:forEach var="category" items="${categories}">
                             <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
                                     data-filter=".${category.nameNoSpace}">
-                                ${category.name}
+                                    ${category.name}
                             </button>
                         </c:forEach>
                     </div>
@@ -88,8 +88,9 @@
 
                                 <div class="block2-txt flex-w flex-t p-t-14">
                                     <div class="block2-txt-child1 flex-col-l ">
-                                        <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                            ${product.name}
+                                        <a href="product-detail.html"
+                                           class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                                ${product.name}
                                         </a>
 
                                         <span class="stext-105 cl3">
@@ -131,7 +132,8 @@
                                     <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
                                     <div class="slick3 gallery-lb">
-                                        <div class="item-slick3" data-thumb="product-image" id="img-product-modal-thumb">
+                                        <div class="item-slick3" data-thumb="product-image"
+                                             id="img-product-modal-thumb">
                                             <div class="wrap-pic-w pos-relative">
                                                 <img src="" alt="IMG-PRODUCT" id="img-product-modal">
 
@@ -161,7 +163,8 @@
                                 <p class="stext-102 cl3 p-t-23" id="product-description">
 
                                 </p>
-                                <p class="stext-102 cl3 p-t-23">Quantity:&nbsp;&nbsp;<span id="product-quantity"></span></p>
+                                <p class="stext-102 cl3 p-t-23">Quantity:&nbsp;&nbsp;<span id="product-quantity"></span>
+                                </p>
                                 <div class="flex-w flex-r-m p-b-10">
                                     <div class="size-204 flex-w flex-m respon6-next">
                                         <div class="wrap-num-product flex-w m-r-20 m-tb-10">
@@ -169,7 +172,8 @@
                                                 <i class="fs-16 zmdi zmdi-minus"></i>
                                             </div>
 
-                                            <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product"
+                                            <input class="mtext-104 cl3 txt-center num-product" type="number"
+                                                   name="num-product"
                                                    min="0" value="1" id="quantity">
 
                                             <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
@@ -194,7 +198,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <a href="${pageContext.request.contextPath}/admin/inventory/add" class="btn btn-primary btn-floating">
+                    <a href="${pageContext.request.contextPath}/admin/inventory/add"
+                       class="btn btn-primary btn-floating">
                         <i class="fa fa-plus"></i>
                     </a>
                 </div>
@@ -231,19 +236,7 @@
         });
     </script>
 
-    <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/popper.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
-    <script>
-        $(".js-select2").each(function () {
-            $(this).select2({
-                minimumResultsForSearch: 20,
-                dropdownParent: $(this).next('.dropDownSelect2')
-            });
-        })
-    </script>
+    <jsp:include page="../components/common-footer-html.jsp"/>
     <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
     <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/daterangepicker.js"></script>
     <script src="${pageContext.request.contextPath}/public/vendor/slick/slick.min.js"></script>
@@ -265,7 +258,6 @@
             });
         });
     </script>
-    <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
     <script src="${pageContext.request.contextPath}/public/vendor/sweetalert/sweetalert.min.js"></script>
     <script>
         $('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
@@ -299,57 +291,41 @@
             var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
             $(this).on('click', function () {
                 addToCart(document.querySelector('#add-to-cart').value, document.querySelector('#quantity').value)
-                        .then(response => {
-                            if (response.status === 200) {
-                                Swal.fire({
-                                    title: 'Success!',
-                                    icon: 'success',
-                                    text: 'Item added to cart!',
-                                    showCancelButton: false,
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'OK',
-                                    target: document.querySelector('#modal-content')
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "${pageContext.request.contextPath}/product";
-                                    }
-                                });
-                            }
-                        });
+                    .then(response => {
+                        if (response.status === 200) {
+                            Swal.fire({
+                                title: 'Success!',
+                                icon: 'success',
+                                text: 'Item added to cart!',
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK',
+                                target: document.querySelector('#modal-content')
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "${pageContext.request.contextPath}/product";
+                                }
+                            });
+                        }
+                    });
             });
         });
 
-    </script>
-    <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script>
-        $('.js-pscroll').each(function () {
-            $(this).css('position', 'relative');
-            $(this).css('overflow', 'hidden');
-            var ps = new PerfectScrollbar(this, {
-                wheelSpeed: 1,
-                scrollingThreshold: 1000,
-                wheelPropagation: false,
-            });
-
-            $(window).on('resize', function () {
-                ps.update();
-            })
-        });
     </script>
     <script>
 
         function fetchProductDetails(productId) {
             fetch('${pageContext.request.contextPath}/product/' + productId)
-                    .then(response => response.json())
-                    .then(json => {
-                        document.querySelector('#product-name').innerHTML = json.name;
-                        document.querySelector('#img-product-modal').src = json.imageURL;
-                        document.querySelector('#product-description').innerHTML = json.description;
-                        document.querySelector('#product-price').innerHTML = "$ " + json.price;
-                        document.querySelector('#add-to-cart').value = json.id;
-                        document.querySelector('#product-quantity').innerHTML = json.quantity;
-                        document.querySelector('#quantity').value = json.quantity;
-                    });
+                .then(response => response.json())
+                .then(json => {
+                    document.querySelector('#product-name').innerHTML = json.name;
+                    document.querySelector('#img-product-modal').src = json.imageURL;
+                    document.querySelector('#product-description').innerHTML = json.description;
+                    document.querySelector('#product-price').innerHTML = "$ " + json.price;
+                    document.querySelector('#add-to-cart').value = json.id;
+                    document.querySelector('#product-quantity').innerHTML = json.quantity;
+                    document.querySelector('#quantity').value = json.quantity;
+                });
         }
 
         function addToCart(productId, quantity) {
@@ -364,5 +340,4 @@
         }
 
     </script>
-    <script src="${pageContext.request.contextPath}/public/js/main.js"></script>
 </html>

@@ -4,7 +4,7 @@
     Author     : jasonmba
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,7 +12,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <jsp:include page="../components/header-links.jsp"/>
+        <jsp:include page="../components/common-header-html.jsp"/>
     </head>
     <body class="animsition cl6 p-b-26">
 
@@ -86,20 +86,7 @@
 
     </body>
 
-
-    <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/popper.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
-    <script>
-        $(".js-select2").each(function () {
-            $(this).select2({
-                minimumResultsForSearch: 20,
-                dropdownParent: $(this).next('.dropDownSelect2')
-            });
-        })
-    </script>
+    <jsp:include page="../components/common-footer-html.jsp"/>
     <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
     <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/daterangepicker.js"></script>
     <script src="${pageContext.request.contextPath}/public/vendor/slick/slick.min.js"></script>
@@ -108,26 +95,6 @@
     <script>
         $('.parallax100').parallax100();
     </script>
-    <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/isotope/isotope.pkgd.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/sweetalert/sweetalert.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script>
-        $('.js-pscroll').each(function () {
-            $(this).css('position', 'relative');
-            $(this).css('overflow', 'hidden');
-            var ps = new PerfectScrollbar(this, {
-                wheelSpeed: 1,
-                scrollingThreshold: 1000,
-                wheelPropagation: false,
-            });
-
-            $(window).on('resize', function () {
-                ps.update();
-            })
-        });
-    </script>
-
     <style>
         .mb-4 {
             margin-bottom: 1.5rem;
@@ -151,25 +118,25 @@
             data: {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June'],
                 datasets: [{
-                        label: 'Total Products',
-                        data: [50, 51, 62, 65, 70, 72],
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 3,
-                        lineTension: 0.3,
-                        shadowOffsetX: 0,
-                        shadowOffsetY: 3,
-                        shadowBlur: 5,
-                        shadowColor: 'rgba(0, 0, 0, 0.3)'
-                    }]
+                    label: 'Total Products',
+                    data: [50, 51, 62, 65, 70, 72],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 3,
+                    lineTension: 0.3,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: 3,
+                    shadowBlur: 5,
+                    shadowColor: 'rgba(0, 0, 0, 0.3)'
+                }]
             },
             options: {
                 scales: {
                     yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
                 }
             }
         });
@@ -181,25 +148,25 @@
             data: {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June'],
                 datasets: [{
-                        label: 'Customer Growth',
-                        data: [100, 150, 200, 250, 300, 350],
-                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                        borderColor: 'rgba(255, 159, 64, 1)',
-                        borderWidth: 3,
-                        lineTension: 0.3,
-                        shadowOffsetX: 0,
-                        shadowOffsetY: 3,
-                        shadowBlur: 5,
-                        shadowColor: 'rgba(0, 0, 0, 0.3)'
-                    }]
+                    label: 'Customer Growth',
+                    data: [100, 150, 200, 250, 300, 350],
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 3,
+                    lineTension: 0.3,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: 3,
+                    shadowBlur: 5,
+                    shadowColor: 'rgba(0, 0, 0, 0.3)'
+                }]
             },
             options: {
                 scales: {
                     yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
                 }
             }
         });
@@ -211,28 +178,28 @@
             data: {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June'],
                 datasets: [{
-                        label: 'Sales',
-                        data: [12, 19, 3, 5, 2, 3],
-                        backgroundColor: 'rgba(108, 122, 224, 0.2)',
-                        borderColor: 'rgba(108, 122, 224, 1)',
-                        borderWidth: 3, // Set line width to 3
-                        lineTension: 0.3, // Set line tension to make lines curved
-                        shadowOffsetX: 0, // Set shadow offset
-                        shadowOffsetY: 3,
-                        shadowBlur: 5,
-                        shadowColor: 'rgba(0, 0, 0, 0.3)' // Set shadow color
-                    }]
+                    label: 'Sales',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: 'rgba(108, 122, 224, 0.2)',
+                    borderColor: 'rgba(108, 122, 224, 1)',
+                    borderWidth: 3, // Set line width to 3
+                    lineTension: 0.3, // Set line tension to make lines curved
+                    shadowOffsetX: 0, // Set shadow offset
+                    shadowOffsetY: 3,
+                    shadowBlur: 5,
+                    shadowColor: 'rgba(0, 0, 0, 0.3)' // Set shadow color
+                }]
             },
             options: {
                 scales: {
                     yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
                 }
             }
         });
     </script>
-    <script src="${pageContext.request.contextPath}/public/js/main.js"></script>
+
 </html>
