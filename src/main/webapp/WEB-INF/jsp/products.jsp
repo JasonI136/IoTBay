@@ -326,7 +326,7 @@
                                                 <img src="" alt="IMG-PRODUCT" id="img-product-modal">
 
                                                 <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                                                   href="${pageContext.request.contextPath}/public/images/product-detail-01.jpg">
+                                                   id="product-image-full">
                                                     <i class="fa fa-expand"></i>
                                                 </a>
                                             </div>
@@ -362,7 +362,7 @@
                                             <input class="mtext-104 cl3 txt-center num-product" type="number"
                                                    name="num-product"
                                                    id="quantity"
-                                                   oninput="this.value = Math.abs(this.value)" min="1"/>
+                                                   oninput="this.value = Math.abs(this.value)" min="1" value="1"/>
                                             <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
                                                 <i class="fs-16 zmdi zmdi-plus"></i>
                                             </div>
@@ -391,5 +391,26 @@
     </footer>
 
     <jsp:include page="components/common-footer-html.jsp"/>
+    <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
+    <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/daterangepicker.js"></script>
+    <script src="${pageContext.request.contextPath}/public/vendor/slick/slick.min.js"></script>
+    <script src="${pageContext.request.contextPath}/public/js/slick-custom.js"></script>
+    <script src="${pageContext.request.contextPath}/public/vendor/parallax100/parallax100.js"></script>
+    <script>
+        $('.parallax100').parallax100();
+    </script>
+    <script src="${pageContext.request.contextPath}/public/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+    <script>
+        $('.gallery-lb').each(function () { // the containers for all your galleries
+            $(this).magnificPopup({
+                delegate: 'a', // the selector for gallery item
+                type: 'image',
+                gallery: {
+                    enabled: true
+                },
+                mainClass: 'mfp-fade'
+            });
+        });
+    </script>
     <script src="${pageContext.request.contextPath}/public/js/jsp/products.js.jsp"></script>
 </html>

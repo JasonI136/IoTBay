@@ -4,18 +4,20 @@
  */
 package iotbay.servlets;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import iotbay.database.DatabaseManager;
-import iotbay.enums.OrderStatus;
 import iotbay.exceptions.ProductStockException;
-import iotbay.models.*;
+import iotbay.models.Cart;
+import iotbay.models.CartItem;
+import iotbay.models.Product;
+import iotbay.models.User;
 import iotbay.models.httpResponses.GenericApiResponse;
 import iotbay.util.CheckoutSession;
-import iotbay.util.Misc;
+import iotbay.util.CustomHttpServletRequest;
+import iotbay.util.CustomHttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,8 +27,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
@@ -131,7 +135,9 @@ public class CartServlet extends HttpServlet {
         }
     }
 
-    private void checkOut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    private void checkOut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        CustomHttpServletResponse res = (CustomHttpServletResponse) response;
+        CustomHttpServletRequest req = (CustomHttpServletRequest) request;
         try {
             this.initShoppingCart(request);
             Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
@@ -141,14 +147,14 @@ public class CartServlet extends HttpServlet {
             PaymentIntent paymentIntent = checkoutSession.initiateCheckout();
 
             // send payment intent to client
-            Misc.sendJsonResponse(response,
+            res.sendJsonResponse(
                     GenericApiResponse.<PaymentIntent>builder()
                             .statusCode(200)
                             .message("Payment intent created")
                             .data(paymentIntent)
                             .build());
         } catch (SQLException | StripeException | IOException e) {
-            Misc.sendJsonResponse(response,
+            res.sendJsonResponse(
                     GenericApiResponse.<String>builder()
                             .statusCode(500)
                             .message("Error")
@@ -159,7 +165,7 @@ public class CartServlet extends HttpServlet {
             // only send product id and name. Use a map to store the product id and name
             Map<Integer, String> outOfStockProducts = e.outOfStockProducts.stream().collect(Collectors.toMap(Product::getId, Product::getName));
 
-            Misc.sendJsonResponse(response,
+            res.sendJsonResponse(
                     GenericApiResponse.<Map<Integer, String>>builder()
                             .statusCode(400)
                             .message("Product(s) out of stock")
@@ -171,6 +177,8 @@ public class CartServlet extends HttpServlet {
     }
 
     private void addCartItem(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        CustomHttpServletResponse res = (CustomHttpServletResponse) response;
+        CustomHttpServletRequest req = (CustomHttpServletRequest) request;
         try {
             if (request.getParameter("productId") != null) {
 
@@ -178,7 +186,7 @@ public class CartServlet extends HttpServlet {
                     Product product = this.db.getProducts().getProduct(Integer.parseInt(request.getParameter("productId")));
                     // check if product exists
                     if (product == null) {
-                        Misc.sendJsonResponse(response,
+                        res.sendJsonResponse(
                                 GenericApiResponse.<String>builder()
                                         .statusCode(400)
                                         .message("Product not found")
@@ -193,13 +201,20 @@ public class CartServlet extends HttpServlet {
 
                     // check if quantity is valid
                     if (quantity < 1) {
-                        response.sendError(400, "Invalid quantity");
+                        res.sendJsonResponse(
+                                GenericApiResponse.<String>builder()
+                                        .statusCode(400)
+                                        .message("Invalid quantity")
+                                        .data("The quantity you have entered is invalid. Please try again.")
+                                        .error(true)
+                                        .build()
+                        );
                         return;
                     }
 
                     // check if product is in stock
                     if (!productIsInStock(product, quantity)) {
-                        Misc.sendJsonResponse(response,
+                        res.sendJsonResponse(
                                 GenericApiResponse.<String>builder()
                                         .statusCode(400)
                                         .message("Product not in stock")
@@ -213,7 +228,7 @@ public class CartServlet extends HttpServlet {
                     Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
                     userShoppingCart.addCartItem(product, quantity);
 
-                    Misc.sendJsonResponse(response,
+                    res.sendJsonResponse(
                             GenericApiResponse.<String>builder()
                                     .statusCode(200)
                                     .message("Success")
@@ -223,11 +238,20 @@ public class CartServlet extends HttpServlet {
                     );
 
                 } catch (NumberFormatException e) {
-                    Misc.sendJsonResponse(response,
+                    res.sendJsonResponse(
                             GenericApiResponse.<String>builder()
                                     .statusCode(400)
                                     .message("Invalid product ID")
                                     .data("Invalid product ID")
+                                    .error(true)
+                                    .build()
+                    );
+                } catch (ProductStockException e) {
+                    res.sendJsonResponse(
+                            GenericApiResponse.<String>builder()
+                                    .statusCode(400)
+                                    .message("Product not in stock")
+                                    .data("The amount of this item in your cart exceeds the amount in stock. Please try again later.")
                                     .error(true)
                                     .build()
                     );
@@ -241,11 +265,14 @@ public class CartServlet extends HttpServlet {
 
     }
 
-    private void clearCart(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    private void clearCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        CustomHttpServletResponse res = (CustomHttpServletResponse) response;
+        CustomHttpServletRequest req = (CustomHttpServletRequest) request;
+
         request.getSession().removeAttribute("shoppingCart");
         this.initShoppingCart(request);
 
-        Misc.sendJsonResponse(response,
+        res.sendJsonResponse(
                 GenericApiResponse.<String>builder()
                         .statusCode(200)
                         .message("Success")
@@ -256,10 +283,10 @@ public class CartServlet extends HttpServlet {
     }
 
     private void updateCart(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        CustomHttpServletResponse res = (CustomHttpServletResponse) response;
+        CustomHttpServletRequest req = (CustomHttpServletRequest) request;
         try {
-            Gson gson = new Gson();
-            String json = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-            JsonObject payload = gson.fromJson(json, JsonObject.class);
+            JsonObject payload = req.getJsonBody();
 
             this.initShoppingCart(request);
             Cart userShoppingCart = (Cart) request.getSession().getAttribute("shoppingCart");
@@ -282,7 +309,7 @@ public class CartServlet extends HttpServlet {
 
             if (productsNotInStock.size() > 0) {
                 String productsNotInStockString = productsNotInStock.stream().map(Product::getName).collect(Collectors.joining(", "));
-                Misc.sendJsonResponse(response,
+                res.sendJsonResponse(
                         GenericApiResponse.<String>builder()
                                 .statusCode(400)
                                 .message("Products not in stock")
@@ -293,7 +320,7 @@ public class CartServlet extends HttpServlet {
                 return;
             }
 
-            Misc.sendJsonResponse(response,
+            res.sendJsonResponse(
                     GenericApiResponse.<String>builder()
                             .statusCode(200)
                             .message("Success")

@@ -7,6 +7,9 @@ package iotbay.servlets;
 import com.google.gson.Gson;
 import iotbay.database.DatabaseManager;
 import iotbay.models.Product;
+import iotbay.models.httpResponses.GenericApiResponse;
+import iotbay.util.CustomHttpServletRequest;
+import iotbay.util.CustomHttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -70,39 +73,45 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        CustomHttpServletResponse res = (CustomHttpServletResponse) response;
+        CustomHttpServletRequest req = (CustomHttpServletRequest) request;
+
         String pathInfo = request.getPathInfo();
 
-        if (pathInfo == null) {
-            response.setStatus(400);
-            response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
-            out.print("{\"error\": \"No product ID provided.\"}");
+        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("")) {
+            res.sendJsonResponse(
+                    GenericApiResponse.<String>builder()
+                            .statusCode(400)
+                            .message("Bad Request")
+                            .data("No product ID provided.")
+                            .error(true)
+                            .build()
+            );
+
         } else {
             try {
                 int productId = Integer.parseInt(pathInfo.substring(1));
                 try {
                     Product product = this.db.getProducts().getProduct(productId);
 
-                    // Use Gson to serialize the product to JSON
-                    Gson gson = new Gson();
-                    String json = gson.toJson(product);
-
-                    // Set the response content type to JSON
-                    response.setContentType("application/json");
-
-                    // Write the JSON to the response output stream
-                    PrintWriter out = response.getWriter();
-                    out.print(json);
-                    out.flush();
+                    res.sendJsonResponse(
+                            GenericApiResponse.<Product>builder()
+                                    .statusCode(200)
+                                    .message("OK")
+                                    .data(product)
+                                    .build()
+                    );
                 } catch (Exception e) {
-
                     throw new ServletException("Failed to get product: " + e.getMessage());
                 }
             } catch (NumberFormatException e) {
-                response.setStatus(400);
-                response.setContentType("application/json");
-                PrintWriter out = response.getWriter();
-                out.print("{\"error\": \"Invalid product ID\"}");
+                res.sendJsonResponse(
+                        GenericApiResponse.<String>builder()
+                                .statusCode(400)
+                                .message("Bad Request")
+                                .data("Invalid product ID")
+                                .error(true)
+                                .build());
             }
         }
 

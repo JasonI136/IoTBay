@@ -13,6 +13,8 @@ import com.stripe.param.checkout.SessionCreateParams;
 import iotbay.database.DatabaseManager;
 import iotbay.models.User;
 import iotbay.models.httpResponses.GenericApiResponse;
+import iotbay.util.CustomHttpServletRequest;
+import iotbay.util.CustomHttpServletResponse;
 import iotbay.util.Misc;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -52,21 +54,12 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
-        // refresh the user
-        //if (Misc.refreshUser(request, response, this.db.getUsers())) return;
 
         switch (path) {
-            case "/payments/add/success":
-                addPaymentMethodSuccess(request, response);
-                return;
-            case "/payments/add/cancel":
-                response.sendRedirect(getServletContext().getContextPath() + "/user");
-                return;
-            case "/":
-                request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
-                return;
-            default:
-                response.sendError(404);
+            case "/payments/add/success" -> addPaymentMethodSuccess(request, response);
+            case "/payments/add/cancel" -> response.sendRedirect(getServletContext().getContextPath() + "/user");
+            case "/" -> request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
+            default -> response.sendError(404);
         }
     }
 
@@ -82,31 +75,26 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String path = request.getPathInfo();
+        String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
 
         if (path != null) {
             switch (request.getPathInfo()) {
-                case "/payments/add":
-                    addPaymentMethod(request, response);
-                    return;
-                case "/payments/remove":
-                    removePaymentMethod(request, response);
-                    return;
-                case "/details/modify":
-                    updateUserDetails(request, response);
-                    return;
-                default:
-                    response.sendError(404);
+                case "/payments/add" -> addPaymentMethod(request, response);
+                case "/payments/remove" -> removePaymentMethod(request, response);
+                case "/details/modify" -> updateUserDetails(request, response);
+                default -> response.sendError(404);
             }
         }
 
 
     }
 
-    private void updateUserDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    private void updateUserDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        CustomHttpServletResponse res = (CustomHttpServletResponse) response;
+        CustomHttpServletRequest req = (CustomHttpServletRequest) request;
         try {
             Gson gson = new Gson();
-            JsonObject requestData = gson.fromJson(request.getReader(), JsonObject.class);
+            JsonObject requestData = req.getJsonBody();
 
             String username = requestData.get("username").getAsString();
             String firstname = requestData.get("firstname").getAsString();
@@ -131,30 +119,25 @@ public class UserServlet extends HttpServlet {
                 this.db.getUsers().updateUser(user);
             }
 
-            Misc.sendJsonResponse(response,
-                    GenericApiResponse.<String>builder()
-                            .statusCode(200)
-                            .message("Success")
-                            .data("Details updated successfully")
-                            .error(false)
-                            .build()
-            );
-//            response.getWriter().write("{\"status\": \"success\"}");
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(200)
+                    .message("Success")
+                    .data("Details updated successfully")
+                    .error(false)
+                    .build());
         } catch (SQLException | IOException e) {
             logger.error(e);
 
-            Misc.sendJsonResponse(response,
-                    GenericApiResponse.<String>builder()
-                            .statusCode(500)
-                            .message("Error")
-                            .data(e.getMessage())
-                            .error(false)
-                            .build()
-            );
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(500)
+                    .message("Error")
+                    .data(e.getMessage())
+                    .error(false)
+                    .build());
         } catch (NumberFormatException e) {
             logger.error(e);
 
-            Misc.sendJsonResponse(response,
+            res.sendJsonResponse(
                     GenericApiResponse.<String>builder()
                             .statusCode(400)
                             .message("Error")

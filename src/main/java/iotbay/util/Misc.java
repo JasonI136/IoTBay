@@ -20,22 +20,4 @@ public class Misc {
         }
     }
 
-    /**
-     * Sends a JSON response to the client.
-     *
-     * @param response The response object.
-     * @param json     The JSON object to send.
-     * @throws IOException
-     */
-    public static void sendJsonResponse(HttpServletResponse response, GenericApiResponse<?> json) throws ServletException {
-        try {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.setStatus(json.getStatusCode());
-            response.getWriter().write(new Gson().toJson(json));
-        } catch (IOException e) {
-            throw new ServletException(e);
-        }
-
-    }
 }

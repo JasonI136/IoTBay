@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -73,7 +74,7 @@
                                                         </div>
                                                     </td>
                                                     <td class="column-2">${cartItem.product.name}</td>
-                                                    <td class="column-3">$ ${cartItem.product.price}</td>
+                                                    <td class="column-3"><fmt:formatNumber type="currency" value="${cartItem.product.price}" maxFractionDigits="2"/></td>
                                                     <td class="column-4">
                                                         <div class="wrap-num-product flex-w m-l-auto m-r-0">
                                                             <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
@@ -88,7 +89,7 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="column-5">$ ${cartItem.totalPrice}</td>
+                                                    <td class="column-5"><fmt:formatNumber type="currency" value="${cartItem.totalPrice}" maxFractionDigits="2"/></td>
                                                 </tr>
                                             </c:forEach>
                                         </table>
@@ -119,7 +120,7 @@
 
                                 <div class="size-209">
                                     <span class="mtext-110 cl2">
-                                        $${sessionScope.shoppingCart.totalPrice}
+                                        <fmt:formatNumber type="currency" value="${sessionScope.shoppingCart.totalPrice}" maxFractionDigits="2"/>
                                     </span>
                                 </div>
                             </div>
@@ -147,7 +148,7 @@
 
                                 <div class="size-209 p-t-1">
                                     <span class="mtext-110 cl2">
-                                        $${sessionScope.shoppingCart.totalPrice}
+                                        <fmt:formatNumber type="currency" value="${sessionScope.shoppingCart.totalPrice}" maxFractionDigits="2"/>
                                     </span>
                                 </div>
                             </div>

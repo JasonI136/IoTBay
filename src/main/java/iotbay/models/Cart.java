@@ -4,6 +4,7 @@
  */
 package iotbay.models;
 
+import iotbay.exceptions.ProductStockException;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -34,10 +35,15 @@ public class Cart implements Serializable {
      * @param product the product to add
      * @param quantity the quantity of the product to add
      */
-    public void addCartItem(Product product, int quantity) {
+    public void addCartItem(Product product, int quantity) throws ProductStockException {
         for (CartItem item : cartItems) {
             if (item.getProduct().getId() == product.getId()) {
                 // The product is already in the cart, update the quantity
+                if (item.getCartQuantity() + quantity > product.getQuantity()) {
+                    // The quantity exceeds the stock, set the quantity to the stock
+                    throw new ProductStockException("The quantity exceeds the stock");
+                }
+
                 item.setCartQuantity(item.getCartQuantity() + quantity);
                 return;
             }

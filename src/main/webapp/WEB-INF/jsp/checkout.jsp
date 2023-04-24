@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
     <head>
@@ -52,14 +53,14 @@
                                         <tr>
                                             <td>${cartItem.product.name}</td>
                                             <td>${cartItem.cartQuantity}</td>
-                                            <td>$${cartItem.totalPrice}</td>
+                                            <td><fmt:formatNumber type="currency" value="${cartItem.totalPrice}" maxFractionDigits="2"/></td>
                                         </tr>
                                         <c:set var="totalCost" value="${totalCost + cartItem.totalPrice}"/>
                                     </c:forEach>
                                     <tr>
                                         <td><b>Total</b></td>
                                         <td></td>
-                                        <td><b>$${totalCost}</b></td>
+                                        <td><b><fmt:formatNumber type="currency" value="${totalCost}" maxFractionDigits="2"/></b></td>
                                     </tr>
                                 </tbody>
                             </table>

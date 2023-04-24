@@ -1,5 +1,7 @@
 package iotbay.filters;
 
+import iotbay.util.CustomHttpServletRequest;
+import iotbay.util.CustomHttpServletResponse;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +26,8 @@ public class MainFilter implements Filter {
             return;
         }
 
-
-        chain.doFilter(request, response);
+        CustomHttpServletResponse customHttpServletResponse = new CustomHttpServletResponse(res);
+        CustomHttpServletRequest customHttpServletRequest = new CustomHttpServletRequest(req);
+        chain.doFilter(customHttpServletRequest, customHttpServletResponse);
     }
 }

@@ -11,11 +11,12 @@
         fetch('${pageContext.request.contextPath}/product/' + productId)
             .then(response => response.json())
             .then(json => {
-                document.querySelector('#product-name').innerHTML = json.name;
-                document.querySelector('#img-product-modal').src = json.imageURL;
-                document.querySelector('#product-description').innerHTML = json.description;
-                document.querySelector('#product-price').innerHTML = "$ " + json.price;
-                document.querySelector('#add-to-cart').value = json.id;
+                document.querySelector('#product-name').innerHTML = json.data.name;
+                document.querySelector('#img-product-modal').src = json.data.imageURL;
+                document.querySelector('#product-description').innerHTML = json.data.description;
+                document.querySelector('#product-price').innerHTML = "$ " + json.data.price;
+                document.querySelector('#add-to-cart').value = json.data.id;
+                document.querySelector('#product-image-full').href = json.data.imageURL;
             });
     }
 
