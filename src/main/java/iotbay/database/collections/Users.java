@@ -10,6 +10,7 @@ import iotbay.database.DatabaseManager;
 import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.PaymentMethod;
+import iotbay.models.Product;
 import iotbay.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,6 +63,7 @@ public class Users {
 
     /**
      * Gets the number of users in the database.
+     *
      * @return the number of users in the database
      * @throws SQLException if there is an error getting the user count
      */
@@ -80,11 +82,12 @@ public class Users {
 
     /**
      * Registers a new user.
+     *
      * @param newUser the user to register
-     * @throws SQLException if there is an error registering the user
-     * @throws UserExistsException if the user already exists
+     * @throws SQLException             if there is an error registering the user
+     * @throws UserExistsException      if the user already exists
      * @throws NoSuchAlgorithmException if the password encryption algorithm is not found
-     * @throws InvalidKeySpecException if the password encryption key is invalid
+     * @throws InvalidKeySpecException  if the password encryption key is invalid
      */
     public void registerUser(User newUser) throws SQLException, UserExistsException, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] salt = this.createSalt();
@@ -104,12 +107,13 @@ public class Users {
 
     /**
      * For JUnit testing only. Skips the creation of a Stripe customer.
-     * @deprecated - For JUnit testing only. Skips the creation of a Stripe customer.
+     *
      * @param newUser the user to register
-     * @throws SQLException if there is an error registering the user
-     * @throws UserExistsException if the user already exists
+     * @throws SQLException             if there is an error registering the user
+     * @throws UserExistsException      if the user already exists
      * @throws NoSuchAlgorithmException if the password encryption algorithm is not found
-     * @throws InvalidKeySpecException if the password encryption key is invalid
+     * @throws InvalidKeySpecException  if the password encryption key is invalid
+     * @deprecated - For JUnit testing only. Skips the creation of a Stripe customer.
      */
     public void registerUserTest(User newUser) throws SQLException, UserExistsException, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] salt = this.createSalt();
@@ -148,13 +152,14 @@ public class Users {
 
     /**
      * Authenticates a user.
+     *
      * @param username the username of the user to authenticate
      * @param password the encrypted password of the user to authenticate
      * @return the user if authentication is successful, null otherwise
-     * @throws SQLException if there is an error authenticating the user
-     * @throws UserNotFoundException if the user does not exist
+     * @throws SQLException             if there is an error authenticating the user
+     * @throws UserNotFoundException    if the user does not exist
      * @throws NoSuchAlgorithmException if the password encryption algorithm is not found
-     * @throws InvalidKeySpecException if the password encryption key is invalid
+     * @throws InvalidKeySpecException  if the password encryption key is invalid
      */
     public User authenticateUser(String username, String password) throws SQLException, UserNotFoundException, NoSuchAlgorithmException, InvalidKeySpecException {
         User user = this.getUser(username);
@@ -225,6 +230,7 @@ public class Users {
 
     /**
      * Checks if a user exists in the database.
+     *
      * @param user the user to check
      * @return true if the user exists, false otherwise
      * @throws SQLException if there is an error checking if the user exists
@@ -289,32 +295,32 @@ public class Users {
 
 
     }
-    
+
     public void updateUser(User user) throws SQLException {
 
-    try (Connection conn = this.db.getDbConnection()) {
+        try (Connection conn = this.db.getDbConnection()) {
 
-        try (PreparedStatement updateUserQuery = conn.prepareStatement(
-                "UPDATE USER_ACCOUNT SET username = ?, first_name = ?, last_name = ?, email = ?, address = ?, phone_number = ? "
-                        + "WHERE id = ?"
-        )) {
-            updateUserQuery.setString(1, user.getUsername());
-            updateUserQuery.setString(2, user.getFirstName());
-            updateUserQuery.setString(3, user.getLastName());
-            updateUserQuery.setString(4, user.getEmail());
-            updateUserQuery.setString(5, user.getAddress());
-            updateUserQuery.setInt(6, user.getPhoneNumber());
-            updateUserQuery.setInt(7, user.getId());
+            try (PreparedStatement updateUserQuery = conn.prepareStatement(
+                    "UPDATE USER_ACCOUNT SET username = ?, first_name = ?, last_name = ?, email = ?, address = ?, phone_number = ? "
+                            + "WHERE id = ?"
+            )) {
+                updateUserQuery.setString(1, user.getUsername());
+                updateUserQuery.setString(2, user.getFirstName());
+                updateUserQuery.setString(3, user.getLastName());
+                updateUserQuery.setString(4, user.getEmail());
+                updateUserQuery.setString(5, user.getAddress());
+                updateUserQuery.setInt(6, user.getPhoneNumber());
+                updateUserQuery.setInt(7, user.getId());
 
-            int affectedRows = updateUserQuery.executeUpdate();
-            if (affectedRows == 1) {
-                logger.info("User " + user.getUsername() + " updated in the database.");
-            } else {
-                throw new SQLException("Failed to update user in the database.");
+                int affectedRows = updateUserQuery.executeUpdate();
+                if (affectedRows == 1) {
+                    logger.info("User " + user.getUsername() + " updated in the database.");
+                } else {
+                    throw new SQLException("Failed to update user in the database.");
+                }
             }
         }
     }
-}
 
 
     /**
@@ -345,4 +351,26 @@ public class Users {
 
     }
 
+    public List<User> getUsers(int limit, int offset) throws SQLException {
+        List<User> userList = new ArrayList<>();
+        String query = "SELECT * "
+                + "FROM USER_ACCOUNT "
+                + "OFFSET ? ROWS "
+                + "FETCH NEXT ? ROWS ONLY";
+
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, offset);
+                stmt.setInt(2, limit);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        userList.add(new User(this.db, rs));
+                    }
+                }
+            }
+        }
+
+        return userList;
+    }
 }

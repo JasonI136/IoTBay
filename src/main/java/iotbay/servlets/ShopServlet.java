@@ -7,13 +7,19 @@ package iotbay.servlets;
 import iotbay.database.DatabaseManager;
 import iotbay.models.Category;
 import iotbay.models.Product;
+import iotbay.models.httpResponses.GenericApiResponse;
+import iotbay.models.httpResponses.ProductResponse;
+import iotbay.util.CustomHttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Builder;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -71,8 +77,10 @@ public class ShopServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        CustomHttpServletResponse res = new CustomHttpServletResponse(response);
         int limit = request.getParameter("limit") != null ? Integer.parseInt(request.getParameter("limit")) : 10;
         int offset = request.getParameter("offset") != null ? Integer.parseInt(request.getParameter("offset")) : 0;
+        boolean getResponseAsJson = request.getParameter("json") != null && Boolean.parseBoolean(request.getParameter("json"));
         String searchNameParam = request.getParameter("searchName");
 
         // If the search name is empty, redirect to the shop page.
@@ -83,6 +91,10 @@ public class ShopServlet extends HttpServlet {
             }
         }
 
+        String pageParameter = request.getParameter("page");
+        if (pageParameter != null) {
+            offset = (Integer.parseInt(pageParameter) - 1) * limit;
+        }
 
         List<Product> products;
         try {
@@ -150,7 +162,27 @@ public class ShopServlet extends HttpServlet {
         if (searchNameParam != null) {
             request.setAttribute("searchName", searchNameParam);
         }
-        request.getRequestDispatcher("/WEB-INF/jsp/products.jsp").forward(request, response);
+
+
+        if (!getResponseAsJson) {
+            request.getRequestDispatcher("/WEB-INF/jsp/products.jsp").forward(request, response);
+        } else {
+            ProductResponse productResponse = new ProductResponse();
+            productResponse.setLimit(limit);
+            productResponse.setNextOffset(nextOffset);
+            productResponse.setPrevOffset(prevOffset);
+            productResponse.setNumberOfPages(numberOfPages);
+            productResponse.setCurrentPage(currentPage);
+            productResponse.setLastOffset(lastOffset);
+            productResponse.setProducts(products);
+
+            res.sendJsonResponse(GenericApiResponse.<ProductResponse>builder()
+                    .statusCode(200)
+                    .message("OK")
+                    .error(false)
+                    .data(productResponse)
+                    .build());
+        }
     }
 
     /**

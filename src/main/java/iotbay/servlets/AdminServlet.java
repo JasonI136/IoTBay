@@ -1,10 +1,9 @@
 package iotbay.servlets;
 
 import iotbay.database.DatabaseManager;
-import iotbay.models.Category;
-import iotbay.models.Log;
-import iotbay.models.Order;
-import iotbay.models.Product;
+import iotbay.models.*;
+import iotbay.models.httpResponses.GenericApiResponse;
+import iotbay.util.CustomHttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +28,9 @@ public class AdminServlet extends HttpServlet {
             case "/users":
                 adminUsers(request, response);
                 return;
+            case "/users/get":
+                adminUsersGet(request, response);
+                return;
             case "/inventory/add":
                 adminInventoryAdd(request, response);
                 return;
@@ -45,6 +47,32 @@ public class AdminServlet extends HttpServlet {
                 request.getSession().setAttribute("message", "Page not found");
                 response.sendError(404);
         }
+    }
+
+    private void adminUsersGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        CustomHttpServletResponse res = new CustomHttpServletResponse(response);
+
+        List<User> users;
+        try {
+           users = this.db.getUsers().getUsers(100, 0);
+        } catch (SQLException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(500)
+                    .message("Failed to retrieve users.")
+                    .data(e.getMessage())
+                    .error(true)
+                    .build()
+            );
+            return;
+        }
+
+        res.sendJsonResponse(GenericApiResponse.<List<User>>builder()
+                .statusCode(200)
+                .message("OK")
+                .data(users)
+                .build()
+        );
+
     }
 
     private void adminLogs(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
