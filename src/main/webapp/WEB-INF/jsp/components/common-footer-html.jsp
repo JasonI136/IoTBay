@@ -8,8 +8,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <script src="${pageContext.request.contextPath}/public/vendor/jquery/jquery-3.2.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/public/vendor/animsition/js/animsition.min.js"></script>
-<script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/popper.js"></script>
-<script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/bootstrap.min.js"></script>
+<%--<script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/popper.js"></script>--%>
+<%--<script src="${pageContext.request.contextPath}/public/vendor/bootstrap/js/bootstrap.min.js"></script>--%>
 <script src="${pageContext.request.contextPath}/public/vendor/select2/select2.min.js"></script>
 <script>
     $(".js-select2").each(function () {

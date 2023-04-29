@@ -1,6 +1,7 @@
 package iotbay.database.collections;
 
 import iotbay.database.DatabaseManager;
+import iotbay.exceptions.ProductInOrderException;
 import iotbay.models.Product;
 
 import java.sql.Connection;
@@ -218,4 +219,39 @@ public class Products {
             }
         }
     }
+
+    /**
+     * Deletes a product from the database.
+     * @param product the product to delete
+     */
+    public void deleteProduct(Product product) throws SQLException, ProductInOrderException {
+        // check if product is in any orders
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT * FROM ORDER_LINE_ITEM WHERE product_id = ?"
+            )) {
+                stmt.setInt(1, product.getId());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        throw new ProductInOrderException("Unable to delete product, product is in an order.");
+                    }
+                }
+            }
+        }
+
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "DELETE FROM PRODUCT WHERE id = ?"
+            )) {
+                stmt.setInt(1, product.getId());
+                int affectedRows = stmt.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new SQLException("Deleting product failed, no rows affected.");
+                }
+            }
+        }
+    }
+
 }

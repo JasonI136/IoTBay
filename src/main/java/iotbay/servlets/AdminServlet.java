@@ -1,9 +1,14 @@
 package iotbay.servlets;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import iotbay.database.DatabaseManager;
+import iotbay.exceptions.ProductInOrderException;
 import iotbay.models.*;
 import iotbay.models.httpResponses.GenericApiResponse;
+import iotbay.util.CustomHttpServletRequest;
 import iotbay.util.CustomHttpServletResponse;
+import jakarta.json.Json;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,12 +54,218 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
+
+        switch (path) {
+            case "/product/update" -> {
+                adminProductsUpdate(request, response);
+                return;
+            }
+            default -> {
+                request.getSession().setAttribute("message", "Page not found");
+                response.sendError(404);
+            }
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
+
+        if (path.startsWith("/product/delete/") || path.startsWith("/product/delete")) {
+            adminProductsDelete(request, response);
+            return;
+        } else {
+            request.getSession().setAttribute("message", "Page not found");
+            response.sendError(404);
+        }
+    }
+
+    private void adminProductsDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        CustomHttpServletRequest req = new CustomHttpServletRequest(request);
+        CustomHttpServletResponse res = new CustomHttpServletResponse(response);
+
+
+        //get the product id from the url. The url is in the format of /product/delete/{id}
+        String path = req.getPathInfo();
+        String[] pathParts = path.split("/");
+        if (pathParts.length != 4) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(400)
+                    .message("Invalid product id.")
+                    .data("Invalid product id or product id not provided.")
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        String id = pathParts[3];
+
+        int productId;
+        try {
+                productId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(400)
+                    .message("Invalid product id.")
+                    .data("Invalid product id.")
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        Product product;
+        try {
+            product = this.db.getProducts().getProduct(productId);
+        } catch (Exception e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(500)
+                    .message("Failed to retrieve product.")
+                    .data(e.getMessage())
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        if (product == null) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(404)
+                    .message("Product not found.")
+                    .data("Product not found.")
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        try {
+            this.db.getProducts().deleteProduct(product);
+        } catch (SQLException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(500)
+                    .message("Failed to delete product.")
+                    .data(e.getMessage())
+                    .error(true)
+                    .build());
+            return;
+        } catch (ProductInOrderException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(400)
+                    .message("Error")
+                    .data(e.getMessage())
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        res.sendJsonResponse(GenericApiResponse.<String>builder()
+                .statusCode(200)
+                .message("Product deleted.")
+                .data("Product deleted.")
+                .build());
+    }
+
+    private void adminProductsUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        CustomHttpServletRequest req = new CustomHttpServletRequest(request);
+        CustomHttpServletResponse res = new CustomHttpServletResponse(response);
+        JsonObject json = req.getJsonBody();
+
+        int productId = json.get("id").getAsInt();
+
+        Product product;
+        try {
+            product = this.db.getProducts().getProduct(productId);
+        } catch (Exception e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(500)
+                    .message("Failed to retrieve product.")
+                    .data(e.getMessage())
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        if (product == null) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(404)
+                    .message("Product not found.")
+                    .data("Product not found.")
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        JsonElement name = json.get("name");
+        if (name != null) {
+            product.setName(name.getAsString());
+        }
+
+        JsonElement price = json.get("price");
+        if (price != null) {
+            try {
+                product.setPrice(price.getAsDouble());
+            } catch (NumberFormatException e) {
+                res.sendJsonResponse(GenericApiResponse.<String>builder()
+                        .statusCode(400)
+                        .message("Invalid price.")
+                        .data("Invalid price.")
+                        .error(true)
+                        .build());
+                return;
+            }
+        }
+
+        JsonElement description = json.get("description");
+        if (description != null) {
+            product.setDescription(description.getAsString());
+        }
+
+        JsonElement stock = json.get("quantity");
+        if (stock != null) {
+            try {
+                product.setQuantity(stock.getAsInt());
+            } catch (NumberFormatException e) {
+                res.sendJsonResponse(GenericApiResponse.<String>builder()
+                        .statusCode(400)
+                        .message("Invalid stock.")
+                        .data("Invalid stock.")
+                        .error(true)
+                        .build());
+                return;
+            }
+        }
+
+        JsonElement imageURL = json.get("imageURL");
+        if (imageURL != null) {
+            product.setImageURL(imageURL.getAsString());
+        }
+
+        try {
+            this.db.getProducts().updateProduct(product);
+        } catch (SQLException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(500)
+                    .message("Failed to update product.")
+                    .data(e.getMessage())
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        res.sendJsonResponse(GenericApiResponse.<String>builder()
+                .statusCode(200)
+                .message("Product updated.")
+                .data("Product updated.")
+                .build());
+    }
+
     private void adminUsersGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         CustomHttpServletResponse res = new CustomHttpServletResponse(response);
 
         List<User> users;
         try {
-           users = this.db.getUsers().getUsers(100, 0);
+            users = this.db.getUsers().getUsers(100, 0);
         } catch (SQLException e) {
             res.sendJsonResponse(GenericApiResponse.<String>builder()
                     .statusCode(500)
@@ -144,11 +355,6 @@ public class AdminServlet extends HttpServlet {
 
         request.setAttribute("orders", orders);
         request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-orders.jsp").forward(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
     }
 
     @Override

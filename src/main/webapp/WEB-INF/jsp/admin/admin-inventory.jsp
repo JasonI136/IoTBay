@@ -27,7 +27,7 @@
 </header>
 
 <div class="container-fluid">
-    <section class="bg0 p-b-20 w-75 m-auto">
+    <section class="bg0 p-b-20 w-full m-auto">
         <div>
             <div class=" bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
                 <div class="container mt-4 pb-3">
@@ -35,6 +35,13 @@
                         <h3 class="ltext-103 cl5">
                             Inventory Management
                         </h3>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Search</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Enter search term"
+                               aria-describedby="basic-addon1" id="search-input">
                     </div>
                     <div id="product-table"></div>
                 </div>
@@ -66,56 +73,57 @@
                                         <img src="" alt="IMG-PRODUCT" id="img-product-modal">
 
                                         <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                                           href="${pageContext.request.contextPath}/public/images/product-detail-01.jpg">
+                                           id="product-image-full">
                                             <i class="fa fa-expand"></i>
                                         </a>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
+
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-5 p-b-30">
                     <div class="p-r-50 p-t-5 p-lr-0-lg">
-                        <h4 class="mtext-105 cl2 js-name-detail p-b-14" id="product-name">
-
-                        </h4>
-
-                        <span class="mtext-106 cl2" id="product-price">
-
-                                </span>
-
-                        <p class="stext-102 cl3 p-t-23" id="product-description">
-
-                        </p>
-                        <p class="stext-102 cl3 p-t-23">Quantity:&nbsp;&nbsp;<span id="product-quantity"></span>
-                        </p>
-                        <div class="flex-w flex-r-m p-b-10">
-                            <div class="size-204 flex-w flex-m respon6-next">
-                                <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                                    <div class="btn-num-product-down-modal cl8 hov-btn3 trans-04 flex-c-m">
-                                        <i class="fs-16 zmdi zmdi-minus"></i>
-                                    </div>
-
-                                    <input class="mtext-104 cl3 txt-center num-product" type="number"
-                                           name="num-product"
-                                           min="0" value="1" id="quantity">
-
-                                    <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                        <i class="fs-16 zmdi zmdi-plus"></i>
-                                    </div>
-                                </div>
-
-                                <button value=""
-                                        class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail"
-                                        name="productId" id="add-to-cart">
-                                    Update Quantity
-                                </button>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Product Name</span>
                             </div>
+                            <input type="text" class="form-control" id="product-name" aria-describedby="basic-addon1"
+                            >
                         </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Price</span>
+                            </div>
+                            <input type="text" class="form-control" id="product-price" aria-describedby="basic-addon1"
+                            >
+                        </div>
+                        <div class="input-group p-b-15">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Description</span>
+                            </div>
+                            <textarea class="form-control" id="product-description" rows="10"></textarea>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Stock</span>
+                            </div>
+                            <input type="text" class="form-control" id="product-quantity"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Image URL</span>
+                            </div>
+                            <input type="text" class="form-control" id="product-image-url"
+                                   aria-describedby="basic-addon1">
+                        </div>
+
+                        <button class="btn btn-primary" id="btn-update-product" data-product-id="0"
+                                onclick="updateProduct()">Update
+                        </button>
                     </div>
                 </div>
             </div>
@@ -137,33 +145,6 @@
 
 
 </body>
-
-
-<!-- SEARCH FUNCTIONALITY -->
-<script>
-    const searchInput = document.getElementById('searchInput');
-    const productList = document.getElementById('productList');
-    const allProductsBtn = document.querySelector('.how-active1');
-
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.toLowerCase();
-
-        for (const product of productList.children) {
-            const name = product.innerText.toLowerCase();
-            if (name.includes(query)) {
-                product.style.display = 'block';
-                if (productList.firstChild !== product) {
-                    productList.insertBefore(product, productList.firstChild);
-                }
-            } else {
-                product.style.display = 'none';
-            }
-        }
-
-        // trigger click event on the "All Products" button
-        allProductsBtn.click();
-    });
-</script>
 
 <jsp:include page="../components/common-footer-html.jsp"/>
 <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>
@@ -188,158 +169,5 @@
     });
 </script>
 <script src="${pageContext.request.contextPath}/public/vendor/sweetalert/sweetalert.min.js"></script>
-<script>
-    $('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
-        e.preventDefault();
-    });
-
-    $('.js-addwish-b2').each(function () {
-        var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-        $(this).on('click', function () {
-            swal(nameProduct, "is added to wishlist !", "success");
-
-            $(this).addClass('js-addedwish-b2');
-            $(this).off('click');
-        });
-    });
-
-    $('.js-addwish-detail').each(function () {
-        var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
-
-        $(this).on('click', function () {
-            swal(nameProduct, "is added to wishlist !", "success");
-
-            $(this).addClass('js-addedwish-detail');
-            $(this).off('click');
-        });
-    });
-
-    /*---------------------------------------------*/
-
-    $('.js-addcart-detail').each(function () {
-        var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-        $(this).on('click', function () {
-            addToCart(document.querySelector('#add-to-cart').value, document.querySelector('#quantity').value)
-                .then(response => {
-                    if (response.status === 200) {
-                        Swal.fire({
-                            title: 'Success!',
-                            icon: 'success',
-                            text: 'Item added to cart!',
-                            showCancelButton: false,
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK',
-                            target: document.querySelector('#modal-content')
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = "${pageContext.request.contextPath}/product";
-                            }
-                        });
-                    }
-                });
-        });
-    });
-
-</script>
-<script>
-
-    function fetchProductDetails(productId) {
-        fetch('${pageContext.request.contextPath}/product/' + productId)
-            .then(response => response.json())
-            .then(json => {
-                document.querySelector('#product-name').innerHTML = json.data.name;
-                document.querySelector('#img-product-modal').src = json.data.imageURL;
-                document.querySelector('#product-description').innerHTML = json.data.description;
-                document.querySelector('#product-price').innerHTML = "$ " + json.data.price;
-                document.querySelector('#add-to-cart').value = json.data.id;
-                document.querySelector('#product-quantity').innerHTML = json.data.quantity;
-                document.querySelector('#quantity').value = json.data.quantity;
-            }).finally(() => {
-            // workaround for js-show-modal1 not working as the anchor tags in the tabulator table are dynamically generated.
-            $('.js-modal1').addClass('show-modal1');
-        });
-    }
-
-    function addToCart(productId, quantity) {
-        const data = new URLSearchParams()
-        data.append('productId', productId);
-        data.append('quantity', quantity);
-        return fetch('${pageContext.request.contextPath}/cart', {
-            method: 'POST',
-            body: data
-        })
-
-    }
-
-</script>
-
-<script>
-    var table = new Tabulator("#product-table", {
-        ajaxURL: "${pageContext.request.contextPath}/shop",
-        ajaxParams: {
-            "json": true,
-        },
-        ajaxConfig: "GET",
-        ajaxResponse: function (url, params, response) {
-            return {
-                "data": response.data.products,
-                "last_page": response.data.numberOfPages,
-            };
-        },
-        layout: "fitColumns",
-        paginationMode: "remote",
-        paginationSize: 10,
-        pagination: true,
-        columns: [
-            {title: "ID", field: "id", width: 20},
-            {title: "Name", field: "name", width: 150},
-            {
-                title: "Price",
-                field: "price",
-                width: 100,
-                formatter: "money",
-                formatterParams: {
-                    decimal: ".",
-                    thousand: ",",
-                    symbol: "$",
-                    symbolAfter: false,
-                    precision: 2,
-                },
-            },
-            {title: "Stock", field: "quantity", width: 100},
-            {title: "Category", field: "categoryName", width: 300},
-            {
-                title: "Image",
-                field: "imageURL",
-                width: 200,
-                formatter: "image",
-                formatterParams: {
-                    height: "100px",
-                    width: "100px",
-                },
-            },
-            // add an edit button
-            {
-                formatter: function (cell, formatterParams) {
-                    return `
-                        <a class='btn btn-primary btn-sm js-show-modal1' onClick='fetchProductDetails(\${cell.getData().id})'>Edit</a>
-                        <a class='btn btn-danger btn-sm' href='${pageContext.request.contextPath}/product/delete/\${cell.getData().id}'>Delete</a>
-                    `
-                },
-                width: 150,
-                hozAlign: "center",
-            },
-        ],
-        rowFormatter: function (row) {
-            var data = row.getData();
-            if (data.quantity <= 0) {
-                row.getElement().style.backgroundColor = "#dc3545";
-            }
-
-            if (data.quantity > 0 && data.quantity <= 10) {
-                row.getElement().style.backgroundColor = "#ffc107";
-            }
-        }
-    });
-</script>
+<script src="${pageContext.request.contextPath}/public/js/jsp/admin-inventory.js.jsp"></script>
 </html>
