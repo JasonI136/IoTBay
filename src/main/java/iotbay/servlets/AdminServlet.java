@@ -8,7 +8,8 @@ import iotbay.models.*;
 import iotbay.models.httpResponses.GenericApiResponse;
 import iotbay.util.CustomHttpServletRequest;
 import iotbay.util.CustomHttpServletResponse;
-import jakarta.json.Json;
+import iotbay.util.PaginationHandler;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,12 @@ import java.util.List;
 public class AdminServlet extends HttpServlet {
 
     DatabaseManager db;
+
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -45,6 +52,9 @@ public class AdminServlet extends HttpServlet {
             case "/orders":
                 adminOrders(request, response);
                 return;
+            case "/orders/get":
+                adminOrdersGet(request, response);
+                return;
             case "/logs":
                 adminLogs(request, response);
                 return;
@@ -54,20 +64,57 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
+
+    private void adminOrdersGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        CustomHttpServletResponse res = new CustomHttpServletResponse(response);
+        int limit = request.getParameter("limit") != null ? Integer.parseInt(request.getParameter("limit")) : 10;
+        int pageParameter;
+
+        try {
+           pageParameter = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+        } catch (NumberFormatException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(400)
+                    .message("Invalid page parameter")
+                    .data(e.getMessage())
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        PaginationHandler<Order> paginationHandler = new PaginationHandler<>(this.db.getOrders(), pageParameter, limit);
+
+        try {
+            paginationHandler.loadItems();
+        } catch (SQLException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(500)
+                    .message("Internal server error")
+                    .data(e.getMessage())
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        res.sendJsonResponse(GenericApiResponse.<PaginationHandler<Order>>builder()
+                .statusCode(200)
+                .message("Success")
+                .data(paginationHandler)
+                .error(false)
+                .build());
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
 
-        switch (path) {
-            case "/product/update" -> {
-                adminProductsUpdate(request, response);
-                return;
-            }
-            default -> {
-                request.getSession().setAttribute("message", "Page not found");
-                response.sendError(404);
-            }
+        if (path.startsWith("/product/update/") || path.startsWith("/product/update")) {
+            adminProductsUpdate(request, response);
+        } else {
+            request.getSession().setAttribute("message", "Page not found");
+            response.sendError(404);
         }
+
     }
 
     @Override
@@ -105,7 +152,7 @@ public class AdminServlet extends HttpServlet {
 
         int productId;
         try {
-                productId = Integer.parseInt(id);
+            productId = Integer.parseInt(id);
         } catch (NumberFormatException e) {
             res.sendJsonResponse(GenericApiResponse.<String>builder()
                     .statusCode(400)
@@ -171,7 +218,32 @@ public class AdminServlet extends HttpServlet {
         CustomHttpServletResponse res = new CustomHttpServletResponse(response);
         JsonObject json = req.getJsonBody();
 
-        int productId = json.get("id").getAsInt();
+        String path = req.getPathInfo();
+        String[] pathParts = path.split("/");
+        if (pathParts.length != 4) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(400)
+                    .message("Invalid product id.")
+                    .data("Invalid product id or product id not provided.")
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        String id = pathParts[3];
+
+        int productId;
+        try {
+            productId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(400)
+                    .message("Invalid product id.")
+                    .data("Invalid product id.")
+                    .error(true)
+                    .build());
+            return;
+        }
 
         Product product;
         try {
@@ -224,7 +296,17 @@ public class AdminServlet extends HttpServlet {
         JsonElement stock = json.get("quantity");
         if (stock != null) {
             try {
-                product.setQuantity(stock.getAsInt());
+                int stockParsed = stock.getAsInt();
+                if (stockParsed < 0) {
+                    res.sendJsonResponse(GenericApiResponse.<String>builder()
+                            .statusCode(400)
+                            .message("Invalid stock.")
+                            .data("Invalid stock.")
+                            .error(true)
+                            .build());
+                    return;
+                }
+                product.setQuantity(stockParsed);
             } catch (NumberFormatException e) {
                 res.sendJsonResponse(GenericApiResponse.<String>builder()
                         .statusCode(400)
@@ -304,9 +386,9 @@ public class AdminServlet extends HttpServlet {
         int userCount = 0;
         int productCount = 0;
         try {
-            orderCount = db.getOrders().getOrderCount();
+            orderCount = db.getOrders().count();
             userCount = db.getUsers().getUserCount();
-            productCount = db.getProducts().getProductCount();
+            productCount = db.getProducts().count();
         } catch (Exception e) {
             e.printStackTrace();
         }

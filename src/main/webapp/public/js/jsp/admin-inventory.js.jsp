@@ -13,17 +13,17 @@
         fetch('${pageContext.request.contextPath}/product/' + productId)
             .then(response => response.json())
             .then(json => {
-                document.querySelector('#product-name').value = json.data.name;
-                document.querySelector('#img-product-modal').src = json.data.imageURL;
-                document.querySelector('#product-description').innerHTML = json.data.description;
-                document.querySelector('#product-price').value = json.data.price;
-                document.querySelector('#product-quantity').value = json.data.quantity;
-                document.querySelector('#btn-update-product').setAttribute('data-product-id', json.data.id);
-                document.querySelector('#product-image-full').href = json.data.imageURL;
-                document.querySelector('#product-image-url').value = json.data.imageURL;
+                document.querySelector('#edit-product-modal #product-name').value = json.data.name;
+                document.querySelector('#edit-product-modal #img-product-modal').src = json.data.imageURL;
+                document.querySelector('#edit-product-modal #product-description').innerHTML = json.data.description;
+                document.querySelector('#edit-product-modal #product-price').value = json.data.price;
+                document.querySelector('#edit-product-modal #product-quantity').value = json.data.quantity;
+                document.querySelector('#edit-product-modal #btn-update-product').setAttribute('data-product-id', json.data.id);
+                document.querySelector('#edit-product-modal #product-image-full').href = json.data.imageURL;
+                document.querySelector('#edit-product-modal #product-image-url').value = json.data.imageURL;
             }).finally(() => {
             // workaround for js-show-modal1 not working as the anchor tags in the tabulator table are dynamically generated.
-            $('.js-modal1').addClass('show-modal1');
+            $('#edit-product-modal').addClass('show-modal1');
         });
     }
 
@@ -76,15 +76,14 @@
 
 
     function updateProduct() {
-        var productId = document.querySelector('#btn-update-product').getAttribute('data-product-id');
-        var productName = document.querySelector('#product-name').value;
-        var productPrice = document.querySelector('#product-price').value;
-        var productQuantity = document.querySelector('#product-quantity').value;
-        var productDescription = document.querySelector('#product-description').value;
-        var productImageUrl = document.querySelector('#product-image-url').value;
+        var productId = document.querySelector('#edit-product-modal #btn-update-product').getAttribute('data-product-id');
+        var productName = document.querySelector('#edit-product-modal #product-name').value;
+        var productPrice = document.querySelector('#edit-product-modal #product-price').value;
+        var productQuantity = document.querySelector('#edit-product-modal #product-quantity').value;
+        var productDescription = document.querySelector('#edit-product-modal #product-description').value;
+        var productImageUrl = document.querySelector('#edit-product-modal #product-image-url').value;
 
         var payload = {
-            "id": productId,
             "name": productName,
             "price": productPrice,
             "quantity": productQuantity,
@@ -92,7 +91,7 @@
             "imageURL": productImageUrl
         }
 
-        fetch("${pageContext.request.contextPath}/admin/product/update", {
+        fetch("${pageContext.request.contextPath}/admin/product/update/" + productId, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -131,15 +130,20 @@
 
     var table = new Tabulator("#product-table", {
         ajaxURL: "${pageContext.request.contextPath}/shop",
-        ajaxParams: {
-            "json": true,
+        ajaxConfig: {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
         },
-        ajaxConfig: "GET",
         ajaxResponse: function (url, params, response) {
             return {
-                "data": response.data.products,
-                "last_page": response.data.numberOfPages,
+                "data": response.data.items,
+                "last_page": response.data.totalPages
             };
+        },
+        dataSendParams: {
+            "size": "limit"
         },
         layout: "fitColumns",
         paginationMode: "remote",
@@ -176,6 +180,7 @@
             },
             // add an edit button
             {
+                title: "Actions",
                 formatter: function (cell, formatterParams) {
                     return `
                         <button class='btn btn-primary btn-sm js-show-modal1 border-dark' onClick='fetchProductDetails(\${cell.getData().id})'>Edit</button>
@@ -204,9 +209,9 @@
             var searchTerm = ev.target.value;
 
             if (!searchTerm) {
-                table.setData("${pageContext.request.contextPath}/shop?json=true")
+                table.setData("${pageContext.request.contextPath}/shop")
             } else {
-                table.setData("${pageContext.request.contextPath}/shop?json=true&searchName=" + searchTerm);
+                table.setData("${pageContext.request.contextPath}/shop?searchName=" + searchTerm);
             }
         }
     })

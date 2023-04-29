@@ -18,15 +18,17 @@
     </head>
     <body class="animsition cl6 p-b-26">
 
-        <header>
-            <div class="container-menu-desktop">
-                <jsp:include page="../components/header-navbar.jsp"/>
-                <jsp:include page="../components/admin-navbar.jsp"/>
-            </div>
-        </header>
+        <!-- Header -->
+        <jsp:include page="../components/navbar/admin-master-navbar.jsp"/>
+
+        <section class="txt-center p-lr-15 p-tb-20 bg-dark">
+            <h2 class="ltext-105 cl0 txt-center">
+                Event Log
+            </h2>
+        </section>
 
 
-        <section class="bg0 p-t-104 p-b-116">
+        <section class="bg0 p-t-50 p-b-116">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">

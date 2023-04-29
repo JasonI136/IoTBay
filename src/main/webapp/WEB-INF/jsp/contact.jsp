@@ -16,12 +16,8 @@
 	</head>
 	<body class="animsition">
 		<!-- Header -->
-		<header class="header-v4">
-			<div class="container-menu-desktop">
-				<jsp:include page="components/header-navbar.jsp" />
-				<jsp:include page="components/main-navbar.jsp" />
-			</div>
-		</header>
+        <jsp:include page="components/navbar/master-navbar.jsp"/>
+
 		<div >
 			<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('${pageContext.request.contextPath}/public/images/bg-orders.jpg');">
 				<h2 class="ltext-105 cl0 txt-center">

@@ -17,12 +17,8 @@
     </head>
     <body class="animsition">
 
-        <header class="header-v4">
-            <div class="container-menu-desktop">
-                <jsp:include page="../components/header-navbar.jsp"/>
-                <jsp:include page="../components/admin-navbar.jsp"/>
-            </div>
-        </header>
+        <!-- Header -->
+        <jsp:include page="../components/navbar/admin-master-navbar.jsp"/>
 
         <!-- Title page -->
         <div>

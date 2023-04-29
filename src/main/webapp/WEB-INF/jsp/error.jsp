@@ -28,12 +28,7 @@
     <body class="animsition">
 
         <!-- Header -->
-        <header class="header-v4">
-            <div class="container-menu-desktop">
-                <jsp:include page="components/header-navbar.jsp"/>
-                <jsp:include page="components/main-navbar.jsp"/>
-            </div>
-        </header>
+        <jsp:include page="components/navbar/master-navbar.jsp"/>
 
         <div class="container">
             <h1>${pageContext.response.status}</h1>

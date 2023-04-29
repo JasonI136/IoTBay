@@ -3730,3 +3730,10 @@ input.num-product::-webkit-inner-spin-button {
     margin-top: 8px;
 }
 
+.menu-desktop a {
+    text-decoration: none;
+}
+
+.top-bar a {
+    text-decoration: none;
+}

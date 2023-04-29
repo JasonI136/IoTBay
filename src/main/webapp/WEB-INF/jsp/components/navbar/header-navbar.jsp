@@ -21,8 +21,6 @@
             </div>
 
             <div class="right-top-bar flex-w h-full">
-
-
                 <c:if test="${sessionScope.user != null}">
                     <c:if test="${sessionScope.user.staff == true}">
                         <c:choose>

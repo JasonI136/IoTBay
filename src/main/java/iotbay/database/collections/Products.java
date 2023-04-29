@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author cmesina
  */
-public class Products {
+public class Products implements ModelDAO<Product> {
 
     /**
      * An instance of the database manager
@@ -84,10 +84,11 @@ public class Products {
 
     /**
      * Gets the number of products in the database.
+     *
      * @return the number of products in the database
      * @throws SQLException if there is an error retrieving the number of products
      */
-    public int getProductCount() throws SQLException {
+    public int count() throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT COUNT(*) FROM PRODUCT"
@@ -103,13 +104,42 @@ public class Products {
         return 0;
     }
 
+    public List<Product> get(int offset, int limit) throws SQLException {
+        List<Product> productList = new ArrayList<>();
+
+        String query = "SELECT PRODUCT.id, PRODUCT.name, PRODUCT.description, "
+                + "PRODUCT.image_url, PRODUCT.price, PRODUCT.quantity, PRODUCT.category_id, "
+                + "category.name AS category_name "
+                + "FROM PRODUCT "
+                + "INNER JOIN CATEGORY "
+                + "ON PRODUCT.category_id = CATEGORY.id "
+                + "ORDER BY PRODUCT.id "
+                + "OFFSET ? ROWS "
+                + "FETCH NEXT ? ROWS ONLY";
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, offset);
+                stmt.setInt(2, limit);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        productList.add(new Product(rs));
+                    }
+                }
+            }
+        }
+
+        return productList;
+    }
+
     /**
      * Gets the number of products in the database that match the given product name..
+     *
      * @param productName the name of the product to search for
      * @return the number of products in the database that match the given product name
      * @throws SQLException if there is an error retrieving the number of products
      */
-    public int getProductCount(String productName) throws SQLException {
+    public int count(String productName) throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT COUNT(*) FROM PRODUCT WHERE LOWER(name) LIKE LOWER(?)"
@@ -131,7 +161,7 @@ public class Products {
      *
      * @param productId the id of the product to retrieve
      * @return the product as a Product object
-     * @throws SQLException             if there is an error retrieving the product
+     * @throws SQLException if there is an error retrieving the product
      */
     public Product getProduct(int productId) throws SQLException {
 
@@ -162,13 +192,14 @@ public class Products {
 
     /**
      * Retrieves a list of products from the database that match the given product name.
+     *
+     * @param limit       the number of products to retrieve
+     * @param offset      the offset to start retrieving products from
      * @param productName the name of the product to search for
-     * @param limit the number of products to retrieve
-     * @param offset the offset to start retrieving products from
      * @return a list of {@link iotbay.models.Product} objects.
      * @throws SQLException if there is an error retrieving the products
      */
-    public List<Product> searchProduct(String productName, int limit, int offset) throws SQLException {
+    public List<Product> get(int offset, int limit, String productName) throws SQLException {
         List<Product> productList = new ArrayList<>();
 
         String query = "SELECT PRODUCT.id, PRODUCT.name, PRODUCT.description, "
@@ -200,6 +231,7 @@ public class Products {
 
     /**
      * Updates a product in the database.
+     *
      * @param product the product to update
      * @throws SQLException if there is an error updating the product
      */
@@ -222,6 +254,7 @@ public class Products {
 
     /**
      * Deletes a product from the database.
+     *
      * @param product the product to delete
      */
     public void deleteProduct(Product product) throws SQLException, ProductInOrderException {

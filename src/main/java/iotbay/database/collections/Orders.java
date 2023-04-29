@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Represents a collection of orders
  */
-public class Orders {
+public class Orders implements ModelDAO<Order> {
 
     /**
      * An instance of the database manager
@@ -143,6 +143,33 @@ public class Orders {
         return orderList;
     }
 
+    public List<Order> get(int offset, int limit) throws SQLException {
+        List<Order> orderList = new ArrayList<>();
+
+        String query;
+
+        query = "SELECT * FROM CUSTOMER_ORDER OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, offset);
+                stmt.setInt(2, limit);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Order order = new Order(rs, this.db);
+                        orderList.add(order);
+                    }
+                }
+            }
+        }
+        return orderList;
+    }
+
+    @Override
+    public List<Order> get(int offset, int limit, String searchTerm) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * Gets all orders from the database with a specific status.
      * @param status the status of the order
@@ -217,7 +244,7 @@ public class Orders {
      * @return the number of orders
      * @throws SQLException if there is an error getting the number of orders
      */
-    public int getOrderCount() throws SQLException {
+    public int count() throws SQLException {
         try (Connection conn = this.db.getDbConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
                     "SELECT COUNT(*) FROM CUSTOMER_ORDER")) {
@@ -231,6 +258,11 @@ public class Orders {
                 }
             }
         }
+    }
+
+    @Override
+    public int count(String searchTerm) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

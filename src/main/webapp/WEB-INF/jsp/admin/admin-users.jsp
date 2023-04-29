@@ -7,72 +7,61 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Admin Users</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+    <head>
+        <title>Admin Users</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
+        <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
 
-    <jsp:include page="../components/common-header-html.jsp"/>
+        <jsp:include page="../components/common-header-html.jsp"/>
 
-</head>
-<body class="animsition cl6 p-b-26">
-    <header class="header-v4">
-        <div class="container-menu-desktop">
-            <jsp:include page="../components/header-navbar.jsp"/>
-            <jsp:include page="../components/admin-navbar.jsp"/>
-        </div>
-    </header>
+    </head>
+    <body class="animsition cl6 p-b-26">
+        <!-- Header -->
+        <jsp:include page="../components/navbar/admin-master-navbar.jsp"/>
 
-    <div class="container-fluid">
-        <section class="bg0 p-b-20 w-75 m-auto">
-            <div>
-                <div class=" bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
-                    <div class="container mt-4 pb-3">
-                        <div class="p-b-10">
-                        <h3 class="ltext-103 cl5">
-                            User Management
-                        </h3>
-                    </div>
-                        <div id="user-table"></div>
-                    </div>
+        <section class="txt-center p-lr-15 p-tb-20 bg-dark">
+            <h2 class="ltext-105 cl0 txt-center">
+                User Management
+            </h2>
+        </section>
 
-                </div>
+        <!-- Content -->
+        <section class="bg0 p-t-50 p-b-116">
+            <div class="container">
+                <div id="user-table"></div>
             </div>
         </section>
-    </div>
+    </body>
 
-
-</body>
-
-<script>
-    var table = new Tabulator("#user-table", {
-        ajaxURL: "${pageContext.request.contextPath}/admin/users/get",
-        ajaxConfig: "GET",
-        ajaxResponse: function (url, params, response) {
-            return response.data;
-        },
-        layout: "fitColumns",
-        pagination: "local",
-        paginationSize: 10,
-        columns: [
-            {title: "User ID", field: "id", width: 150},
-            {title: "Username", field: "username", width: 150},
-            {title: "First Name", field: "firstName", width: 150},
-            {title: "Last Name", field: "lastName", width: 150},
-            {title: "Email", field: "email", width: 150},
-            {
-                title: "Staff",
-                field: "isStaff",
-                hozAlign: "center",
-                width: 50,
-                formatter: "tickCross",
+    <script>
+        var table = new Tabulator("#user-table", {
+            ajaxURL: "${pageContext.request.contextPath}/admin/users/get",
+            ajaxConfig: "GET",
+            ajaxResponse: function (url, params, response) {
+                return response.data;
             },
-        ],
-    });
-</script>
+            layout: "fitColumns",
+            pagination: "local",
+            paginationSize: 10,
+            columns: [
+                {title: "User ID", field: "id", width: 150},
+                {title: "Username", field: "username", width: 150},
+                {title: "First Name", field: "firstName", width: 150},
+                {title: "Last Name", field: "lastName", width: 150},
+                {title: "Email", field: "email", width: 150},
+                {
+                    title: "Staff",
+                    field: "isStaff",
+                    hozAlign: "center",
+                    width: 50,
+                    formatter: "tickCross",
+                },
+            ],
+        });
+    </script>
 
 
-<jsp:include page="../components/common-footer-html.jsp"/>
+    <jsp:include page="../components/common-footer-html.jsp"/>
 </html>

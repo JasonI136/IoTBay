@@ -18,12 +18,8 @@
     </head>
     <body class="animsition">
 
-        <header>
-            <div class="container-menu-desktop">
-                <jsp:include page="components/header-navbar.jsp"/>
-                <jsp:include page="components/main-navbar.jsp"/>
-            </div>
-        </header>
+        <!-- Header -->
+        <jsp:include page="components/navbar/master-navbar.jsp"/>
 
         <section class="section-slide">
             <div class="wrap-slick1">

@@ -19,12 +19,10 @@
 
     </head>
     <body class="animsition">
-        <header class="header-v4">
-            <div class="container-menu-desktop">
-                <jsp:include page="components/header-navbar.jsp"/>
-                <jsp:include page="components/main-navbar.jsp"/>
-            </div>
-        </header>
+
+        <!-- Header -->
+        <jsp:include page="components/navbar/master-navbar.jsp"/>
+
         <!-- breadcrumb -->
         <div class="container">
             <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">

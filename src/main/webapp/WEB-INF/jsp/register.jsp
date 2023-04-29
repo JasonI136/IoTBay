@@ -15,12 +15,9 @@
         <jsp:include page="components/common-header-html.jsp"/>
     </head>
     <body>
-        <header class="header-v4">
-            <div class="container-menu-desktop">
-                <jsp:include page="components/header-navbar.jsp"/>
-                <jsp:include page="components/main-navbar.jsp"/>
-            </div>
-        </header>
+        <!-- Header -->
+        <jsp:include page="components/navbar/master-navbar.jsp"/>
+
         <!-- Title page -->
         <div>
             <section class="bg-img1 txt-center p-lr-15 p-tb-92"
