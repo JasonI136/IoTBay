@@ -93,7 +93,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ShopServlet</servlet-name>
-        <url-pattern>/shop</url-pattern>
+        <url-pattern>/shop/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CartServlet</servlet-name>

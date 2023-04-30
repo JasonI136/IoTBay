@@ -229,6 +229,26 @@ public class Products implements ModelDAO<Product> {
         return productList;
     }
 
+    public void addProduct(Product product) throws  SQLException {
+        String query = "INSERT INTO PRODUCT (name, description, image_url, price, quantity, category_id) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, product.getName());
+                stmt.setString(2, product.getDescription());
+                stmt.setString(3, product.getImageURL());
+                stmt.setDouble(4, product.getPrice());
+                stmt.setInt(5, product.getQuantity());
+                stmt.setInt(6, product.getCategoryId());
+                int affectedRows = stmt.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new SQLException("Creating product failed, no rows affected.");
+                }
+            }
+        }
+    }
+
     /**
      * Updates a product in the database.
      *

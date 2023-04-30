@@ -52,4 +52,51 @@ public class Categories {
 
 
     }
+
+    public void addCategory(Category category) throws SQLException {
+        String query = "INSERT INTO CATEGORY (NAME) VALUES (?)";
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, category.getName());
+                int affectedRows =  stmt.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new SQLException("Creating category failed, no rows affected.");
+                }
+            }
+        }
+    }
+
+    public Category getCategory(String asString) throws SQLException {
+        String query = "SELECT * FROM CATEGORY WHERE NAME = ?";
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, asString);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new Category(rs);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void deleteCategory(int categoryId) throws SQLException {
+        String query = "DELETE FROM CATEGORY WHERE ID = ?";
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, categoryId);
+                int affectedRows =  stmt.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new SQLException("Deleting category failed, no rows affected.");
+                }
+            }
+        }
+    }
 }

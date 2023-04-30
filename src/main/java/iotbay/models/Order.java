@@ -31,6 +31,10 @@ public class Order implements Serializable {
      */
     private Timestamp orderDate;
 
+    private int orderDateUnix;
+
+    private String orderDateISO;
+
     /**
      * The order status
      */
@@ -59,6 +63,8 @@ public class Order implements Serializable {
         this.id = rs.getInt("id");
         this.userId = rs.getInt("user_id");
         this.orderDate = rs.getTimestamp("order_date");
+        this.orderDateUnix = (int) (this.orderDate.getTime() / 1000);
+        this.orderDateISO = this.orderDate.toInstant().toString();
         this.orderStatus = OrderStatus.valueOf(rs.getString("order_status"));
         this.stripePaymentIntentId = rs.getString("stripe_payment_intent_id");
         this.db = db;

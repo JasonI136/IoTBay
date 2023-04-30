@@ -19,7 +19,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author cmesina
@@ -75,6 +77,48 @@ public class ShopServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
+
+        if (path.equals("/categories/get")) {
+            getCategories(request, response);
+            return;
+        } else {
+            products(request, response);
+        }
+
+    }
+
+    private void getCategories(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        CustomHttpServletResponse res = new CustomHttpServletResponse(response);
+        boolean tabulator = request.getParameter("tabulator") != null && Boolean.parseBoolean(request.getParameter("tabulator"));
+
+        try {
+            if (tabulator) {
+                Map<Integer, String> categories = new HashMap<>();
+                for (Category category : db.getCategories().getCategories()) {
+                    categories.put(category.getId(), category.getName());
+                }
+                res.sendJsonResponse(categories);
+                return;
+            }
+            res.sendJsonResponse(GenericApiResponse.<List<Category>>builder()
+                    .statusCode(200)
+                    .message("Success")
+                    .error(false)
+                    .data(db.getCategories().getCategories())
+                    .build());
+        } catch (SQLException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(500)
+                    .message("Internal server error")
+                    .error(true)
+                    .data(e.getMessage())
+                    .build());
+        }
+    }
+
+    private void products(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         CustomHttpServletResponse res = new CustomHttpServletResponse(response);
         int limit;
         int page;

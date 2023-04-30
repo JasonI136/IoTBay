@@ -64,6 +64,12 @@
                                    aria-describedby="basic-addon1">
                         </div>
 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Category</span>
+                            <select class="form-select" id="product-category">
+                            </select>
+                        </div>
+
                         <button class="btn btn-primary" id="btn-update-product" data-product-id="0"
                                 onclick="updateProduct()">Update
                         </button>

@@ -36,7 +36,33 @@
                     <input type="text" class="form-control" placeholder="Enter search term"
                            aria-describedby="basic-addon1" id="search-input">
                 </div>
-                <div id="product-table"></div>
+                <div class="flex-b" style="gap: 5px">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <i class="fa-solid fa-basket-shopping"></i>
+
+                            Products
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="showAddProductModal()"><i class="fa-solid fa-plus"></i> Add</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <i class="fa fa-object-group" aria-hidden="true"></i>
+
+                            Category
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="addCategory()"><i class="fa-solid fa-plus"></i> Add</a></li>
+                            <li><a class="dropdown-item" onclick="deleteCategory()"><i class="fa-solid fa-trash-can"></i> Delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="product-table" class="m-t-10"></div>
             </div>
         </section>
 
@@ -45,18 +71,6 @@
 
         <!-- Add Product Modal-->
         <jsp:include page="../components/modals/admin-inventory-add-product-modal.jsp"/>
-
-
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <a onclick="$('#add-product-modal').addClass('show-modal1');"
-                       class="btn btn-primary btn-floating">
-                        <i class="fa fa-plus"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
 
 
     </body>

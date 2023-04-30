@@ -27,6 +27,13 @@ public class CustomHttpServletResponse implements HttpServletResponse {
         this.getWriter().write(new Gson().toJson(responseData));
     }
 
+    public void sendJsonResponse(Object responseData) throws IOException {
+        this.setContentType("application/json");
+        this.setCharacterEncoding("UTF-8");
+        this.setStatus(200);
+        this.getWriter().write(new Gson().toJson(responseData));
+    }
+
     @Override
     public void addCookie(Cookie cookie) {
         this.response.addCookie(cookie);
