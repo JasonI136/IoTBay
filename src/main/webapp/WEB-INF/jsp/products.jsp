@@ -382,9 +382,7 @@
         </div>
     </body>
 
-    <footer class="bg3 p-t-75 p-b-32">
-        <jsp:include page="components/footer.jsp"/>
-    </footer>
+    <jsp:include page="components/footer.jsp"/>
 
     <jsp:include page="components/common-footer-html.jsp"/>
     <script src="${pageContext.request.contextPath}/public/vendor/daterangepicker/moment.min.js"></script>

@@ -33,6 +33,8 @@
                 <div id="user-table"></div>
             </div>
         </section>
+
+        <jsp:include page="../components/footer.jsp"/>
     </body>
 
     <script>

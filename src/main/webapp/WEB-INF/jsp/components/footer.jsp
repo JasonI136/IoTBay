@@ -4,14 +4,9 @@
     Author     : chadm
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-
+<footer class="bg3 p-t-75 p-b-32">
     <div class="container">
         <div class="row">
             <div class="col-sm-6 col-lg-3 p-b-50">
@@ -42,7 +37,8 @@
 
                 <ul class="footer-sec-ul">
                     <li class="p-b-10">
-                        <a href="${pageContext.request.contextPath}/orderTracking" class="stext-107 cl7 hov-cl1 trans-04">
+                        <a href="${pageContext.request.contextPath}/orderTracking"
+                           class="stext-107 cl7 hov-cl1 trans-04">
                             Track Order
                         </a>
                     </li>
@@ -74,11 +70,11 @@
                         About Us
                     </a>
                 </li>
-                
+
                 <p class="stext-107 cl7 size-201">
                     Payment Options
                 </p>
-                
+
                 <a href="#" class="m-all-1">
                     <img src="${pageContext.request.contextPath}/public/images/icons/icon-pay-02.png" alt="ICON-PAY">
                 </a>
@@ -98,8 +94,9 @@
 
             <p class="stext-107 cl6 txt-center">
                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
+                Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+                All rights reserved
             </p>
         </div>
     </div>
-</html>
+</footer>

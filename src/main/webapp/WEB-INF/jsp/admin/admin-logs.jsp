@@ -75,4 +75,6 @@
 
     <jsp:include page="../components/common-footer-html.jsp"/>
 
+    <jsp:include page="../components/footer.jsp"/>
+
 </html>

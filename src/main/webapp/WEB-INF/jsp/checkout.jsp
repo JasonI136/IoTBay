@@ -23,6 +23,14 @@
         <!-- Header -->
         <jsp:include page="components/navbar/master-navbar.jsp"/>
 
+        <!-- Title page -->
+        <section class="bg-img1 txt-center p-lr-15 p-tb-92"
+                 style="background-image: url('${pageContext.request.contextPath}/public/images/bg-orders.jpg');">
+            <h2 class="ltext-105 cl0 txt-center">
+                Checkout
+            </h2>
+        </section>
+
         <section class="bg0 p-t-104 p-b-116">
             <div class="container">
                 <div class="row">
@@ -80,9 +88,9 @@
 
                         </c:if>
                         <c:if test="${not empty sessionScope.user.paymentMethods}">
-                            <form>
-                                <div class="form-group">
-                                    <label for="payment-method">Payment Method:</label>
+                            <form class="card p-all-20">
+                                <div class="mb-3">
+                                    <label for="payment-method" class="form-label">Payment Method:</label>
 
                                     <select class="form-control" id="payment-method" onchange="updateCardNumber()">
                                         <option value="" selected disabled>Pick a card</option>
@@ -93,41 +101,35 @@
                                             </option>
                                         </c:forEach>
                                     </select>
-
+                                </div>
+                                <div class="mb-3">
+                                    <label for="card-number" class="form-label">Credit Card Number:</label>
+                                    <input type="text" class="form-control" id="card-number"
+                                           placeholder="Enter your credit card number" value="" disabled>
+                                </div>
+                                <div class="mb-3 row">
+                                    <div class="col">
+                                        <label for="expiry" class="form-label">Expiration Date:</label>
+                                        <input type="text" class="form-control" id="expiry" placeholder="MM/YY"
+                                               disabled>
+                                    </div>
+                                    <div class="col">
+                                        <label for="cvv" class="form-label">CVV:</label>
+                                        <input type="password" class="form-control" id="cvv"
+                                               placeholder="Enter CVV"
+                                               maxlength="3">
+                                    </div>
 
                                 </div>
-                                <div id="credit-card-fields">
-                                    <div class="form-group">
-                                        <label for="card-number">Credit Card Number:</label>
-                                        <input type="text" class="form-control" id="card-number"
-                                               placeholder="Enter your credit card number" value="" disabled>
-
+                                <button type="submit" class="btn btn-primary btn-block" onclick="checkOut(event)"
+                                        id="btn-pay">
+                                    <span class="spinner-border spinner-border-sm" role="status"
+                                          aria-hidden="true" id="btn-pay-spinner" hidden=""></span>
+                                    <div id="btn-pay-text">
+                                        <i class="fa-solid fa-coins"></i> Pay
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="expiry">Expiration Date:</label>
-                                                <input type="text" class="form-control" id="expiry" placeholder="MM/YY"
-                                                       disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="cvv">CVV:</label>
-                                                <input type="password" class="form-control" id="cvv"
-                                                       placeholder="Enter CVV"
-                                                       maxlength="3">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <a type="submit"
-                                       class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-t-15"
-                                       onclick="checkOut()">
-                                        Confirm Order
-                                    </a>
-                                </div>
 
-
+                                </button>
                             </form>
                         </c:if>
                     </div>
@@ -136,9 +138,7 @@
         </section>
 
 
-        <footer class="bg3 p-t-75 p-b-32">
-            <jsp:include page="components/footer.jsp"/>
-        </footer>
+        <jsp:include page="components/footer.jsp"/>
     </body>
     <jsp:include page="components/common-footer-html.jsp"/>
     <script src="${pageContext.request.contextPath}/public/js/jsp/checkout.js.jsp"></script>

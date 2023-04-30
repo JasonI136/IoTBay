@@ -38,30 +38,29 @@
                             .then(response => response.json())
                             .then(json => {
                                 if (json.statusCode === 200) {
-                                    Swal.fire({
-                                        title: json.message,
-                                        icon: 'success',
-                                        text: json.data,
-                                        showCancelButton: false,
-                                        confirmButtonColor: '#3085d6',
-                                        confirmButtonText: 'OK'
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.reload();
-                                        }
-                                    });
+                                    return json.data;
                                 } else {
-                                    Swal.fire({
-                                        title: json.message,
-                                        icon: 'error',
-                                        text: json.data,
-                                        showCancelButton: false,
-                                        confirmButtonColor: '#3085d6',
-                                        confirmButtonText: 'OK'
-                                    });
+                                    Swal.showValidationMessage(
+                                        json.data
+                                    );
                                 }
                             })
-                    },
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: result.value,
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    }
                 })
             })
     }
@@ -92,33 +91,30 @@
                     .then(response => response.json())
                     .then(json => {
                         if (json.statusCode === 200) {
-                            Swal.fire({
-                                title: json.message,
-                                icon: 'success',
-                                text: json.data,
-                                target: target,
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.reload();
-                                }
-                            });
+                            return json.data;
                         } else {
-                            Swal.fire({
-                                title: json.message,
-                                icon: 'error',
-                                text: json.data,
-                                target: target,
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK'
-                            });
+                            Swal.showValidationMessage(
+                                json.data
+                            );
                         }
                     })
             },
             allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Added!',
+                    text: result.value,
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
+                });
+            }
         })
     }
 
@@ -135,7 +131,7 @@
                 });
             }).finally(() => {
             // workaround for js-show-modal1 not working as the anchor tags in the tabulator table are dynamically generated.
-            $('#add-product-modal').addClass('show-modal1');
+            $('#add-product-modal').modal('show');
         })
     }
 
@@ -160,12 +156,11 @@
                     document.querySelector('#edit-product-modal #product-price').value = json.data.price;
                     document.querySelector('#edit-product-modal #product-quantity').value = json.data.quantity;
                     document.querySelector('#edit-product-modal #btn-update-product').setAttribute('data-product-id', json.data.id);
-                    document.querySelector('#edit-product-modal #product-image-full').href = json.data.imageURL;
                     document.querySelector('#edit-product-modal #product-image-url').value = json.data.imageURL;
                     document.querySelector('#edit-product-modal #product-category').value = json.data.categoryId;
                 }).finally(() => {
                 // workaround for js-show-modal1 not working as the anchor tags in the tabulator table are dynamically generated.
-                $('#edit-product-modal').addClass('show-modal1');
+                $('#edit-product-modal').modal('show');
             });
         })
     }
@@ -218,7 +213,17 @@
     }
 
 
-    function updateProduct() {
+    function updateProduct(event) {
+        event.preventDefault();
+        var form = document.querySelector('#edit-product-modal form');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        document.querySelector('#btn-update-product').setAttribute('disabled', 'disabled');
+        document.querySelector('#btn-update-product #btn-spinner').removeAttribute('hidden')
+
         var productId = document.querySelector('#edit-product-modal #btn-update-product').getAttribute('data-product-id');
         var productName = document.querySelector('#edit-product-modal #product-name').value;
         var productPrice = document.querySelector('#edit-product-modal #product-price').value;
@@ -245,6 +250,7 @@
         })
             .then(response => response.json())
             .then(json => {
+
                 if (json.statusCode === 200) {
                     Swal.fire({
                         title: json.message,
@@ -270,7 +276,10 @@
                         target: document.querySelector('#modal-content')
                     });
                 }
-            })
+            }).finally(() => {
+            document.querySelector('#btn-update-product').removeAttribute('disabled');
+            document.querySelector('#btn-update-product #btn-spinner').setAttribute('hidden', 'hidden')
+        })
     }
 
     var table = new Tabulator("#product-table", {
@@ -361,7 +370,27 @@
         }
     })
 
-    function addProduct() {
+    $('#edit-product-modal #product-image-url').on('change', function (ev) {
+        var imageURL = $('#edit-product-modal #product-image-url').val();
+        if (imageURL) {
+            $('#edit-product-modal #img-product-modal').attr('src', imageURL);
+        }
+    })
+
+
+
+    function addProduct(event) {
+        event.preventDefault();
+        var form = document.querySelector('#add-product-modal form');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        document.querySelector('#btn-add-product').setAttribute('disabled', 'disabled');
+        document.querySelector('#btn-add-product #btn-spinner').removeAttribute('hidden')
+
+
         var productName = document.querySelector('#add-product-modal #product-name').value;
         var productDescription = document.querySelector('#add-product-modal #product-description').value;
         var productPrice = document.querySelector('#add-product-modal #product-price').value;
@@ -410,5 +439,8 @@
                         confirmButtonText: 'OK'
                     });
                 }
-            })
+            }).finally(() => {
+            document.querySelector('#btn-add-product').removeAttribute('disabled');
+            document.querySelector('#btn-add-product #btn-spinner').setAttribute('hidden', 'hidden')
+        })
     }

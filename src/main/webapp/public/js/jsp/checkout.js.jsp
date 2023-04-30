@@ -16,7 +16,17 @@
         cardNumberInput.value = last4;
     }
 
-    function checkOut() {
+    function checkOut(event) {
+        event.preventDefault();
+
+        var btnPay = document.querySelector('#btn-pay');
+        var btnPaySpinner = document.querySelector('#btn-pay-spinner');
+        var btnPayText = document.querySelector('#btn-pay-text');
+
+        btnPay.setAttribute('disabled', 'disabled');
+        btnPaySpinner.removeAttribute('hidden');
+        btnPayText.setAttribute('hidden', 'hidden');
+
         let paymentMethodId = document.getElementById("payment-method").value;
         let stripe = Stripe(stripePublishableKey);
 
@@ -78,6 +88,10 @@
                             });
                         }
                     }
+
+                    btnPay.removeAttribute('disabled');
+                    btnPaySpinner.setAttribute('hidden', 'hidden');
+                    btnPayText.removeAttribute('hidden');
                 });
             } else {
                 Swal.fire({
@@ -105,6 +119,10 @@
                 if (result.isConfirmed) {
                     window.location.href = "${pageContext.request.contextPath}/user";
                 }
+            }).finally(() => {
+                btnPay.removeAttribute('disabled');
+                btnPaySpinner.setAttribute('hidden', 'hidden');
+                btnPayText.removeAttribute('hidden');
             });
-        });
+        })
     }

@@ -30,39 +30,57 @@
 
         <!-- Content -->
         <section class="bg0 p-t-50 p-b-116">
-            <div class="container">
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">Search</span>
-                    <input type="text" class="form-control" placeholder="Enter search term"
-                           aria-describedby="basic-addon1" id="search-input">
-                </div>
-                <div class="flex-b" style="gap: 5px">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                            <i class="fa-solid fa-basket-shopping"></i>
+            <div class="container card p-t-20 p-b-20 p-l-30 p-r-30">
+                <div class="row">
+                    <div class="card p-all-10">
+                        <div class="flex-b" style="gap: 5px">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="fa-solid fa-basket-shopping"></i>
 
-                            Products
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" onclick="showAddProductModal()"><i class="fa-solid fa-plus"></i> Add</a></li>
-                        </ul>
+                                    Products
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" onclick="showAddProductModal()"><i
+                                            class="fa-solid fa-plus"></i> Add</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="fa fa-object-group" aria-hidden="true"></i>
+
+                                    Category
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" onclick="addCategory()"><i
+                                            class="fa-solid fa-plus"></i>
+                                        Add</a></li>
+                                    <li><a class="dropdown-item" onclick="deleteCategory()"><i
+                                            class="fa-solid fa-trash-can"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                            <i class="fa fa-object-group" aria-hidden="true"></i>
+                </div>
 
-                            Category
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" onclick="addCategory()"><i class="fa-solid fa-plus"></i> Add</a></li>
-                            <li><a class="dropdown-item" onclick="deleteCategory()"><i class="fa-solid fa-trash-can"></i> Delete</a></li>
-                        </ul>
+                <div class="row">
+                    <div class="card p-all-10 gy-2">
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">Search</span>
+                            <input type="text" class="form-control" placeholder="Enter search term"
+                                   aria-describedby="basic-addon1" id="search-input">
+                        </div>
                     </div>
                 </div>
 
-                <div id="product-table" class="m-t-10"></div>
+                <div class="row">
+                    <div id="product-table" class="gy-2 bg-transparent p-all-0 "></div>
+                </div>
+
             </div>
         </section>
 
@@ -72,7 +90,7 @@
         <!-- Add Product Modal-->
         <jsp:include page="../components/modals/admin-inventory-add-product-modal.jsp"/>
 
-
+        <jsp:include page="../components/footer.jsp"/>
     </body>
 
     <jsp:include page="../components/common-footer-html.jsp"/>
