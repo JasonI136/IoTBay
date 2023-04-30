@@ -7,58 +7,6 @@
 --%>
     <%@ page contentType="text/javascript" %>
 
-    function addProduct() {
-        var productName = document.querySelector('#add-product-modal #product-name').value;
-        var productDescription = document.querySelector('#add-product-modal #product-description').value;
-        var productPrice = document.querySelector('#add-product-modal #product-price').value;
-        var productQuantity = document.querySelector('#add-product-modal #product-quantity').value;
-        var productImageURL = document.querySelector('#add-product-modal #product-image-url').value;
-        var productCategory = document.querySelector('#add-product-modal #product-category').value;
-
-        fetch('${pageContext.request.contextPath}/admin/products/add', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "name": productName,
-                "description": productDescription,
-                "price": productPrice,
-                "quantity": productQuantity,
-                "imageURL": productImageURL,
-                "categoryId": productCategory
-            })
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (json.statusCode === 200) {
-                    Swal.fire({
-                        title: json.message,
-                        target: '#add-product-modal',
-                        icon: 'success',
-                        text: json.data,
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.reload();
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: json.message,
-                        target: '#add-product-modal',
-                        icon: 'error',
-                        text: json.data,
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            })
-    }
-
     function deleteCategory() {
         // show swal alert with select dropdown with all the categories. Delete the selected category
         fetch('${pageContext.request.contextPath}/shop/categories/get')
@@ -412,3 +360,55 @@
             }
         }
     })
+
+    function addProduct() {
+        var productName = document.querySelector('#add-product-modal #product-name').value;
+        var productDescription = document.querySelector('#add-product-modal #product-description').value;
+        var productPrice = document.querySelector('#add-product-modal #product-price').value;
+        var productQuantity = document.querySelector('#add-product-modal #product-quantity').value;
+        var productImageURL = document.querySelector('#add-product-modal #product-image-url').value;
+        var productCategory = document.querySelector('#add-product-modal #product-category').value;
+
+        fetch('${pageContext.request.contextPath}/admin/products/add', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "name": productName,
+                "description": productDescription,
+                "price": productPrice,
+                "quantity": productQuantity,
+                "imageURL": productImageURL,
+                "categoryId": productCategory
+            })
+        })
+            .then(response => response.json())
+            .then(json => {
+                if (json.statusCode === 200) {
+                    Swal.fire({
+                        title: "Success",
+                        target: '#add-product-modal',
+                        icon: 'success',
+                        text: "Product added successfully",
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: json.message,
+                        target: '#add-product-modal',
+                        icon: 'error',
+                        text: json.data,
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+    }

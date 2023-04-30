@@ -4,10 +4,7 @@ import iotbay.database.DatabaseManager;
 import iotbay.exceptions.ProductInOrderException;
 import iotbay.models.Product;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -229,11 +226,11 @@ public class Products implements ModelDAO<Product> {
         return productList;
     }
 
-    public void addProduct(Product product) throws  SQLException {
+    public Product addProduct(Product product) throws  SQLException {
         String query = "INSERT INTO PRODUCT (name, description, image_url, price, quantity, category_id) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = this.db.getDbConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setString(1, product.getName());
                 stmt.setString(2, product.getDescription());
                 stmt.setString(3, product.getImageURL());
@@ -245,8 +242,18 @@ public class Products implements ModelDAO<Product> {
                 if (affectedRows == 0) {
                     throw new SQLException("Creating product failed, no rows affected.");
                 }
+
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        product.setId(generatedKeys.getInt(1));
+                    } else {
+                        throw new SQLException("Creating product failed, no ID obtained.");
+                    }
+                }
             }
         }
+
+        return product;
     }
 
     /**

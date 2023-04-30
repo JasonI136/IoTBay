@@ -113,13 +113,25 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
+
         Product product = new Product();
         product.setName(name.getAsString());
         product.setDescription(description.getAsString());
-        product.setPrice(price.getAsDouble());
-        product.setQuantity(quantity.getAsInt());
-        product.setCategoryId(categoryId.getAsInt());
-        product.setImageURL(imageURL.getAsString() == null ? "https://placehold.co/600x400" : imageURL.getAsString());
+        try {
+            product.setPrice(price.getAsDouble());
+            product.setQuantity(quantity.getAsInt());
+            product.setCategoryId(categoryId.getAsInt());
+        } catch (NumberFormatException e) {
+            res.sendJsonResponse(GenericApiResponse.<String>builder()
+                    .statusCode(400)
+                    .message("Invalid product data.")
+                    .data("Invalid product data or product data not provided.")
+                    .error(true)
+                    .build());
+            return;
+        }
+
+        product.setImageURL((imageURL.getAsString() == null || imageURL.getAsString().isEmpty()) ? "https://placehold.co/600x400" : imageURL.getAsString());
 
         try {
             this.db.getProducts().addProduct(product);
@@ -133,10 +145,10 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
-        res.sendJsonResponse(GenericApiResponse.<String>builder()
+        res.sendJsonResponse(GenericApiResponse.<Product>builder()
                 .statusCode(200)
                 .message("Product added successfully.")
-                .data("Product added successfully.")
+                .data(product)
                 .error(false)
                 .build());
 
@@ -145,7 +157,7 @@ public class AdminServlet extends HttpServlet {
     private void adminCategoriesAdd(HttpServletRequest request, HttpServletResponse response) throws IOException {
         CustomHttpServletRequest req = new CustomHttpServletRequest(request);
         CustomHttpServletResponse res = new CustomHttpServletResponse(response);
-        JsonObject json  = req.getJsonBody();
+        JsonObject json = req.getJsonBody();
 
         JsonElement name = json.get("name");
 
@@ -368,7 +380,6 @@ public class AdminServlet extends HttpServlet {
                     .build());
             return;
         }
-
 
 
         try {
@@ -624,7 +635,6 @@ public class AdminServlet extends HttpServlet {
                     .build());
             return;
         }
-
 
 
         res.sendJsonResponse(GenericApiResponse.<String>builder()
