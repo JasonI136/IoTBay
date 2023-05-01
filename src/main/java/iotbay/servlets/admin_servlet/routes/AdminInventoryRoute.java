@@ -35,7 +35,7 @@ public class AdminInventoryRoute implements Route {
 
         request.setAttribute("products", products);
         request.setAttribute("categories", categories);
-        request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-inventory.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/new-admin/inventory.jsp").forward(request, response);
     }
 
 }

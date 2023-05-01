@@ -27,7 +27,7 @@ public class AdminIndexRoute implements Route {
         request.setAttribute("orderCount", orderCount);
         request.setAttribute("userCount", userCount);
         request.setAttribute("productCount", productCount);
-        request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-index.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/new-admin/index.jsp").forward(request, response);
     }
 
 }

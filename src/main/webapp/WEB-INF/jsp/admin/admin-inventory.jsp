@@ -14,6 +14,7 @@
 
         <link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
         <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+<%--        <link href="${pageContext.request.contextPath}/public/css/tabulator_bootstrap5.css" rel="stylesheet">--%>
         <jsp:include page="../components/common-header-html.jsp"/>
 
     </head>

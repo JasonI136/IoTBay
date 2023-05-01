@@ -21,7 +21,7 @@ public class AdminOrdersRoute implements Route {
         CustomHttpServletRequest req = new CustomHttpServletRequest(request);
 
         if (req.getContentType() == null) {
-            request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-orders.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/new-admin/orders.jsp").forward(request, response);
         } else if (req.getContentType().equals("application/json")) {
             DatabaseManager db = (DatabaseManager) request.getServletContext().getAttribute("db");
             int limit = request.getParameter("limit") != null ? Integer.parseInt(request.getParameter("limit")) : 10;

@@ -444,3 +444,16 @@
             document.querySelector('#btn-add-product #btn-spinner').setAttribute('hidden', 'hidden')
         })
     }
+
+    $(window).on('hashchange load', function () {
+        if (window.location.href.indexOf('#add-item') !== -1) {
+            showAddProductModal();
+        }
+    })
+
+    $(window).on('hashchange load', function () {
+        if (window.location.href.indexOf('#add-category') !== -1) {
+            addCategory();
+        }
+    })
+

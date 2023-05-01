@@ -342,3 +342,10 @@
             }
         }
     })
+
+
+    $(window).on('hashchange load', function () {
+        if (window.location.href.indexOf('#add-user') !== -1) {
+            $('#add-user-modal').modal('show');
+        }
+    })

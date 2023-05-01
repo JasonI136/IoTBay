@@ -22,7 +22,7 @@ public class AdminUsersRoute implements Route {
         int page;
 
         if (request.getContentType() == null) {
-            request.getRequestDispatcher("/WEB-INF/jsp/admin/admin-users.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/new-admin/users.jsp").forward(request, response);
         } else if (request.getContentType().equals("application/json")) {
             DatabaseManager db = (DatabaseManager) request.getServletContext().getAttribute("db");
 
