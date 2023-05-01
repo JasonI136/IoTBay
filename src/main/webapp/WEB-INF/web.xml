@@ -50,7 +50,7 @@
     </servlet>
     <servlet>
         <servlet-name>AdminServlet</servlet-name>
-        <servlet-class>iotbay.servlets.AdminServlet</servlet-class>
+        <servlet-class>iotbay.servlets.admin_servlet.AdminServlet</servlet-class>
     </servlet>
     <filter>
         <filter-name>AuthFilter</filter-name>

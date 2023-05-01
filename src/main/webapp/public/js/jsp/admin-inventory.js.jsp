@@ -29,7 +29,7 @@
                     confirmButtonColor: '#d9534f',
                     showLoaderOnConfirm: true,
                     preConfirm: (categoryId) => {
-                        return fetch('${pageContext.request.contextPath}/admin/categories/' + categoryId, {
+                        return fetch('${pageContext.request.contextPath}/admin/category/' + categoryId, {
                             method: "DELETE",
                             headers: {
                                 "Content-Type": "application/json"
@@ -176,7 +176,7 @@
             confirmButtonText: 'Yes!'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch("${pageContext.request.contextPath}/admin/product/delete/" + productId, {
+                fetch("${pageContext.request.contextPath}/admin/product/" + productId, {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json"
@@ -241,7 +241,7 @@
             "categoryId": productCategoryId
         }
 
-        fetch("${pageContext.request.contextPath}/admin/product/update/" + productId, {
+        fetch("${pageContext.request.contextPath}/admin/product/" + productId, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

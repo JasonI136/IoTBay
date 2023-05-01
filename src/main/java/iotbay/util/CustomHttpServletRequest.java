@@ -26,6 +26,15 @@ public class CustomHttpServletRequest implements HttpServletRequest {
         return new Gson().fromJson(this.getReader(), JsonObject.class);
     }
 
+    public String getPath() {
+        String path = this.request.getPathInfo();
+        if (path == null) {
+            return "/";
+        } else {
+            return path.replaceAll("/$", "");
+        }
+    }
+
     @Override
     public String getAuthType() {
         return request.getAuthType();

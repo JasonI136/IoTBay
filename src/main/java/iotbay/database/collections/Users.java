@@ -10,7 +10,6 @@ import iotbay.database.DatabaseManager;
 import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.PaymentMethod;
-import iotbay.models.Product;
 import iotbay.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +32,7 @@ import java.util.*;
  *
  * @author cmesina
  */
-public class Users {
+public class Users implements ModelDAO<User> {
 
     /**
      * The length of the salt
@@ -67,9 +66,23 @@ public class Users {
      * @return the number of users in the database
      * @throws SQLException if there is an error getting the user count
      */
-    public int getUserCount() throws SQLException {
+    public int count() throws SQLException {
         try (Connection conn = db.getDbConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM USER_ACCOUNT");
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    public int count(String searchTerm) throws SQLException {
+        try (Connection conn = db.getDbConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM USER_ACCOUNT WHERE LOWER(USERNAME) LIKE ?");
+            stmt.setString(1, "%" + searchTerm.toLowerCase() + "%");
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -224,8 +237,51 @@ public class Users {
 
             }
         }
+    }
+
+    /**
+     * Retrieves a user from the database.
+     *
+     * @param id the id of the user to retrieve
+     * @return the user as a User object
+     * @throws SQLException if there is an error retrieving the user
+     */
+    public User getUser(int id) throws SQLException {
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement userQueryStmt = conn.prepareStatement(
+                    "SELECT * FROM USER_ACCOUNT WHERE id = ?"
+            )) {
+                userQueryStmt.setInt(1, id);
+
+                try (ResultSet userRs = userQueryStmt.executeQuery()) {
+                    if (!userRs.next()) {
+                        return null;
+                    }
+
+                    try (PreparedStatement userPaymentMethodsQueryStmt = conn.prepareStatement(
+                            "SELECT * FROM PAYMENT_METHOD WHERE user_id = ?"
+                    )) {
+                        userPaymentMethodsQueryStmt.setInt(1, userRs.getInt("id"));
+
+                        try (ResultSet paymentMethodsRs = userPaymentMethodsQueryStmt.executeQuery()) {
+                            List<PaymentMethod> paymentMethods = new ArrayList<>();
+
+                            while (paymentMethodsRs.next()) {
+                                paymentMethods.add(new PaymentMethod(paymentMethodsRs));
+                            }
+
+                            User user = new User(this.db, userRs);
+                            user.setPaymentMethods(paymentMethods);
+
+                            return user;
+                        }
+                    }
+                }
 
 
+            }
+        }
     }
 
     /**
@@ -242,6 +298,50 @@ public class Users {
             )) {
                 checkUserQuery.setString(1, user.getUsername());
                 checkUserQuery.setString(2, user.getEmail());
+
+                try (ResultSet checkUserRs = checkUserQuery.executeQuery()) {
+                    checkUserRs.next();
+
+                    return checkUserRs.getInt(1) > 0;
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if a user exists in the database by username.
+     * @param username the username to check
+     * @return true if the user exists, false otherwise
+     * @throws SQLException
+     */
+    private boolean checkUserExistsByUsername(String username) throws SQLException {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement checkUserQuery = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM USER_ACCOUNT WHERE username = ?"
+            )) {
+                checkUserQuery.setString(1, username);
+
+                try (ResultSet checkUserRs = checkUserQuery.executeQuery()) {
+                    checkUserRs.next();
+
+                    return checkUserRs.getInt(1) > 0;
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if a user exists in the database by email.
+     * @param email the email to check
+     * @return true if the user exists, false otherwise
+     * @throws SQLException
+     */
+    private boolean checkUserExistsByEmail(String email) throws SQLException {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement checkUserQuery = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM USER_ACCOUNT WHERE email = ?"
+            )) {
+                checkUserQuery.setString(1, email);
 
                 try (ResultSet checkUserRs = checkUserQuery.executeQuery()) {
                     checkUserRs.next();
@@ -296,12 +396,38 @@ public class Users {
 
     }
 
-    public void updateUser(User user) throws SQLException {
+    public void updateUser(User user) throws SQLException, UserExistsException, NoSuchAlgorithmException, InvalidKeySpecException {
+
+        // check if the username has changed
+        User oldUser = this.getUser(user.getId());
+        if (!oldUser.getUsername().equals(user.getUsername())) {
+            // check if the new username is already taken
+            if (this.checkUserExistsByUsername(user.getUsername())) {
+                throw new UserExistsException("The username " + user.getUsername() + " already exists.");
+            }
+        }
+
+        // check if the email has changed
+        if (!oldUser.getEmail().equals(user.getEmail())) {
+            // check if the new email is already taken
+            if (this.checkUserExistsByEmail(user.getEmail())) {
+                throw new UserExistsException("The email " + user.getEmail() + " already exists.");
+            }
+        }
+
+        // check if the password has changed, if so hash it
+        if (!oldUser.getPassword().equals(user.getPassword())) {
+            byte[] salt = this.createSalt();
+            byte[] passwordHash = this.encryptPassword(user.getPassword(), salt);
+
+            user.setPassword(Base64.getEncoder().encodeToString(passwordHash));
+            user.setPasswordSalt(Base64.getEncoder().encodeToString(salt));
+        }
 
         try (Connection conn = this.db.getDbConnection()) {
 
             try (PreparedStatement updateUserQuery = conn.prepareStatement(
-                    "UPDATE USER_ACCOUNT SET username = ?, first_name = ?, last_name = ?, email = ?, address = ?, phone_number = ? "
+                    "UPDATE USER_ACCOUNT SET username = ?, first_name = ?, last_name = ?, email = ?, address = ?, phone_number = ?, password = ?, password_salt = ?, is_staff = ? "
                             + "WHERE id = ?"
             )) {
                 updateUserQuery.setString(1, user.getUsername());
@@ -310,13 +436,35 @@ public class Users {
                 updateUserQuery.setString(4, user.getEmail());
                 updateUserQuery.setString(5, user.getAddress());
                 updateUserQuery.setInt(6, user.getPhoneNumber());
-                updateUserQuery.setInt(7, user.getId());
+                updateUserQuery.setString(7, user.getPassword());
+                updateUserQuery.setString(8, user.getPasswordSalt());
+                updateUserQuery.setBoolean(9, user.isStaff());
+                updateUserQuery.setInt(10, user.getId());
+
+
 
                 int affectedRows = updateUserQuery.executeUpdate();
                 if (affectedRows == 1) {
                     logger.info("User " + user.getUsername() + " updated in the database.");
                 } else {
                     throw new SQLException("Failed to update user in the database.");
+                }
+            }
+        }
+    }
+
+    public void deleteUser(int userId) throws SQLException {
+        String query = "DELETE FROM USER_ACCOUNT WHERE id = ?";
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, userId);
+
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 1) {
+                    logger.info("User with id " + userId + " deleted from the database.");
+                } else {
+                    throw new SQLException("Failed to delete user from the database.");
                 }
             }
         }
@@ -351,7 +499,7 @@ public class Users {
 
     }
 
-    public List<User> getUsers(int limit, int offset) throws SQLException {
+    public List<User> get(int offset, int limit) throws SQLException {
         List<User> userList = new ArrayList<>();
         String query = "SELECT * "
                 + "FROM USER_ACCOUNT "
@@ -363,6 +511,30 @@ public class Users {
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setInt(1, offset);
                 stmt.setInt(2, limit);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        userList.add(new User(this.db, rs));
+                    }
+                }
+            }
+        }
+
+        return userList;
+    }
+
+    public List<User> get(int offset, int limit, String searchTerm) throws SQLException {
+        List<User> userList = new ArrayList<>();
+        String query = "SELECT * "
+                + "FROM USER_ACCOUNT "
+                + "WHERE LOWER(username) LIKE ? "
+                + "OFFSET ? ROWS "
+                + "FETCH NEXT ? ROWS ONLY";
+
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, "%" + searchTerm.toLowerCase() + "%");
+                stmt.setInt(2, offset);
+                stmt.setInt(3, limit);
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
                         userList.add(new User(this.db, rs));

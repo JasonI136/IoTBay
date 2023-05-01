@@ -29,41 +29,51 @@
 
         <!-- Content -->
         <section class="bg0 p-t-50 p-b-116">
-            <div class="container">
-                <div id="user-table"></div>
+            <div class="container card p-t-20 p-b-20 p-l-30 p-r-30">
+                <div class="row">
+                    <div class="card p-all-10">
+                        <div class="flex-b" style="gap: 5px">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="fa-solid fa-user"></i>
+
+                                    Users
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" onclick="$('#add-user-modal').modal('show')"><i
+                                            class="fa-solid fa-plus"></i> Add</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="card p-all-10 gy-2">
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">Search (Username)</span>
+                            <input type="text" class="form-control" placeholder="Enter search term"
+                                   aria-describedby="basic-addon1" id="search-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div id="user-table" class="gy-2 bg-transparent p-all-0 "></div>
+                </div>
+
             </div>
         </section>
 
         <jsp:include page="../components/footer.jsp"/>
     </body>
 
-    <script>
-        var table = new Tabulator("#user-table", {
-            ajaxURL: "${pageContext.request.contextPath}/admin/users/get",
-            ajaxConfig: "GET",
-            ajaxResponse: function (url, params, response) {
-                return response.data;
-            },
-            layout: "fitColumns",
-            pagination: "local",
-            paginationSize: 10,
-            columns: [
-                {title: "User ID", field: "id", width: 150},
-                {title: "Username", field: "username", width: 150},
-                {title: "First Name", field: "firstName", width: 150},
-                {title: "Last Name", field: "lastName", width: 150},
-                {title: "Email", field: "email", width: 150},
-                {
-                    title: "Staff",
-                    field: "isStaff",
-                    hozAlign: "center",
-                    width: 50,
-                    formatter: "tickCross",
-                },
-            ],
-        });
-    </script>
-
+    <jsp:include page="../components/modals/admin-users-add-user-modal.jsp"/>
+    <jsp:include page="../components/modals/admin-users-edit-user-modal.jsp"/>
 
     <jsp:include page="../components/common-footer-html.jsp"/>
+    <script src="${pageContext.request.contextPath}/public/js/jsp/admin-users.js.jsp"></script>
+
 </html>

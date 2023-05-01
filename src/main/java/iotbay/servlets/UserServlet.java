@@ -11,6 +11,7 @@ import com.stripe.model.SetupIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import iotbay.database.DatabaseManager;
+import iotbay.exceptions.UserExistsException;
 import iotbay.models.User;
 import iotbay.models.httpResponses.GenericApiResponse;
 import iotbay.util.CustomHttpServletRequest;
@@ -24,6 +25,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 
 /**
@@ -145,6 +148,26 @@ public class UserServlet extends HttpServlet {
                             .error(false)
                             .build()
             );
+        } catch (UserExistsException e) {
+            res.sendJsonResponse(
+                    GenericApiResponse.<String>builder()
+                            .statusCode(400)
+                            .message("Error")
+                            .data("Username or email already exists.")
+                            .error(false)
+                            .build()
+            );
+            return;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            res.sendJsonResponse(
+                    GenericApiResponse.<String>builder()
+                            .statusCode(500)
+                            .message("Error")
+                            .data("Internal server error")
+                            .error(false)
+                            .build()
+            );
+            return;
         }
     }
 

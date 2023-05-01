@@ -2,6 +2,8 @@ package iotbay.filters;
 
 import iotbay.database.DatabaseManager;
 import iotbay.models.User;
+import iotbay.models.httpResponses.GenericApiResponse;
+import iotbay.util.CustomHttpServletResponse;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,6 +52,7 @@ public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
+        CustomHttpServletResponse res1 = (CustomHttpServletResponse) response;
         HttpServletResponse res = (HttpServletResponse) response;
         String reqPath = req.getRequestURI().substring(req.getContextPath().length());
 
@@ -61,9 +64,20 @@ public class AuthFilter implements Filter {
                 User user = (User) req.getSession().getAttribute("user");
                 if (user == null) {
                     // If not, redirect to login page
-                    req.getSession().setAttribute("loginRedirect", req.getRequestURI());
-                    res.sendRedirect(req.getContextPath() + "/login");
-                    return;
+                    if (req.getContentType() == null) {
+                        req.getSession().setAttribute("loginRedirect", req.getRequestURI());
+                        res.sendRedirect(req.getContextPath() + "/login");
+                        return;
+                    } else if (req.getContentType().equals("application/json")) {
+                        res1.sendJsonResponse(GenericApiResponse.<String>builder()
+                                .statusCode(401)
+                                .message("Unauthorized")
+                                .data("You must be logged in to access this page.")
+                                .error(true)
+                                .build());
+                        return;
+                    }
+
                 } else {
                     // Refresh the user session object to ensure it's up to date.
                     try {

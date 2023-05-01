@@ -27,6 +27,11 @@ public class Order implements Serializable {
     private int userId;
 
     /**
+     * The user associated with the order
+     */
+    private User user;
+
+    /**
      * The order date
      */
     private Timestamp orderDate;
@@ -62,6 +67,16 @@ public class Order implements Serializable {
     public Order(ResultSet rs, DatabaseManager db) throws SQLException {
         this.id = rs.getInt("id");
         this.userId = rs.getInt("user_id");
+        try {
+            this.user = db.getUsers().getUser(this.userId);
+
+            // nullify password and password salt as we don't need them.
+            this.user.setPassword(null);
+            this.user.setPasswordSalt(null);
+        } catch (SQLException e) {
+            this.user = null;
+        }
+
         this.orderDate = rs.getTimestamp("order_date");
         this.orderDateUnix = (int) (this.orderDate.getTime() / 1000);
         this.orderDateISO = this.orderDate.toInstant().toString();
