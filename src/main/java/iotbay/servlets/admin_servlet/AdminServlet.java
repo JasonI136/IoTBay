@@ -4,6 +4,7 @@ import iotbay.database.DatabaseManager;
 import iotbay.servlets.admin_servlet.routes.*;
 import iotbay.servlets.interfaces.Route;
 import iotbay.util.CustomHttpServletRequest;
+import iotbay.util.ServletRouteManager;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -12,40 +13,31 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.HttpMethod;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AdminServlet extends HttpServlet {
 
     public DatabaseManager db;
 
-    // Map<Method, Map<Path, Handler>>
-    private static final Map<String, HashMap<String, Route>> ROUTES = new HashMap<>();
+    private static final ServletRouteManager routeManager = new ServletRouteManager();
 
     static {
-        HashMap<String, Route> getRoutes = new HashMap<>();
-        getRoutes.put("/", new AdminIndexRoute());
-        getRoutes.put("/inventory", new AdminInventoryRoute());
-        getRoutes.put("/users", new AdminUsersRoute());
-        getRoutes.put("/user/\\d+", new AdminGetUserRoute());
-        getRoutes.put("/orders", new AdminOrdersRoute());
-        getRoutes.put("/logs", new AdminLogsRoute());
-        ROUTES.put(HttpMethod.GET, getRoutes);
+        routeManager.addRoute(HttpMethod.GET, "/", new AdminIndexRoute());
+        routeManager.addRoute(HttpMethod.GET, "/inventory", new AdminInventoryRoute());
+        routeManager.addRoute(HttpMethod.GET, "/users", new AdminUsersRoute());
+        routeManager.addRoute(HttpMethod.GET, "/user/\\d+", new AdminGetUserRoute());
+        routeManager.addRoute(HttpMethod.GET, "/orders", new AdminOrdersRoute());
+        routeManager.addRoute(HttpMethod.GET, "/logs", new AdminLogsRoute());
 
-        HashMap<String, Route> postRoutes = new HashMap<>();
-        postRoutes.put("/product/\\d+", new AdminProductUpdateRoute());
-        postRoutes.put("/orders/\\d+", new AdminOrderUpdateRoute());
-        postRoutes.put("/categories/add", new AdminCategoryAddRoute());
-        postRoutes.put("/products/add", new AdminProductAddRoute());
-        postRoutes.put("/users/add", new AdminUserAddRoute());
-        postRoutes.put("/user/\\d+", new AdminUserUpdateRoute());
-        ROUTES.put(HttpMethod.POST, postRoutes);
+        routeManager.addRoute(HttpMethod.POST, "/product/\\d+", new AdminProductUpdateRoute());
+        routeManager.addRoute(HttpMethod.POST, "/orders/\\d+", new AdminOrderUpdateRoute());
+        routeManager.addRoute(HttpMethod.POST, "/categories/add", new AdminCategoryAddRoute());
+        routeManager.addRoute(HttpMethod.POST, "/products/add", new AdminProductAddRoute());
+        routeManager.addRoute(HttpMethod.POST, "/users/add", new AdminUserAddRoute());
+        routeManager.addRoute(HttpMethod.POST, "/user/\\d+", new AdminUserUpdateRoute());
 
-        HashMap<String, Route> deleteRoutes = new HashMap<>();
-        deleteRoutes.put("/product/\\d+", new AdminProductDeleteRoute());
-        deleteRoutes.put("/category/\\d+", new AdminCategoryDeleteRoute());
-        deleteRoutes.put("/user/\\d+", new AdminUserDeleteRoute());
-        ROUTES.put(HttpMethod.DELETE, deleteRoutes);
+        routeManager.addRoute(HttpMethod.DELETE, "/product/\\d+", new AdminProductDeleteRoute());
+        routeManager.addRoute(HttpMethod.DELETE, "/category/\\d+", new AdminCategoryDeleteRoute());
+        routeManager.addRoute(HttpMethod.DELETE, "/user/\\d+", new AdminUserDeleteRoute());
     }
 
 
@@ -58,15 +50,12 @@ public class AdminServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         CustomHttpServletRequest req = (CustomHttpServletRequest) request;
 
-        // regex match the path
-        for (String path : ROUTES.get(req.getMethod()).keySet()) {
-            if (req.getPath().matches(path)) {
-                ROUTES.get(req.getMethod()).get(path).handle(request, response);
-                return;
-            }
+        Route route = routeManager.getRoute(req.getMethod(), req.getPath());
+        if (route != null) {
+            route.handle(req, response);
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
-
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Override
