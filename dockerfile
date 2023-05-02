@@ -17,7 +17,7 @@ COPY supervisord.conf /app/supervisord.conf
 
 RUN wget 'https://s3.eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/6.2023.4/payara-6.2023.4.zip' -O /tmp/payara.zip
 #COPY payara.zip /tmp/payara.zip
-RUN wget 'http://archive.apache.org/dist/db/derby/db-derby-10.10.2.0/db-derby-10.10.2.0-bin.zip' -O /tmp/db-derby.zip
+RUN wget 'https://dlcdn.apache.org//db/derby/db-derby-10.16.1.1/db-derby-10.16.1.1-bin.zip' -O /tmp/db-derby.zip
 
 # unzip the file to /app/payara
 RUN unzip /tmp/payara.zip -d /app
