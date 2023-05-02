@@ -29,7 +29,8 @@ public class DatabaseTests {
                 "jdbc:derby:memory:",
                 "",
                 "",
-                "iotbaydb;create=true"
+                "iotbaydb;create=true",
+                true
         );
     }
 

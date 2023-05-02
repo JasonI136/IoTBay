@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -66,10 +68,14 @@ public class AppContextListener implements ServletContextListener {
             throw new ConfigMissingException("app-config.properties not found. Please ensure that the file exists in the /WEB-INF directory.");
         }
 
-        InputStream inputStreamSecrets = this.scx.getResourceAsStream("/WEB-INF/secrets.properties");
+        String configFilePath = System.getProperty("com.sun.aas.instanceRoot") + "/config";
+        InputStream inputStreamSecrets = null;
 
-        if (inputStreamSecrets == null) {
-            throw new ConfigMissingException("secrets.properties not found. Please ensure that the file exists in the /WEB-INF directory.");
+        try {
+            inputStreamSecrets = new FileInputStream(configFilePath + "/secrets.properties");
+        } catch (FileNotFoundException | SecurityException e) {
+            logger.error("secrets.properties not found. Please ensure that the file exists in the /config directory.");
+            throw e;
         }
 
         this.appConfig = new Properties();
@@ -78,6 +84,7 @@ public class AppContextListener implements ServletContextListener {
 
         appConfig.load(inputStream);
         secrets.load(inputStreamSecrets);
+
 
     }
 
@@ -92,7 +99,8 @@ public class AppContextListener implements ServletContextListener {
                 appConfig.getProperty("database.url"),
                 appConfig.getProperty("database.username"),
                 appConfig.getProperty("database.password"),
-                appConfig.getProperty("database.name")
+                appConfig.getProperty("database.name"),
+                false
         );
 
         StaticDatabaseManager.setInstance(db);
@@ -150,8 +158,8 @@ public class AppContextListener implements ServletContextListener {
         try {
             // These methods must be called in this order.
             this.initConfig();
-            this.initDb();
             this.initStripe();
+            this.initDb();
             this.initScheduler();
         } catch (Exception e) {
             logger.error("Application failed to start.", e);
