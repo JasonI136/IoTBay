@@ -8,11 +8,15 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import iotbay.annotations.GlobalServletField;
 import iotbay.database.collections.*;
+import iotbay.exceptions.UserExistsException;
+import iotbay.models.User;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 
 /**
@@ -92,6 +96,8 @@ public class DatabaseManager {
     @GlobalServletField("logs")
     private Logs logs;
 
+    boolean skipAdminUserCreation = false;
+
 
     /**
      * Creates a new instance of DatabaseManager
@@ -103,13 +109,15 @@ public class DatabaseManager {
      * @throws ClassNotFoundException if the database driver is not found
      * @throws SQLException           if there is an error connecting to the database
      */
-    public DatabaseManager(String dbUrl, String dbUser, String dbPass, String dbName) throws ClassNotFoundException, SQLException {
+    public DatabaseManager(String dbUrl, String dbUser, String dbPass, String dbName, boolean skipAdminUserCreation) throws ClassNotFoundException, SQLException {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(dbUrl + dbName);
         config.setUsername(dbUser);
         config.setPassword(dbPass);
         config.setMaximumPoolSize(20);
         config.setLeakDetectionThreshold(10000);
+
+        this.skipAdminUserCreation = skipAdminUserCreation;
 
         this.dataSource = new HikariDataSource(config);
 
@@ -405,6 +413,27 @@ public class DatabaseManager {
         this.paymentMethods = new PaymentMethods(this);
         this.orderLineItems = new OrderLineItems(this, this.orders, this.products);
         this.logs = new Logs(this);
+
+        // create the default admin user if it doesn't exist
+        if (this.getUsers().getUser("admin") == null && !skipAdminUserCreation) {
+            User user = new User(this);
+            user.setUsername("admin");
+            user.setPassword("admin");
+            user.setFirstName("Admin");
+            user.setLastName("Admin");
+            user.setEmail("admin@example.com");
+            user.setStaff(true);
+            user.setPhoneNumber(1234567890);
+            user.setAddress("123 Admin Street, Admin City, Admin State, Admin Postcode");
+
+            try {
+                this.getUsers().registerUser(user);
+            } catch (UserExistsException e) {
+                logger.warn("Default admin user already exists, skipping creation");
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                logger.error("Error creating default admin user. " + e.getMessage());
+            }
+        }
 
         logger.info("Database initialized.");
 
