@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  iotbay:
+    image: mclarence/iotbay:latest
+    ports:
+      - 8080:8080
+      - 127.0.0.1:4848:4848
+    volumes:
+      - /path/to/secrets.properties:/app/payara/glassfish/domains/domain1/config/secrets.properties
+    restart: always
