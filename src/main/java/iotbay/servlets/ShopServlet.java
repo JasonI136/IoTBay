@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author cmesina
@@ -79,6 +80,14 @@ public class ShopServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
+
+        Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
+
+        if (((String) appConfig.get("app.demo")).equalsIgnoreCase("true")) {
+            request.setAttribute("demo", true);
+        } else {
+            request.setAttribute("demo", false);
+        }
 
         if (path.equals("/categories/get")) {
             getCategories(request, response);

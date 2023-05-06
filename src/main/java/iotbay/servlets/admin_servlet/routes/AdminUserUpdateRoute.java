@@ -2,6 +2,9 @@ package iotbay.servlets.admin_servlet.routes;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import iotbay.database.DatabaseManager;
 import iotbay.exceptions.UserExistsException;
 import iotbay.models.User;
@@ -108,58 +111,99 @@ public class AdminUserUpdateRoute implements Route {
         JsonElement phoneNumber = json.get("phoneNumber");
         if (phoneNumber != null) {
             try {
-                user.setPhoneNumber(phoneNumber.getAsInt());
-            } catch (NumberFormatException e) {
-                res.sendJsonResponse(GenericApiResponse.<String>builder()
-                        .statusCode(400)
-                        .error(true)
-                        .message("Bad Request")
-                        .data("Phone number must be a number")
-                        .build());
-                return;
-            }
-        }
+                PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+                Phonenumber.PhoneNumber phoneNumber2;
+                phoneNumber2 = phoneUtil.parse(phoneNumber.getAsString(), "AU");
+                if (!phoneUtil.isValidNumber(phoneNumber2)) {
+                    res.sendJsonResponse(
+                            GenericApiResponse.<String>builder()
+                                    .statusCode(400)
+                                    .message("Error")
+                                    .data("Invalid Australian phone number")
+                                    .error(true)
+                                    .build()
+                    );
+                    return;
+                }
 
-        JsonElement emailAddress = json.get("emailAddress");
-        if (emailAddress != null) {
-            user.setEmail(emailAddress.getAsString());
-        }
-
-        JsonElement address = json.get("address");
-        if (address != null) {
-            user.setAddress(address.getAsString());
-        }
-
-        JsonElement staffMember = json.get("staffMember");
-        if (staffMember != null) {
-            user.setStaff(staffMember.getAsBoolean());
-        }
-
-        try {
-            db.getUsers().updateUser(user);
-        } catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-            res.sendJsonResponse(GenericApiResponse.<String>builder()
-                    .statusCode(500)
-                    .message("Internal server error.")
-                    .data(e.getMessage())
-                    .error(true)
-                    .build());
-            return;
-        } catch (UserExistsException e) {
+            user.setPhoneNumber(phoneUtil.format(phoneNumber2, PhoneNumberUtil.PhoneNumberFormat.E164));
+        } catch(NumberParseException e){
             res.sendJsonResponse(GenericApiResponse.<String>builder()
                     .statusCode(400)
-                    .message("Bad Request")
-                    .data(e.getMessage())
                     .error(true)
+                    .message("Bad Request")
+                    .data("Invalid phone number")
                     .build());
             return;
         }
-
-        res.sendJsonResponse(GenericApiResponse.<String>builder()
-                .statusCode(200)
-                .message("User updated successfully.")
-                .data("User updated successfully.")
-                .error(false)
-                .build());
     }
+
+    JsonElement emailAddress = json.get("emailAddress");
+        if(emailAddress !=null)
+
+    {
+        user.setEmail(emailAddress.getAsString());
+    }
+
+    JsonElement address = json.get("address");
+        if(address !=null)
+
+    {
+        user.setAddress(address.getAsString());
+    }
+
+    JsonElement staffMember = json.get("staffMember");
+        if(staffMember !=null)
+
+    {
+        user.setStaff(staffMember.getAsBoolean());
+    }
+
+        try
+
+    {
+        db.getUsers().updateUser(user);
+    } catch(SQLException |NoSuchAlgorithmException |
+    InvalidKeySpecException e)
+
+    {
+        res.sendJsonResponse(GenericApiResponse.<String>builder()
+                .statusCode(500)
+                .message("Internal server error.")
+                .data(e.getMessage())
+                .error(true)
+                .build());
+        return;
+    } catch(
+    UserExistsException e)
+
+    {
+        res.sendJsonResponse(GenericApiResponse.<String>builder()
+                .statusCode(400)
+                .message("Bad Request")
+                .data(e.getMessage())
+                .error(true)
+                .build());
+        return;
+    }
+
+        res.sendJsonResponse(GenericApiResponse .
+
+    <String> builder()
+                .
+
+    statusCode(200)
+                .
+
+    message("User updated successfully.")
+                .
+
+    data("User updated successfully.")
+                .
+
+    error(false)
+                .
+
+    build());
+}
 }

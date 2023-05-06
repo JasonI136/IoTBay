@@ -111,7 +111,7 @@
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.reload();
+                        window.location.href = "${pageContext.request.contextPath}/admin/inventory";
                     }
                 });
             }
@@ -262,7 +262,7 @@
                         target: document.querySelector('#modal-content')
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.reload();
+                            window.location.href = "${pageContext.request.contextPath}/admin/inventory";
                         }
                     });
                 } else {
@@ -425,7 +425,7 @@
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.reload();
+                            window.location.href = "${pageContext.request.contextPath}/admin/inventory";
                         }
                     });
                 } else {

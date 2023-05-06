@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author cmesina
@@ -98,6 +99,14 @@ public class MainServlet extends HttpServlet {
                 categories = this.db.getCategories().getCategories();
             } catch (Exception e) {
                 throw new ServletException("Failed to query database: " + e.getMessage());
+            }
+
+            Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
+
+            if (((String) appConfig.get("app.demo")).equalsIgnoreCase("true")) {
+                request.setAttribute("demo", true);
+            } else {
+                request.setAttribute("demo", false);
             }
 
 

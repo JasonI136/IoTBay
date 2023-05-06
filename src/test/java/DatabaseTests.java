@@ -63,7 +63,7 @@ public class DatabaseTests {
         final String email = "email@example.com";
         final String password = "password";
         final String address = "123 Example Street";
-        final int phoneNumber = 123456789;
+        final String phoneNumber = "0400000000";
         final boolean staff = false;
         final Timestamp registrationDate = new Timestamp(System.currentTimeMillis());
         final String stripeCustomerId = "cus_123456789";

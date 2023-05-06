@@ -20,6 +20,7 @@ public class PaymentMethods {
 
     /**
      * Initializes the payment methods collection with the database manager
+     *
      * @param db
      */
     public PaymentMethods(DatabaseManager db) {
@@ -33,6 +34,7 @@ public class PaymentMethods {
 
     /**
      * Gets a payment method by the stripe payment method id.
+     *
      * @param stripePaymentMethodId the stripe payment method id
      * @return a {@link iotbay.models.PaymentMethod} object, or null if not found.
      * @throws SQLException if there is an error retrieving the payment method
@@ -55,6 +57,7 @@ public class PaymentMethods {
 
     /**
      * Gets a payment method by the id.
+     *
      * @param id the id
      * @return a {@link iotbay.models.PaymentMethod} object, or null if not found.
      * @throws SQLException if there is an error retrieving the payment method
@@ -76,8 +79,9 @@ public class PaymentMethods {
 
     /**
      * Adds a payment method to the database.
+     *
      * @param paymentMethod the payment method to add
-     * @param user the user to add the payment method to
+     * @param user          the user to add the payment method to
      * @return the payment method that was added
      * @throws SQLException if there is an error adding the payment method
      */
@@ -113,6 +117,7 @@ public class PaymentMethods {
 
     /**
      * Deletes a payment method from the database.
+     *
      * @param paymentMethod the payment method to delete
      * @throws SQLException if there is an error deleting the payment method
      */
@@ -127,6 +132,27 @@ public class PaymentMethods {
                 } else {
                     logger.error("Payment method " + paymentMethod.getId() + " was not deleted from the database.");
                     throw new SQLException("Payment method " + paymentMethod.getId() + " was not deleted from the database.");
+                }
+            }
+        }
+    }
+
+    public void updatePaymentMethod(PaymentMethod paymentMethod) throws SQLException {
+        try (Connection conn = this.db.getDbConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement("UPDATE PAYMENT_METHOD SET stripe_payment_method_id = ?, PAYMENT_METHOD_TYPE = ?, CARD_LAST_4 = ?, USER_ID = ?, DELETED = ? WHERE id = ?")) {
+                stmt.setString(1, paymentMethod.getStripePaymentMethodId());
+                stmt.setString(2, paymentMethod.getPaymentMethodType());
+                stmt.setInt(3, paymentMethod.getCardLast4());
+                stmt.setInt(4, paymentMethod.getUserId());
+                stmt.setBoolean(5, paymentMethod.isDeleted());
+                stmt.setInt(6, paymentMethod.getId());
+
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 1) {
+                    logger.info("Payment method " + paymentMethod.getId() + " was updated in the database.");
+                } else {
+                    logger.error("Payment method " + paymentMethod.getId() + " was not updated in the database.");
+                    throw new SQLException("Payment method " + paymentMethod.getId() + " was not updated in the database.");
                 }
             }
         }

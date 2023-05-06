@@ -106,9 +106,15 @@
             <version>10.10.2.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.libphonenumber</groupId>
+            <artifactId>libphonenumber</artifactId>
+            <version>8.13.11</version>
+        </dependency>
     </dependencies>
 
     <build>
+        <finalName>IoTBay</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

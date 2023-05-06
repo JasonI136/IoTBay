@@ -144,7 +144,7 @@ public class DatabaseManager {
                             + "last_name                        VARCHAR(256),"
                             + "email                            VARCHAR(256) UNIQUE,"
                             + "address                          VARCHAR(256),"
-                            + "phone_number                     INT,"
+                            + "phone_number                     VARCHAR(256),"
                             + "is_staff                         BOOLEAN,"
                             + "stripe_customer_id               VARCHAR(256),"
                             + "registration_date                TIMESTAMP,"
@@ -169,6 +169,7 @@ public class DatabaseManager {
                             + "stripe_payment_method_id         VARCHAR(256),"
                             + "payment_method_type              VARCHAR(256),"
                             + "card_last_4                      INT,"
+                            + "deleted                          BOOLEAN,"
                             + "PRIMARY KEY (id),"
                             + "CONSTRAINT user_id_ref FOREIGN KEY (user_id) REFERENCES USER_ACCOUNT(id)"
                             + ")";
@@ -423,7 +424,7 @@ public class DatabaseManager {
             user.setLastName("Admin");
             user.setEmail("admin@example.com");
             user.setStaff(true);
-            user.setPhoneNumber(1234567890);
+            user.setPhoneNumber("0400000000");
             user.setAddress("123 Admin Street, Admin City, Admin State, Admin Postcode");
 
             try {

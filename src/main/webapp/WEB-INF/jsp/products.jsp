@@ -38,6 +38,14 @@
         <!-- Product -->
         <section class="bg0 p-t-23 p-b-140">
             <div class="container">
+                <c:if test="${demo == true}">
+                    <div class="row alert alert-warning" role="alert">
+                        <span>
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            This is a demo website. Items on this website are <b><u>not for sale</u></b>. Website is reset every 24 hours.
+                        </span>
+                    </div>
+                </c:if>
                 <div class="p-b-10">
                     <c:choose>
                         <c:when test="${empty searchName}">
@@ -234,7 +242,8 @@
                                     </c:when>
                                     <%-- If the number of pages is greater than 5, display the last 5 pages. --%>
                                     <c:otherwise>
-                                        <c:forEach var="i" begin="${paginationHandler.totalPages - 4}" end="${paginationHandler.totalPages}">
+                                        <c:forEach var="i" begin="${paginationHandler.totalPages - 4}"
+                                                   end="${paginationHandler.totalPages}">
                                             <c:choose>
                                                 <%-- If the current page is the same as the page number, highlight the page number. --%>
                                                 <c:when test="${i == paginationHandler.currentPage}">
@@ -256,7 +265,8 @@
                             <%-- If we are greater than 2 pages, display the current page as the middle button --%>
                             <c:when test="${paginationHandler.currentPage > 2}">
                                 <%-- Display the last 2 pages before the current page. --%>
-                                <c:forEach var="i" begin="${paginationHandler.currentPage - 2}" end="${paginationHandler.currentPage - 1}">
+                                <c:forEach var="i" begin="${paginationHandler.currentPage - 2}"
+                                           end="${paginationHandler.currentPage - 1}">
                                     <li class="page-item"><a class="page-link"
                                                              href="${pageContext.request.contextPath}/shop?limit=${paginationHandler.pageSize}&page=${i}${searchName}">${i}</a>
                                     </li>
@@ -266,7 +276,8 @@
                                                                 href="${pageContext.request.contextPath}/shop?limit=${paginationHandler.pageSize}&page=${paginationHandler.currentPage}${searchName}">${paginationHandler.currentPage}</a>
                                 </li>
                                 <%-- Display the next 2 pages after the current page. --%>
-                                <c:forEach var="i" begin="${paginationHandler.currentPage + 1}" end="${paginationHandler.currentPage + 2}">
+                                <c:forEach var="i" begin="${paginationHandler.currentPage + 1}"
+                                           end="${paginationHandler.currentPage + 2}">
                                     <li class="page-item"><a class="page-link"
                                                              href="${pageContext.request.contextPath}/shop?limit=${paginationHandler.pageSize}&page=${i}${searchName}">${i}</a>
                                     </li>

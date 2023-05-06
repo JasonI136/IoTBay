@@ -17,7 +17,6 @@
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/public/images/icons/favicon.png"/>
     </head>
     <body class="animsition">
-
         <!-- Header -->
         <jsp:include page="components/navbar/master-navbar.jsp"/>
 
@@ -115,6 +114,14 @@
         <!-- Product -->
         <section class="bg0 p-t-23 p-b-140">
             <div class="container">
+                <c:if test="${demo == true}">
+                    <div class="row alert alert-warning" role="alert">
+                        <span>
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            This is a demo website. Items on this website are <b><u>not for sale</u></b>. Website is reset every 24 hours.
+                        </span>
+                    </div>
+                </c:if>
                 <div class="p-b-10">
                     <h3 class="ltext-103 cl5">
                         Featured Items
@@ -201,7 +208,8 @@
                                             <div class="wrap-pic-w pos-relative">
                                                 <img src="" alt="IMG-PRODUCT" id="img-product-modal">
 
-                                                <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" id="product-image-full">
+                                                <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
+                                                   id="product-image-full">
                                                     <i class="fa fa-expand"></i>
                                                 </a>
                                             </div>

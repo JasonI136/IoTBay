@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  *
@@ -78,6 +79,14 @@ public class LoginServlet extends HttpServlet {
         if (request.getSession().getAttribute("user") != null) {
             response.sendRedirect(request.getContextPath() + "/user");
             return;
+        }
+
+        Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
+
+        if (((String) appConfig.get("app.demo")).equalsIgnoreCase("true")) {
+            request.setAttribute("demo", true);
+        } else {
+            request.setAttribute("demo", false);
         }
 
 

@@ -223,7 +223,11 @@ public class Users implements ModelDAO<User> {
                             List<PaymentMethod> paymentMethods = new ArrayList<>();
 
                             while (paymentMethodsRs.next()) {
-                                paymentMethods.add(new PaymentMethod(paymentMethodsRs));
+                                PaymentMethod paymentMethod = new PaymentMethod(paymentMethodsRs);
+                                if (paymentMethod.isDeleted()) {
+                                    continue;
+                                }
+                                paymentMethods.add(paymentMethod);
                             }
 
                             User user = new User(this.db, userRs);
@@ -268,7 +272,11 @@ public class Users implements ModelDAO<User> {
                             List<PaymentMethod> paymentMethods = new ArrayList<>();
 
                             while (paymentMethodsRs.next()) {
-                                paymentMethods.add(new PaymentMethod(paymentMethodsRs));
+                                PaymentMethod paymentMethod = new PaymentMethod(paymentMethodsRs);
+                                if (paymentMethod.isDeleted()) {
+                                    continue;
+                                }
+                                paymentMethods.add(paymentMethod);
                             }
 
                             User user = new User(this.db, userRs);
@@ -378,7 +386,7 @@ public class Users implements ModelDAO<User> {
                 addUserQuery.setString(5, user.getLastName());
                 addUserQuery.setString(6, user.getEmail());
                 addUserQuery.setString(7, user.getAddress());
-                addUserQuery.setInt(8, user.getPhoneNumber());
+                addUserQuery.setString(8, user.getPhoneNumber());
                 addUserQuery.setString(9, user.getStripeCustomerId());
                 addUserQuery.setBoolean(10, user.isStaff());
                 addUserQuery.setTimestamp(11, user.getRegistrationDate());
@@ -435,7 +443,7 @@ public class Users implements ModelDAO<User> {
                 updateUserQuery.setString(3, user.getLastName());
                 updateUserQuery.setString(4, user.getEmail());
                 updateUserQuery.setString(5, user.getAddress());
-                updateUserQuery.setInt(6, user.getPhoneNumber());
+                updateUserQuery.setString(6, user.getPhoneNumber());
                 updateUserQuery.setString(7, user.getPassword());
                 updateUserQuery.setString(8, user.getPasswordSalt());
                 updateUserQuery.setBoolean(9, user.isStaff());
