@@ -18,25 +18,24 @@
 
             <div class="row">
                 <div class="col-md-6 col-lg-7 p-b-30">
-                    <div class="p-l-25 p-r-30 p-lr-0-lg">
-                        <div class="wrap-slick3 flex-sb flex-w justify-content-center">
-                            <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
-                            <div class="slick3 gallery-lb">
-                                <div class="item-slick3" data-thumb="product-image"
-                                     id="img-product-modal-thumb">
-                                    <div class="wrap-pic-w pos-relative">
-                                        <img src="" alt="IMG-PRODUCT" id="img-product-modal">
+                    <div class="wrap-slick3 flex-sb flex-w justify-content-center">
+                        <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
-                                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                                           id="product-image-full">
-                                            <i class="fa fa-expand"></i>
-                                        </a>
-                                    </div>
+                        <div class="slick3 gallery-lb">
+                            <div class="item-slick3" data-thumb="product-image"
+                                 id="img-product-modal-thumb">
+                                <div class="wrap-pic-w pos-relative">
+                                    <img src="" alt="IMG-PRODUCT" id="img-product-modal" class="img-thumbnail">
+
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
+                                       id="product-image-full">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
                                 </div>
-
-
                             </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -55,9 +54,9 @@
 
                         </p>
 
-                        <div class="flex-w flex-r-m p-b-10">
-                            <div class="size-204 flex-w flex-m respon6-next">
-                                <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                        <div class="flex-w flex-c-m p-b-10">
+                            <div class="size-204 flex-w flex-m respon6-next justify-content-center" style="gap: 10px">
+                                <div class="wrap-num-product flex-w m-tb-10" >
                                     <div class="btn-num-product-down-modal cl8 hov-btn3 trans-04 flex-c-m">
                                         <i class="fs-16 zmdi zmdi-minus"></i>
                                     </div>
