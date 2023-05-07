@@ -73,13 +73,6 @@ public class CartServlet extends HttpServlet {
         if (path != null) {
             if (path.equals("/checkout")) {
                 request.setAttribute("stripe_pk", ((Properties) getServletContext().getAttribute("secrets")).getProperty("stripe.api.publishable.key"));
-                Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
-
-                if (((String) appConfig.get("app.demo")).equalsIgnoreCase("true")) {
-                    request.setAttribute("demo", true);
-                } else {
-                    request.setAttribute("demo", false);
-                }
                 request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
             } else {
                 response.sendError(404);

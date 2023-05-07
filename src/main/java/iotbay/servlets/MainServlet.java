@@ -101,13 +101,6 @@ public class MainServlet extends HttpServlet {
                 throw new ServletException("Failed to query database: " + e.getMessage());
             }
 
-            Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
-
-            if (((String) appConfig.get("app.demo")).equalsIgnoreCase("true")) {
-                request.setAttribute("demo", true);
-            } else {
-                request.setAttribute("demo", false);
-            }
 
 
             request.setAttribute("products", products);

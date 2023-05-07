@@ -77,14 +77,6 @@ public class RegisterServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
-
-        if (((String) appConfig.get("app.demo")).equalsIgnoreCase("true")) {
-            request.setAttribute("demo", true);
-        } else {
-            request.setAttribute("demo", false);
-        }
-
         request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
     }
 

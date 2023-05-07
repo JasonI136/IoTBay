@@ -61,15 +61,6 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
-
-        Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
-
-        if (((String) appConfig.get("app.demo")).equalsIgnoreCase("true")) {
-            request.setAttribute("demo", true);
-        } else {
-            request.setAttribute("demo", false);
-        }
-
         switch (path) {
             case "/payments/add/success" -> addPaymentMethodSuccess(request, response);
             case "/payments/add/cancel" -> response.sendRedirect(getServletContext().getContextPath() + "/user");
@@ -268,6 +259,10 @@ public class UserServlet extends HttpServlet {
 
         //get current http protocol
         String protocol = request.getScheme();
+
+        if (request.getHeader("X-Forwarded-Proto") != null) {
+            protocol = request.getHeader("X-Forwarded-Proto");
+        }
 
         SessionCreateParams params;
         // check if the redirect url is valid

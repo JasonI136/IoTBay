@@ -343,6 +343,7 @@
                 },
                 width: 150,
                 hozAlign: "center",
+                frozen: true,
             },
         ],
         rowFormatter: function (row) {

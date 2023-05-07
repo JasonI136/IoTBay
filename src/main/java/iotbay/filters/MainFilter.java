@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * The main filter.
@@ -24,6 +25,14 @@ public class MainFilter implements Filter {
             req.setAttribute("message", "Application failed to initialize");
             res.sendError(500, initError);
             return;
+        }
+
+        Properties appConfig = (Properties) request.getServletContext().getAttribute("appConfig");
+
+        if (((String) appConfig.get("app.demo")).equalsIgnoreCase("true")) {
+            request.setAttribute("demo", true);
+        } else {
+            request.setAttribute("demo", false);
         }
 
         CustomHttpServletResponse customHttpServletResponse = new CustomHttpServletResponse(res);

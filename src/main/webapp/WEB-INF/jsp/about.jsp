@@ -18,7 +18,7 @@
 
         <title>About Us</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+
 
         <jsp:include page="components/common-header-html.jsp"/>
 
@@ -69,7 +69,7 @@
                     </div>
 
                     <div class="col-11 col-md-5 col-lg-4 m-lr-auto">
-                        <div class="how-bor1 ">
+                        <div class="how-bor1">
                             <div class="hov-img0">
                                 <img src="${pageContext.request.contextPath}/public/images/raspberrypi.jpg" alt="IMG">
                             </div>

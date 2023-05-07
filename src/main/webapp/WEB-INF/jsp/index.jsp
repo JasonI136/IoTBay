@@ -12,7 +12,7 @@
     <head>
         <title>IoTBay Home</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <jsp:include page="components/common-header-html.jsp"/>
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/public/images/icons/favicon.png"/>
     </head>
@@ -115,7 +115,7 @@
         <section class="bg0 p-t-23 p-b-140">
             <div class="container">
                 <c:if test="${demo == true}">
-                    <div class="row alert alert-warning" role="alert">
+                    <div class="row alert alert-warning m-lr-1" role="alert">
                         <span>
                             <i class="fa-solid fa-triangle-exclamation"></i>
                             This is a demo website. Items on this website are <b><u>not for sale</u></b>. Website is reset every 24 hours.
@@ -136,7 +136,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="${product.imageURL}" alt="IMG-PRODUCT">
+                                        <img src="${product.imageURL}"  onClick="fetchProductDetails(${product.id})" class="js-show-modal1" alt="IMG-PRODUCT">
 
                                         <a href="#"
                                            class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
@@ -147,7 +147,7 @@
 
                                     <div class="block2-txt flex-w flex-t p-t-14">
                                         <div class="block2-txt-child1 flex-col-l ">
-                                            <a href="product-detail.html"
+                                            <a href="" onClick="fetchProductDetails(${product.id})" class="js-show-modal1"
                                                class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                                     ${product.name}
                                             </a>

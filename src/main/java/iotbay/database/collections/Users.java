@@ -7,6 +7,7 @@ package iotbay.database.collections;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import iotbay.database.DatabaseManager;
+import iotbay.database.collections.metrics.UserMetrics;
 import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.PaymentMethod;
@@ -51,6 +52,8 @@ public class Users implements ModelDAO<User> {
 
     private static final Logger logger = LogManager.getLogger(DatabaseManager.class);
 
+    private UserMetrics metrics;
+
     /**
      * Initalizes the users collection with the database manager
      *
@@ -58,6 +61,7 @@ public class Users implements ModelDAO<User> {
      */
     public Users(DatabaseManager db) {
         this.db = db;
+        this.metrics = new UserMetrics(this);
     }
 
     /**
@@ -552,5 +556,13 @@ public class Users implements ModelDAO<User> {
         }
 
         return userList;
+    }
+
+    public UserMetrics getMetrics() {
+        return this.metrics;
+    }
+
+    public DatabaseManager getDb() {
+        return this.db;
     }
 }

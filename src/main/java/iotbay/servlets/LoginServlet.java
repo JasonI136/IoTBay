@@ -81,15 +81,6 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        Properties appConfig = (Properties) getServletContext().getAttribute("appConfig");
-
-        if (((String) appConfig.get("app.demo")).equalsIgnoreCase("true")) {
-            request.setAttribute("demo", true);
-        } else {
-            request.setAttribute("demo", false);
-        }
-
-
         //request.getSession().setAttribute("login", request.getParameter("redirect"));
         request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
     }

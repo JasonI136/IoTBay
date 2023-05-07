@@ -9,7 +9,7 @@
 <html>
     <head>
         <title>Title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <jsp:include page="WEB-INF/jsp/components/common-header-html.jsp"/>
     </head>
     <body class="">
