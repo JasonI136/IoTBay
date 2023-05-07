@@ -12,10 +12,14 @@ stripe.api.publishable.key = pk_test_XXXXXXXXXXXXXXXXXXXXXXXX
 2. Run using docker below.
 
 **Note:** It is recommended to only allow port 4848 to be accessible from localhost.
+
+Set AS_ADMIN_PASSWORD to a strong password. Replace `/path/to/secrets.properties` with the path to the `secrets.properties` file created in the setup step 1.
+
 ### Docker
 ```shell
 docker run \
     --name iotbay \
+    -e AS_ADMIN_PASSWORD='abcd1234'
     -p 8080:8080 \
     -p 127.0.0.1:4848:4848 \
     -v /path/to/iotbay/secrets.properties:/app/payara/glassfish/domains/domain1/config/secrets.properties \
@@ -29,6 +33,8 @@ version: "3.9"
 services:
   iotbay:
     image: mclarence/iotbay:latest
+    environment:
+    - AS_ADMIN_PASSWORD='abcd1234'
     ports:
       - 8080:8080
       - 127.0.0.1:4848:4848
@@ -36,4 +42,3 @@ services:
       - /path/to/secrets.properties:/app/payara/glassfish/domains/domain1/config/secrets.properties
     restart: always
 ```
-Replace `/path/to/secrets.properties` with the path to the `secrets.properties` file created in the setup step 1.
