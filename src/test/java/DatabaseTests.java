@@ -30,6 +30,7 @@ public class DatabaseTests {
                 "",
                 "",
                 "iotbaydb;create=true",
+                true,
                 true
         );
     }

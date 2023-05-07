@@ -110,6 +110,10 @@ public class Users implements ModelDAO<User> {
         byte[] salt = this.createSalt();
         byte[] passwordHash = this.encryptPassword(newUser.getPassword(), salt);
 
+        if (newUser.getRegistrationDate() == null) {
+            newUser.setRegistrationDate(new java.sql.Timestamp(System.currentTimeMillis()));
+        }
+
         newUser.setPassword(Base64.getEncoder().encodeToString(passwordHash));
         newUser.setPasswordSalt(Base64.getEncoder().encodeToString(salt));
 

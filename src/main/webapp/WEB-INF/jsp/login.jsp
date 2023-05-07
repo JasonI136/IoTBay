@@ -65,8 +65,15 @@
                             <div class="alert alert-info" role="alert">
                                 Demo Admin Account: <br>
                                 <b>Username:</b> admin <br>
-                                <b>Password:</b> admin
+                                <b>Password:</b> admin <br>
+                                Use this account to access the admin dashboard.
                             </div>
+                            <div class="alert alert-info" role="alert">
+                                Demo Customer Account: <br>
+                                <b>Username:</b> customer <br>
+                                <b>Password:</b> customer
+                            </div>
+
                         </c:if>
 
 

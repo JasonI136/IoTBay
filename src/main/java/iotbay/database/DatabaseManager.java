@@ -96,7 +96,9 @@ public class DatabaseManager {
     @GlobalServletField("logs")
     private Logs logs;
 
-    boolean skipAdminUserCreation = false;
+    boolean skipAdminUserCreation;
+
+    boolean skipCustomerUserCreation;
 
 
     /**
@@ -109,7 +111,7 @@ public class DatabaseManager {
      * @throws ClassNotFoundException if the database driver is not found
      * @throws SQLException           if there is an error connecting to the database
      */
-    public DatabaseManager(String dbUrl, String dbUser, String dbPass, String dbName, boolean skipAdminUserCreation) throws ClassNotFoundException, SQLException {
+    public DatabaseManager(String dbUrl, String dbUser, String dbPass, String dbName, boolean skipAdminUserCreation, boolean skipCustomerUserCreation) throws ClassNotFoundException, SQLException {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(dbUrl + dbName);
         config.setUsername(dbUser);
@@ -118,6 +120,7 @@ public class DatabaseManager {
         config.setLeakDetectionThreshold(10000);
 
         this.skipAdminUserCreation = skipAdminUserCreation;
+        this.skipCustomerUserCreation = skipCustomerUserCreation;
 
         this.dataSource = new HikariDataSource(config);
 
@@ -433,6 +436,27 @@ public class DatabaseManager {
                 logger.warn("Default admin user already exists, skipping creation");
             } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 logger.error("Error creating default admin user. " + e.getMessage());
+            }
+        }
+
+        // create the default customer user if it doesn't exist
+        if (this.getUsers().getUser("customer") == null && !skipCustomerUserCreation) {
+            User user = new User(this);
+            user.setUsername("customer");
+            user.setPassword("customer");
+            user.setFirstName("Customer");
+            user.setLastName("Customer");
+            user.setEmail("customer@example.com");
+            user.setStaff(false);
+            user.setPhoneNumber("0400000000");
+            user.setAddress("123 Customer Street, Customer City, Customer State, Customer Postcode");
+
+            try {
+                this.getUsers().registerUser(user);
+            } catch (UserExistsException e) {
+                logger.warn("Default customer user already exists, skipping creation");
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                logger.error("Error creating default customer user. " + e.getMessage());
             }
         }
 

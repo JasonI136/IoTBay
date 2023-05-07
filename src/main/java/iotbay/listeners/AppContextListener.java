@@ -100,6 +100,7 @@ public class AppContextListener implements ServletContextListener {
                 appConfig.getProperty("database.username"),
                 appConfig.getProperty("database.password"),
                 appConfig.getProperty("database.name"),
+                false,
                 false
         );
 
