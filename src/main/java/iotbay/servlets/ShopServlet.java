@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author cmesina
@@ -202,6 +203,7 @@ public class ShopServlet extends HttpServlet {
             request.setAttribute("paginationHandler", paginationHandler);
             request.setAttribute("categories", categories);
             request.setAttribute("products", paginationHandler.getItems());
+            request.setAttribute("searchName", searchNameParam);
             request.getRequestDispatcher("/WEB-INF/jsp/products.jsp").forward(request, response);
         } else if (request.getContentType().equals("application/json")) {
             res.sendJsonResponse(GenericApiResponse.<PaginationHandler<Product>>builder()

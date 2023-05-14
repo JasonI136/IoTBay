@@ -2,6 +2,9 @@ package iotbay.servlets.admin_servlet.routes;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import iotbay.database.DatabaseManager;
 import iotbay.exceptions.UserExistsException;
 import iotbay.models.User;
@@ -90,14 +93,33 @@ public class AdminUserAddRoute implements Route {
             return;
         } else {
             try {
-                user.setPhoneNumber(phoneNumber.getAsInt());
-            } catch (NumberFormatException e) {
-                res.sendJsonResponse(GenericApiResponse.<String>builder()
-                        .statusCode(400)
-                        .error(true)
-                        .message("Bad Request")
-                        .data("Phone number must be a number")
-                        .build());
+                PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+                Phonenumber.PhoneNumber phoneNumber2;
+                phoneNumber2 = phoneUtil.parse(phoneNumber.getAsString(), "AU");
+                if (!phoneUtil.isValidNumber(phoneNumber2)) {
+                    res.sendJsonResponse(
+                            GenericApiResponse.<String>builder()
+                                    .statusCode(400)
+                                    .message("Error")
+                                    .data("Invalid Australian phone number")
+                                    .error(true)
+                                    .build()
+                    );
+                    return;
+                }
+
+                user.setPhoneNumber(phoneUtil.format(phoneNumber2, PhoneNumberUtil.PhoneNumberFormat.E164));
+
+            } catch (NumberParseException e) {
+                res.sendJsonResponse(
+                        GenericApiResponse.<String>builder()
+                                .statusCode(400)
+                                .message("Error")
+                                .data("Invalid Australian phone number")
+                                .error(true)
+                                .build()
+                );
+                return;
             }
         }
 

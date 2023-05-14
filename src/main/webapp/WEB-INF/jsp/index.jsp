@@ -12,12 +12,11 @@
     <head>
         <title>IoTBay Home</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <jsp:include page="components/common-header-html.jsp"/>
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/public/images/icons/favicon.png"/>
     </head>
     <body class="animsition">
-
         <!-- Header -->
         <jsp:include page="components/navbar/master-navbar.jsp"/>
 
@@ -115,6 +114,14 @@
         <!-- Product -->
         <section class="bg0 p-t-23 p-b-140">
             <div class="container">
+                <c:if test="${demo == true}">
+                    <div class="row alert alert-warning m-lr-1" role="alert">
+                        <span>
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            This is a demo website. Items on this website are <b><u>not for sale</u></b>. Website is reset every 24 hours.
+                        </span>
+                    </div>
+                </c:if>
                 <div class="p-b-10">
                     <h3 class="ltext-103 cl5">
                         Featured Items
@@ -128,8 +135,8 @@
                             <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${product.categoryNameNoSpace}">
                                 <!-- Block2 -->
                                 <div class="block2">
-                                    <div class="block2-pic hov-img0">
-                                        <img src="${product.imageURL}" alt="IMG-PRODUCT">
+                                    <div class="block2-pic hov-img0 img-thumbnail">
+                                        <img src="${product.imageURL}"  onClick="fetchProductDetails(${product.id})" class="js-show-modal1 product-img-listing" alt="IMG-PRODUCT">
 
                                         <a href="#"
                                            class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
@@ -140,8 +147,7 @@
 
                                     <div class="block2-txt flex-w flex-t p-t-14">
                                         <div class="block2-txt-child1 flex-col-l ">
-                                            <a href="product-detail.html"
-                                               class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                            <a href="" onClick="fetchProductDetails(${product.id})" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6 js-show-modal1">
                                                     ${product.name}
                                             </a>
 
@@ -151,16 +157,16 @@
                                             </span>
                                         </div>
 
-                                        <div class="block2-txt-child2 flex-r p-t-3">
-                                            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                                <img class="icon-heart1 dis-block trans-04"
-                                                     src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png"
-                                                     alt="ICON">
-                                                <img class="icon-heart2 dis-block trans-04 ab-t-l"
-                                                     src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png"
-                                                     alt="ICON">
-                                            </a>
-                                        </div>
+<%--                                        <div class="block2-txt-child2 flex-r p-t-3">--%>
+<%--                                            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">--%>
+<%--                                                <img class="icon-heart1 dis-block trans-04"--%>
+<%--                                                     src="${pageContext.request.contextPath}/public/images/icons/icon-heart-01.png"--%>
+<%--                                                     alt="ICON">--%>
+<%--                                                <img class="icon-heart2 dis-block trans-04 ab-t-l"--%>
+<%--                                                     src="${pageContext.request.contextPath}/public/images/icons/icon-heart-02.png"--%>
+<%--                                                     alt="ICON">--%>
+<%--                                            </a>--%>
+<%--                                        </div>--%>
                                     </div>
                                 </div>
                             </div>
@@ -179,86 +185,7 @@
         </section>
 
 
-        <!-- PRODUCT MODAL -->
-        <div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
-            <div class="overlay-modal1 js-hide-modal1"></div>
-
-            <div class="container">
-                <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent" id="modal-content">
-                    <button class="how-pos3 hov3 trans-04 js-hide-modal1">
-                        <img src="${pageContext.request.contextPath}/public/images/icons/icon-close.png" alt="CLOSE">
-                    </button>
-
-                    <div class="row">
-                        <div class="col-md-6 col-lg-7 p-b-30">
-                            <div class="p-l-25 p-r-30 p-lr-0-lg">
-                                <div class="wrap-slick3 flex-sb flex-w">
-                                    <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
-
-                                    <div class="slick3 gallery-lb">
-                                        <div class="item-slick3" data-thumb="product-image"
-                                             id="img-product-modal-thumb">
-                                            <div class="wrap-pic-w pos-relative">
-                                                <img src="" alt="IMG-PRODUCT" id="img-product-modal">
-
-                                                <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" id="product-image-full">
-                                                    <i class="fa fa-expand"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 col-lg-5 p-b-30">
-                            <div class="p-r-50 p-t-5 p-lr-0-lg">
-                                <h4 class="mtext-105 cl2 js-name-detail p-b-14" id="product-name">
-
-                                </h4>
-
-                                <span class="mtext-106 cl2" id="product-price">
-
-                                </span>
-
-                                <p class="stext-102 cl3 p-t-23" id="product-description">
-
-                                </p>
-
-                                <div class="flex-w flex-r-m p-b-10">
-                                    <div class="size-204 flex-w flex-m respon6-next">
-                                        <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                                            <div class="btn-num-product-down-modal cl8 hov-btn3 trans-04 flex-c-m">
-                                                <i class="fs-16 zmdi zmdi-minus"></i>
-                                            </div>
-
-                                            <input class="mtext-104 cl3 txt-center num-product" type="number"
-                                                   name="num-product"
-                                                   min="1" value="1" id="quantity">
-
-                                            <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                                <i class="fs-16 zmdi zmdi-plus"></i>
-                                            </div>
-                                        </div>
-
-                                        <button value=""
-                                                class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail"
-                                                name="productId" id="add-to-cart">
-                                            Add to cart
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+        <jsp:include page="components/modals/product-details-modal.jsp"/>
 
         <jsp:include page="components/footer.jsp"/>
 

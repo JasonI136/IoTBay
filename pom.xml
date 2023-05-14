@@ -84,17 +84,10 @@
             <version>2.0.7</version>
         </dependency>
         <dependency>
-            <groupId>codes.rafael.concurrent-trees</groupId>
-            <artifactId>concurrent-trees</artifactId>
-            <version>2.6.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -113,11 +106,15 @@
             <version>10.10.2.0</version>
             <scope>test</scope>
         </dependency>
-
-
+        <dependency>
+            <groupId>com.googlecode.libphonenumber</groupId>
+            <artifactId>libphonenumber</artifactId>
+            <version>8.13.11</version>
+        </dependency>
     </dependencies>
 
     <build>
+        <finalName>IoTBay</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

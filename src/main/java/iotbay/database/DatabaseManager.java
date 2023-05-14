@@ -6,7 +6,6 @@ package iotbay.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import iotbay.annotations.GlobalServletField;
 import iotbay.database.collections.*;
 import iotbay.exceptions.UserExistsException;
 import iotbay.models.User;
@@ -39,64 +38,56 @@ public class DatabaseManager {
     /**
      * An instance of the users collection
      */
-    @GlobalServletField("users")
     private Users users;
 
     /**
      * An instance of the products collection
      */
-    @GlobalServletField("products")
     private Products products;
 
     /**
      * An instance of the categories collection
      */
-    @GlobalServletField("categories")
     private Categories categories;
 
     /**
      * An instance of the orders collection
      */
-    @GlobalServletField("orders")
     private Orders orders;
 
     /**
      * An instance of the order line items collection
      */
-    @GlobalServletField("orderLineItems")
     private OrderLineItems orderLineItems;
 
     /**
      * An instance of the payments collection
      */
-    @GlobalServletField("payments")
     private Payments payments;
 
     /**
      * An instance of the invoices collection
      */
-    @GlobalServletField("invoices")
     private Invoices invoices;
 
     /**
      * An instance of the shipments collection
      */
-    @GlobalServletField("shipments")
     private Shipments shipments;
 
     /**
      * An instance of the payment methods collection
      */
-    @GlobalServletField("paymentMethods")
     private PaymentMethods paymentMethods;
 
     /**
      * An instance of the logs collection
      */
-    @GlobalServletField("logs")
     private Logs logs;
 
-    boolean skipAdminUserCreation = false;
+    boolean skipAdminUserCreation;
+
+    boolean skipCustomerUserCreation;
 
 
     /**
@@ -109,7 +100,7 @@ public class DatabaseManager {
      * @throws ClassNotFoundException if the database driver is not found
      * @throws SQLException           if there is an error connecting to the database
      */
-    public DatabaseManager(String dbUrl, String dbUser, String dbPass, String dbName, boolean skipAdminUserCreation) throws ClassNotFoundException, SQLException {
+    public DatabaseManager(String dbUrl, String dbUser, String dbPass, String dbName, boolean skipAdminUserCreation, boolean skipCustomerUserCreation) throws ClassNotFoundException, SQLException {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(dbUrl + dbName);
         config.setUsername(dbUser);
@@ -118,6 +109,7 @@ public class DatabaseManager {
         config.setLeakDetectionThreshold(10000);
 
         this.skipAdminUserCreation = skipAdminUserCreation;
+        this.skipCustomerUserCreation = skipCustomerUserCreation;
 
         this.dataSource = new HikariDataSource(config);
 
@@ -144,7 +136,7 @@ public class DatabaseManager {
                             + "last_name                        VARCHAR(256),"
                             + "email                            VARCHAR(256) UNIQUE,"
                             + "address                          VARCHAR(256),"
-                            + "phone_number                     INT,"
+                            + "phone_number                     VARCHAR(256),"
                             + "is_staff                         BOOLEAN,"
                             + "stripe_customer_id               VARCHAR(256),"
                             + "registration_date                TIMESTAMP,"
@@ -169,6 +161,7 @@ public class DatabaseManager {
                             + "stripe_payment_method_id         VARCHAR(256),"
                             + "payment_method_type              VARCHAR(256),"
                             + "card_last_4                      INT,"
+                            + "deleted                          BOOLEAN,"
                             + "PRIMARY KEY (id),"
                             + "CONSTRAINT user_id_ref FOREIGN KEY (user_id) REFERENCES USER_ACCOUNT(id)"
                             + ")";
@@ -423,7 +416,7 @@ public class DatabaseManager {
             user.setLastName("Admin");
             user.setEmail("admin@example.com");
             user.setStaff(true);
-            user.setPhoneNumber(1234567890);
+            user.setPhoneNumber("0400000000");
             user.setAddress("123 Admin Street, Admin City, Admin State, Admin Postcode");
 
             try {
@@ -432,6 +425,27 @@ public class DatabaseManager {
                 logger.warn("Default admin user already exists, skipping creation");
             } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 logger.error("Error creating default admin user. " + e.getMessage());
+            }
+        }
+
+        // create the default customer user if it doesn't exist
+        if (this.getUsers().getUser("customer") == null && !skipCustomerUserCreation) {
+            User user = new User(this);
+            user.setUsername("customer");
+            user.setPassword("customer");
+            user.setFirstName("Customer");
+            user.setLastName("Customer");
+            user.setEmail("customer@example.com");
+            user.setStaff(false);
+            user.setPhoneNumber("0400000000");
+            user.setAddress("123 Customer Street, Customer City, Customer State, Customer Postcode");
+
+            try {
+                this.getUsers().registerUser(user);
+            } catch (UserExistsException e) {
+                logger.warn("Default customer user already exists, skipping creation");
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                logger.error("Error creating default customer user. " + e.getMessage());
             }
         }
 

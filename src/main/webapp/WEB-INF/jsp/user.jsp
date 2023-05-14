@@ -12,7 +12,7 @@
     <head>
         <title>User</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <script>
 
         </script>
@@ -55,6 +55,17 @@
                             Your Account Details
                         </h4>
                         <form id="userDetailsForm" name="userDetailsForm">
+                            <c:if test="${demo == true}">
+                                <div class="row alert alert-warning" role="alert">
+                                    <span>
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                            This is a demo website. Please do not enter any sensitive information. Website is
+                                            reset
+                                            every 24 hours.
+                                    </span>
+
+                                </div>
+                            </c:if>
                             <div class="row">
                                 <div class="col bor8 m-b-20 how-pos4-parent">
                                     <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username"
@@ -151,7 +162,7 @@
                             </div>
                         </c:if>
                         <c:forEach items="${sessionScope.user.paymentMethods}" var="paymentmethod">
-                            <div class="row">
+                                <div class="row">
                                 <div class="col-md-6">
                                     <h6 class="mtext-105 cl2 p-b-30">
                                         <b>${paymentmethod.paymentMethodType.toUpperCase()}</b> ${paymentmethod.cardLast4}
@@ -169,6 +180,14 @@
                             </div>
                         </c:forEach>
                         <form action="${pageContext.request.contextPath}/user/payments/add" method="post">
+                            <c:if test="${demo == true}">
+                                <div class="alert alert-warning" role="alert">
+                                    <span>
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                            This is a demo website. Please do not enter any sensitive information. Website is reset every 24 hours.
+                                    </span>
+                                </div>
+                            </c:if>
                             <button type="submit"
                                     class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
                                 Add Payment Method
@@ -185,6 +204,7 @@
                         <c:forEach var="order" items="${sessionScope.user.orders}">
                             <div class="row">
                                 <form class="col" method="post" action="orderTracking">
+                                    <input type="hidden" name="lastname" value="${user.lastName}">
                                     <button type="submit" name="orderid" value="${order.id}"
                                             class="flex-c-m stext-101 cl0 size-121 bg3 bor4 hov-btn3 p-lr-15 trans-04 pointer">
                                             ${order.id} | ${order.orderDate} | ${order.orderStatus.toString()}

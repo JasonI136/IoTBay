@@ -1,6 +1,7 @@
 package iotbay.database.collections;
 
 import iotbay.database.DatabaseManager;
+import iotbay.database.collections.metrics.OrderMetrics;
 import iotbay.enums.OrderStatus;
 import iotbay.models.Order;
 
@@ -18,12 +19,15 @@ public class Orders implements ModelDAO<Order> {
      */
     DatabaseManager db;
 
+    OrderMetrics metrics;
+
     /**
      * Initializes the orders collection with the database manager
      * @param db
      */
     public Orders(DatabaseManager db) {
         this.db = db;
+        this.metrics = new OrderMetrics(this);
     }
 
     /**
@@ -263,6 +267,14 @@ public class Orders implements ModelDAO<Order> {
     @Override
     public int count(String searchTerm) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public DatabaseManager getDb() {
+        return db;
+    }
+
+    public OrderMetrics getMetrics() {
+        return metrics;
     }
 
 }

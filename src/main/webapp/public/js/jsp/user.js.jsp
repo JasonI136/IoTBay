@@ -44,6 +44,11 @@
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.querySelector("#userDetailsForm").reset();
+                            window.location.reload();
+                        }
                     });
                 } else {
                     // Display an error message

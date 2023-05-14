@@ -13,7 +13,7 @@
     <head>
         <title>Login</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+
 
         <jsp:include page="components/common-header-html.jsp"/>
     </head>
@@ -53,6 +53,29 @@
                         <h4 class="mtext-105 cl2 txt-center p-b-30">
                             Login
                         </h4>
+                        <c:if test="${demo == true}">
+                            <div class="alert alert-warning" role="alert">
+                                <span>
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                This is a demo website. Please do not enter any sensitive information. Website is reset
+                                every 24 hours.
+                                </span>
+                            </div>
+
+                            <div class="alert alert-info" role="alert">
+                                Demo Admin Account: <br>
+                                <b>Username:</b> admin <br>
+                                <b>Password:</b> admin <br>
+                                Use this account to access the admin dashboard.
+                            </div>
+                            <div class="alert alert-info" role="alert">
+                                Demo Customer Account: <br>
+                                <b>Username:</b> customer <br>
+                                <b>Password:</b> customer
+                            </div>
+
+                        </c:if>
+
 
                         <div class="bor8 m-b-20 how-pos4-parent">
                             <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="username"

@@ -27,6 +27,8 @@ public class AdminServlet extends HttpServlet {
         routeManager.addRoute(HttpMethod.GET, "/user/\\d+", new AdminGetUserRoute());
         routeManager.addRoute(HttpMethod.GET, "/orders", new AdminOrdersRoute());
         routeManager.addRoute(HttpMethod.GET, "/logs", new AdminLogsRoute());
+        routeManager.addRoute(HttpMethod.GET, "/users/metrics/regPerMonth", new AdminUserMetricsRegPerMonthGetRoute());
+        routeManager.addRoute(HttpMethod.GET, "/orders/metrics/ordersPerMonth", new AdminOrderMetricsOrdersPerMonthGetRoute());
 
         routeManager.addRoute(HttpMethod.POST, "/product/\\d+", new AdminProductUpdateRoute());
         routeManager.addRoute(HttpMethod.POST, "/orders/\\d+", new AdminOrderUpdateRoute());

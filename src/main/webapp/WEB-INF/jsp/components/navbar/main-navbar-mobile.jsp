@@ -10,7 +10,7 @@
 <div class="wrap-header-mobile">
     <!-- Logo moblie -->
     <div class="logo-mobile">
-        <a href="index.html"><img src="${pageContext.request.contextPath}/public/images/logo-dark.png"
+        <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/public/images/logo-dark.png"
                                   alt="IMG-LOGO"></a>
     </div>
 

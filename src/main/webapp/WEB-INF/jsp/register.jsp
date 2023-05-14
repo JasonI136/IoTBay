@@ -10,7 +10,7 @@
     <head>
         <title>Register</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+
 
         <jsp:include page="components/common-header-html.jsp"/>
     </head>
@@ -50,9 +50,20 @@
                         <h4 class="mtext-105 cl2 txt-center p-b-30">
                             Register
                         </h4>
+
+                        <c:if test="${demo == true}">
+                            <div class="row alert alert-warning" role="alert">
+                                <span>
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    This is a demo website. Please do not enter any sensitive information. Website is reset
+                                    every 24 hours.
+                                </span>
+                            </div>
+                        </c:if>
+
                         <div class="row">
                             <div class="col bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username"
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text"  id="username"
                                        name="username" required placeholder="Your User Name">
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">

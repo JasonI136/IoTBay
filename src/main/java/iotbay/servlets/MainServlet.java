@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author cmesina
@@ -99,6 +100,7 @@ public class MainServlet extends HttpServlet {
             } catch (Exception e) {
                 throw new ServletException("Failed to query database: " + e.getMessage());
             }
+
 
 
             request.setAttribute("products", products);

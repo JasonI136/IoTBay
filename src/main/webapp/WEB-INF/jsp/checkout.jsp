@@ -83,9 +83,14 @@
                         <c:if test="${empty sessionScope.user.paymentMethods}">
                             <div class="p-t-50">
                                 <h2 class="mtext-105 cl2 p-b-30 txt-center">No available payments.</h2>
+                                <form action="${pageContext.request.contextPath}/user/payments/add?redirectUrl=/cart/checkout"
+                                      method="post">
+                                    <button type="submit"
+                                            class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+                                        Add Payment Method
+                                    </button>
+                                </form>
                             </div>
-
-
                         </c:if>
                         <c:if test="${not empty sessionScope.user.paymentMethods}">
                             <form class="card p-all-20">
@@ -102,25 +107,20 @@
                                         </c:forEach>
                                     </select>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="card-number" class="form-label">Credit Card Number:</label>
-                                    <input type="text" class="form-control" id="card-number"
-                                           placeholder="Enter your credit card number" value="" disabled>
-                                </div>
-                                <div class="mb-3 row">
-                                    <div class="col">
-                                        <label for="expiry" class="form-label">Expiration Date:</label>
-                                        <input type="text" class="form-control" id="expiry" placeholder="MM/YY"
-                                               disabled>
+                                <c:if test="${demo == true}">
+                                    <div class="alert alert-info" role="alert">
+                                        <span>
+                                            <i class="fa-sharp fa-solid fa-circle-info"></i>
+                                            Clicking pay will generate a fake payment intent on the Stripe Payment Processor. No actual payment will be made.
+                                        </span>
                                     </div>
-                                    <div class="col">
-                                        <label for="cvv" class="form-label">CVV:</label>
-                                        <input type="password" class="form-control" id="cvv"
-                                               placeholder="Enter CVV"
-                                               maxlength="3">
+                                    <div class="alert alert-warning" role="alert">
+                                        <span>
+                                            <i class="fa-solid fa-triangle-exclamation"></i>
+                                            This is a demo site. <b>You will not receive any actual product.</b>
+                                        </span>
                                     </div>
-
-                                </div>
+                                </c:if>
                                 <button type="submit" class="btn btn-primary btn-block" onclick="checkOut(event)"
                                         id="btn-pay">
                                     <span class="spinner-border spinner-border-sm" role="status"

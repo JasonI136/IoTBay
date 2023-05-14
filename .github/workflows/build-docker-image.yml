@@ -38,7 +38,7 @@ jobs:
         with:
           platforms: linux/amd64, linux/arm64/v8
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/iotbay:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/iotbay:latest
           file: ./dockerfile
           context: .
 

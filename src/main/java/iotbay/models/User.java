@@ -110,7 +110,7 @@ public class User implements Serializable {
      * <br>
      * <b>TABLE:</b> USER_ACCOUNT.phone_number
      */
-    private int phoneNumber;
+    private String phoneNumber;
 
     /**
      * Whether the user is a staff member.
@@ -162,7 +162,7 @@ public class User implements Serializable {
         this.lastName = rs.getString("last_name");
         this.email = rs.getString("email");
         this.address = rs.getString("address");
-        this.phoneNumber = rs.getInt("phone_number");
+        this.phoneNumber = rs.getString("phone_number");
         this.isStaff = rs.getBoolean("is_staff");
         this.stripeCustomerId = rs.getString("stripe_customer_id");
         this.registrationDate = rs.getTimestamp("registration_date");
@@ -190,13 +190,14 @@ public class User implements Serializable {
 
 
     /**
-     * Deletes a payment method associated with the user.
+     * "Deletes" (Hides) a payment method associated with the user.
      *
      * @param paymentMethod The payment method to delete.
      * @throws SQLException if there is an error deleting the payment method
      */
     public void deletePaymentMethod(PaymentMethod paymentMethod) throws Exception {
-        this.db.getPaymentMethods().deletePaymentMethod(paymentMethod);
+        paymentMethod.setDeleted(true);
+        this.db.getPaymentMethods().updatePaymentMethod(paymentMethod);
     }
 
     /**

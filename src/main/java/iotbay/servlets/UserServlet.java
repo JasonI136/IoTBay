@@ -6,6 +6,9 @@ package iotbay.servlets;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentMethod;
 import com.stripe.model.SetupIntent;
 import com.stripe.model.checkout.Session;
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * @author cmesina
@@ -57,7 +61,6 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
-
         switch (path) {
             case "/payments/add/success" -> addPaymentMethodSuccess(request, response);
             case "/payments/add/cancel" -> response.sendRedirect(getServletContext().getContextPath() + "/user");
@@ -112,13 +115,40 @@ public class UserServlet extends HttpServlet {
                 user.setUsername(username);
             }
 
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+            Phonenumber.PhoneNumber phoneNumber = null;
+            try {
+                phoneNumber = phoneUtil.parse(phone, "AU");
+                if (!phoneUtil.isValidNumber(phoneNumber)) {
+                    res.sendJsonResponse(
+                            GenericApiResponse.<String>builder()
+                                    .statusCode(400)
+                                    .message("Error")
+                                    .data("Invalid Australian phone number")
+                                    .error(true)
+                                    .build()
+                    );
+                    return;
+                }
+            } catch (Exception e) {
+                res.sendJsonResponse(
+                        GenericApiResponse.<String>builder()
+                                .statusCode(400)
+                                .message("Error")
+                                .data("Invalid Australian phone number")
+                                .error(true)
+                                .build()
+                );
+                return;
+            }
+
+
             if (firstname != null && address != null && email != null && phone != null && lastname != null) {
                 user.setFirstName(firstname);
                 user.setLastName(lastname);
                 user.setAddress(address);
                 user.setEmail(email);
-                int number = Integer.parseInt(phone);
-                user.setPhoneNumber(number);
+                user.setPhoneNumber(phoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164));
                 this.db.getUsers().updateUser(user);
             }
 
@@ -196,8 +226,18 @@ public class UserServlet extends HttpServlet {
         }
 
         try {
-            PaymentMethod stripePaymentMethod = PaymentMethod.retrieve(paymentMethod.getStripePaymentMethodId());
-            stripePaymentMethod.detach();
+            try {
+                PaymentMethod stripePaymentMethod = PaymentMethod.retrieve(paymentMethod.getStripePaymentMethodId());
+                stripePaymentMethod.detach();
+            } catch (StripeException e) {
+                if (e.getMessage().startsWith("The payment method you provided is not attached to a customer so detachment is impossible.")) {
+                    logger.warn("Payment method " + paymentMethod.getId() + " is not attached to a customer on Stripe");
+                } else {
+                    throw new ServletException(e);
+                }
+
+            }
+
             user.deletePaymentMethod(paymentMethod);
 
             logger.info("User " + user.getId() + " removed a payment method");
@@ -212,14 +252,38 @@ public class UserServlet extends HttpServlet {
     }
 
     private static void addPaymentMethod(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        SessionCreateParams params =
-                SessionCreateParams.builder()
-                        .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-                        .setMode(SessionCreateParams.Mode.SETUP)
-                        .setCustomer(((User) request.getSession().getAttribute("user")).getStripeCustomerId())
-                        .setSuccessUrl("http://localhost:8080/IoTBay/user/payments/add/success?session_id={CHECKOUT_SESSION_ID}")
-                        .setCancelUrl("http://localhost:8080/IoTBay/user/payments/add/cancel")
-                        .build();
+        String redirectUrl = request.getParameter("redirectUrl");
+
+        // get the host header
+        String host = request.getHeader("Host");
+
+        //get current http protocol
+        String protocol = request.getScheme();
+
+        if (request.getHeader("X-Forwarded-Proto") != null) {
+            protocol = request.getHeader("X-Forwarded-Proto");
+        }
+
+        SessionCreateParams params;
+        // check if the redirect url is valid
+        if (redirectUrl == null || redirectUrl.isEmpty()) {
+            params = SessionCreateParams.builder()
+                    .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                    .setMode(SessionCreateParams.Mode.SETUP)
+                    .setCustomer(((User) request.getSession().getAttribute("user")).getStripeCustomerId())
+                    .setSuccessUrl(String.format("%s://%s%s/user/payments/add/success?session_id={CHECKOUT_SESSION_ID}", protocol, host, request.getContextPath()))
+                    .setCancelUrl(String.format("%s://%s%s/user/payments/add/cancel", protocol, host, request.getContextPath()))
+                    .build();
+        } else {
+            params = SessionCreateParams.builder()
+                    .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                    .setMode(SessionCreateParams.Mode.SETUP)
+                    .setCustomer(((User) request.getSession().getAttribute("user")).getStripeCustomerId())
+                    .setSuccessUrl(String.format("%s://%s%s/user/payments/add/success?session_id={CHECKOUT_SESSION_ID}&redirectUrl=%s", protocol, host,request.getContextPath(), redirectUrl))
+                    .setCancelUrl(String.format("%s://%s%s/user/payments/add/cancel", protocol, host, request.getContextPath()))
+                    .build();
+        }
+
 
         try {
             Session session = Session.create(params);
@@ -249,6 +313,13 @@ public class UserServlet extends HttpServlet {
 
                 logger.info("User " + user.getId() + " added a new payment method");
                 iotbayLogger.info("User " + user.getId() + " added a new payment method");
+
+                String redirectUrl = request.getParameter("redirectUrl");
+
+                if (redirectUrl != null && !redirectUrl.isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + redirectUrl);
+                    return;
+                }
 
                 response.sendRedirect(request.getContextPath() + "/user");
             } catch (Exception e) {

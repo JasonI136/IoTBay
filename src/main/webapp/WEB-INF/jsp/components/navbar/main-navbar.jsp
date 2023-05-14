@@ -13,7 +13,7 @@
     <div class="wrap-menu-desktop">
         <nav class="limiter-menu-desktop container">
             <!-- Logo desktop -->
-            <a href="#" class="logo">
+            <a href="${pageContext.request.contextPath}/" class="logo">
                 <img src="${pageContext.request.contextPath}/public/images/logo-dark.png">
             </a>
 

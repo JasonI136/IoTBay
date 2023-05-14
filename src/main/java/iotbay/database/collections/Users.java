@@ -7,6 +7,7 @@ package iotbay.database.collections;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import iotbay.database.DatabaseManager;
+import iotbay.database.collections.metrics.UserMetrics;
 import iotbay.exceptions.UserExistsException;
 import iotbay.exceptions.UserNotFoundException;
 import iotbay.models.PaymentMethod;
@@ -51,6 +52,8 @@ public class Users implements ModelDAO<User> {
 
     private static final Logger logger = LogManager.getLogger(DatabaseManager.class);
 
+    private UserMetrics metrics;
+
     /**
      * Initalizes the users collection with the database manager
      *
@@ -58,6 +61,7 @@ public class Users implements ModelDAO<User> {
      */
     public Users(DatabaseManager db) {
         this.db = db;
+        this.metrics = new UserMetrics(this);
     }
 
     /**
@@ -105,6 +109,10 @@ public class Users implements ModelDAO<User> {
     public void registerUser(User newUser) throws SQLException, UserExistsException, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] salt = this.createSalt();
         byte[] passwordHash = this.encryptPassword(newUser.getPassword(), salt);
+
+        if (newUser.getRegistrationDate() == null) {
+            newUser.setRegistrationDate(new java.sql.Timestamp(System.currentTimeMillis()));
+        }
 
         newUser.setPassword(Base64.getEncoder().encodeToString(passwordHash));
         newUser.setPasswordSalt(Base64.getEncoder().encodeToString(salt));
@@ -223,7 +231,11 @@ public class Users implements ModelDAO<User> {
                             List<PaymentMethod> paymentMethods = new ArrayList<>();
 
                             while (paymentMethodsRs.next()) {
-                                paymentMethods.add(new PaymentMethod(paymentMethodsRs));
+                                PaymentMethod paymentMethod = new PaymentMethod(paymentMethodsRs);
+                                if (paymentMethod.isDeleted()) {
+                                    continue;
+                                }
+                                paymentMethods.add(paymentMethod);
                             }
 
                             User user = new User(this.db, userRs);
@@ -268,7 +280,11 @@ public class Users implements ModelDAO<User> {
                             List<PaymentMethod> paymentMethods = new ArrayList<>();
 
                             while (paymentMethodsRs.next()) {
-                                paymentMethods.add(new PaymentMethod(paymentMethodsRs));
+                                PaymentMethod paymentMethod = new PaymentMethod(paymentMethodsRs);
+                                if (paymentMethod.isDeleted()) {
+                                    continue;
+                                }
+                                paymentMethods.add(paymentMethod);
                             }
 
                             User user = new User(this.db, userRs);
@@ -378,7 +394,7 @@ public class Users implements ModelDAO<User> {
                 addUserQuery.setString(5, user.getLastName());
                 addUserQuery.setString(6, user.getEmail());
                 addUserQuery.setString(7, user.getAddress());
-                addUserQuery.setInt(8, user.getPhoneNumber());
+                addUserQuery.setString(8, user.getPhoneNumber());
                 addUserQuery.setString(9, user.getStripeCustomerId());
                 addUserQuery.setBoolean(10, user.isStaff());
                 addUserQuery.setTimestamp(11, user.getRegistrationDate());
@@ -435,7 +451,7 @@ public class Users implements ModelDAO<User> {
                 updateUserQuery.setString(3, user.getLastName());
                 updateUserQuery.setString(4, user.getEmail());
                 updateUserQuery.setString(5, user.getAddress());
-                updateUserQuery.setInt(6, user.getPhoneNumber());
+                updateUserQuery.setString(6, user.getPhoneNumber());
                 updateUserQuery.setString(7, user.getPassword());
                 updateUserQuery.setString(8, user.getPasswordSalt());
                 updateUserQuery.setBoolean(9, user.isStaff());
@@ -544,5 +560,13 @@ public class Users implements ModelDAO<User> {
         }
 
         return userList;
+    }
+
+    public UserMetrics getMetrics() {
+        return this.metrics;
+    }
+
+    public DatabaseManager getDb() {
+        return this.db;
     }
 }

@@ -53,6 +53,14 @@ public class PaymentMethod implements Serializable {
     private int cardLast4;
 
     /**
+     * Whether the payment method has been deleted
+     * <br>
+     * <br>
+     * <b>TABLE:</b> PAYMENT_METHOD.deleted
+     */
+    private boolean deleted;
+
+    /**
      * Empty constructor
      */
     public PaymentMethod() { }
@@ -68,6 +76,7 @@ public class PaymentMethod implements Serializable {
         this.stripePaymentMethodId = rs.getString("stripe_payment_method_id");
         this.paymentMethodType = rs.getString("payment_method_type");
         this.cardLast4 = rs.getInt("card_last_4");
+        this.deleted = rs.getBoolean("deleted");
     }
 
 }

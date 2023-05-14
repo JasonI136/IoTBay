@@ -4,9 +4,13 @@
  */
 package iotbay.servlets;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import com.stripe.exception.StripeException;
 import iotbay.database.DatabaseManager;
 import iotbay.exceptions.UserExistsException;
 import iotbay.models.User;
+import iotbay.models.httpResponses.GenericApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +20,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Properties;
 
 /**
- *
  * @author cmesina
  */
 public class RegisterServlet extends HttpServlet {
@@ -40,10 +44,10 @@ public class RegisterServlet extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -53,7 +57,7 @@ public class RegisterServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RegisterServlet</title>");            
+            out.println("<title>Servlet RegisterServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet RegisterServlet at " + request.getContextPath() + "</h1>");
@@ -63,62 +67,82 @@ public class RegisterServlet extends HttpServlet {
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String emailAddress = request.getParameter("email");
         String address = request.getParameter("address");
+        String phoneNumber = request.getParameter("phone");
+
+        if (!username.matches("^\\S+$")) {
+            request.setAttribute("error_title", "Error");
+            request.setAttribute("error_msg", "Username cannot contain spaces.");
+            request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
+        }
 
         // check if the fields are empty and return an error with the fields that are empty
-        if (username.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || emailAddress.isEmpty() || address.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || emailAddress.isEmpty() || address.isEmpty() || phoneNumber.isEmpty()) {
             request.setAttribute("error_title", "Empty fields");
             request.setAttribute("error_msg", "Please fill in all the fields.");
             request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
         }
 
-        int phoneNumber = 0;
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        Phonenumber.PhoneNumber phoneNum = null;
         try {
-           phoneNumber = Integer.parseInt(request.getParameter("phone"));
+            phoneNum = phoneUtil.parse(phoneNumber, "AU");
+            if (!phoneUtil.isValidNumber(phoneNum)) {
+                request.setAttribute("error_title", "Invalid phone number");
+                request.setAttribute("error_msg", "Please enter a valid Australian phone number.");
+                request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+                return;
+            }
         } catch (Exception e) {
             request.setAttribute("error_title", "Invalid phone number");
-            request.setAttribute("error_msg", "Please enter a valid phone number.");
+            request.setAttribute("error_msg", "Please enter a valid Australian phone number.");
             request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
         }
 
         // check email is valid
-        if (!emailAddress.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        if (!emailAddress.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
             request.setAttribute("error_title", "Invalid email address");
             request.setAttribute("error_msg", "Please enter a valid email address.");
             request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
         }
-        
+
         User newUser = new User((DatabaseManager) getServletContext().getAttribute("db"));
         newUser.setUsername(username);
         newUser.setPassword(password);
@@ -126,9 +150,9 @@ public class RegisterServlet extends HttpServlet {
         newUser.setLastName(lastName);
         newUser.setEmail(emailAddress);
         newUser.setAddress(address);
-        newUser.setPhoneNumber(phoneNumber);
+        newUser.setPhoneNumber(phoneUtil.format(phoneNum, PhoneNumberUtil.PhoneNumberFormat.E164));
         newUser.setRegistrationDate(new java.sql.Timestamp(System.currentTimeMillis()));
-        
+
         try {
             this.db.getUsers().registerUser(newUser);
         } catch (Exception e) {
@@ -138,9 +162,16 @@ public class RegisterServlet extends HttpServlet {
                 request.setAttribute("error_title", "User already exists");
                 request.setAttribute("error_msg", e.getMessage());
                 request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+                return;
             }
-            
-            throw new ServletException("An error occurred whilst registering " + username + ". " + e.getMessage());
+
+            logger.error("Registration Failed: " + e.getMessage());
+            iotbayLogger.error("Registration Failed: " + e.getMessage());
+            request.setAttribute("error_title", "Error");
+            request.setAttribute("error_msg", e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
+
         }
 
         logger.info("User " + username + " has been registered.");
@@ -149,7 +180,7 @@ public class RegisterServlet extends HttpServlet {
         request.setAttribute("success_title", "Registration successful");
         request.setAttribute("success_msg", "You have successfully registered. Please login to continue.");
         request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
-        
+
     }
 
     /**
@@ -161,6 +192,6 @@ public class RegisterServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-     
+
 
 }

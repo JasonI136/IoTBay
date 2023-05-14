@@ -116,7 +116,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.reset();
-                            window.location.reload();
+                            window.location.href = "${pageContext.request.contextPath}/admin/users";
                         }
                     });
                 } else {
