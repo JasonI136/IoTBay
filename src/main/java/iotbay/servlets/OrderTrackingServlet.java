@@ -7,6 +7,7 @@ package iotbay.servlets;
 import iotbay.database.DatabaseManager;
 import iotbay.models.Order;
 import iotbay.models.OrderLineItem;
+import iotbay.models.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,6 @@ import java.util.List;
 
 
 /**
- *
  * @author jasonmba
  */
 public class OrderTrackingServlet extends HttpServlet {
@@ -36,10 +36,10 @@ public class OrderTrackingServlet extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -62,10 +62,10 @@ public class OrderTrackingServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -76,27 +76,44 @@ public class OrderTrackingServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String orderIDString = request.getParameter("orderid");
+        String orderLastName = request.getParameter("lastname");
         if (orderIDString.isEmpty()) {
             request.setAttribute("error", "Please enter an order ID.");
             request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
             return;
         }
-        
+
         int orderID = Integer.parseInt(orderIDString);
 
         try {
             Order order = this.db.getOrders().getOrder(orderID);
             if (order != null) {
+                User orderUser = order.getUser();
+
+                if (orderUser == null) {
+                    request.setAttribute("error_title", "Error");
+                    request.setAttribute("error_msg", "Order could not be found.");
+                    request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
+                    return;
+                }
+
+                if (!orderUser.getLastName().equals(orderLastName)) {
+                    request.setAttribute("error_title", "Error");
+                    request.setAttribute("error_msg", "Order could not be found.");
+                    request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
+                    return;
+                }
+
                 request.setAttribute("order", order);
                 List<OrderLineItem> orderLineItemsList = this.db.getOrderLineItems().getOrderLineItems(orderID);
                 request.setAttribute("orderLineItemsList", orderLineItemsList);
@@ -106,6 +123,7 @@ public class OrderTrackingServlet extends HttpServlet {
                 request.setAttribute("error_msg", "Order could not be found.");
                 request.getRequestDispatcher("/WEB-INF/jsp/order-tracking.jsp").forward(request, response);
             }
+
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }

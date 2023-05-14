@@ -5,9 +5,12 @@
 package iotbay.servlets;
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import com.stripe.exception.StripeException;
 import iotbay.database.DatabaseManager;
 import iotbay.exceptions.UserExistsException;
 import iotbay.models.User;
+import iotbay.models.httpResponses.GenericApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -100,27 +103,44 @@ public class RegisterServlet extends HttpServlet {
         String address = request.getParameter("address");
         String phoneNumber = request.getParameter("phone");
 
+        if (!username.matches("^\\S+$")) {
+            request.setAttribute("error_title", "Error");
+            request.setAttribute("error_msg", "Username cannot contain spaces.");
+            request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
+        }
+
         // check if the fields are empty and return an error with the fields that are empty
         if (username.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || emailAddress.isEmpty() || address.isEmpty() || phoneNumber.isEmpty()) {
             request.setAttribute("error_title", "Empty fields");
             request.setAttribute("error_msg", "Please fill in all the fields.");
             request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
         }
 
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        Phonenumber.PhoneNumber phoneNum = null;
         try {
-            phoneUtil.parse(phoneNumber, "AU");
+            phoneNum = phoneUtil.parse(phoneNumber, "AU");
+            if (!phoneUtil.isValidNumber(phoneNum)) {
+                request.setAttribute("error_title", "Invalid phone number");
+                request.setAttribute("error_msg", "Please enter a valid Australian phone number.");
+                request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+                return;
+            }
         } catch (Exception e) {
             request.setAttribute("error_title", "Invalid phone number");
             request.setAttribute("error_msg", "Please enter a valid Australian phone number.");
             request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
         }
 
         // check email is valid
-        if (!emailAddress.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        if (!emailAddress.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
             request.setAttribute("error_title", "Invalid email address");
             request.setAttribute("error_msg", "Please enter a valid email address.");
             request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
         }
 
         User newUser = new User((DatabaseManager) getServletContext().getAttribute("db"));
@@ -130,7 +150,7 @@ public class RegisterServlet extends HttpServlet {
         newUser.setLastName(lastName);
         newUser.setEmail(emailAddress);
         newUser.setAddress(address);
-        newUser.setPhoneNumber(phoneNumber);
+        newUser.setPhoneNumber(phoneUtil.format(phoneNum, PhoneNumberUtil.PhoneNumberFormat.E164));
         newUser.setRegistrationDate(new java.sql.Timestamp(System.currentTimeMillis()));
 
         try {
@@ -142,9 +162,16 @@ public class RegisterServlet extends HttpServlet {
                 request.setAttribute("error_title", "User already exists");
                 request.setAttribute("error_msg", e.getMessage());
                 request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+                return;
             }
 
-            throw new ServletException("An error occurred whilst registering " + username + ". " + e.getMessage());
+            logger.error("Registration Failed: " + e.getMessage());
+            iotbayLogger.error("Registration Failed: " + e.getMessage());
+            request.setAttribute("error_title", "Error");
+            request.setAttribute("error_msg", e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
+            return;
+
         }
 
         logger.info("User " + username + " has been registered.");

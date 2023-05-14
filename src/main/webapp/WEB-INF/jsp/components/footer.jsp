@@ -16,7 +16,7 @@
 
                 <ul class="footer-sec-ul">
                     <li class="p-b-10">
-                        <a href="${pageContext.request.contextPath}/index" class="stext-107 cl7 hov-cl1 trans-04">
+                        <a href="${pageContext.request.contextPath}/" class="stext-107 cl7 hov-cl1 trans-04">
                             Home
                         </a>
                     </li>

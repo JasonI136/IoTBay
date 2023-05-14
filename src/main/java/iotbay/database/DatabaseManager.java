@@ -6,7 +6,6 @@ package iotbay.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import iotbay.annotations.GlobalServletField;
 import iotbay.database.collections.*;
 import iotbay.exceptions.UserExistsException;
 import iotbay.models.User;
@@ -39,61 +38,51 @@ public class DatabaseManager {
     /**
      * An instance of the users collection
      */
-    @GlobalServletField("users")
     private Users users;
 
     /**
      * An instance of the products collection
      */
-    @GlobalServletField("products")
     private Products products;
 
     /**
      * An instance of the categories collection
      */
-    @GlobalServletField("categories")
     private Categories categories;
 
     /**
      * An instance of the orders collection
      */
-    @GlobalServletField("orders")
     private Orders orders;
 
     /**
      * An instance of the order line items collection
      */
-    @GlobalServletField("orderLineItems")
     private OrderLineItems orderLineItems;
 
     /**
      * An instance of the payments collection
      */
-    @GlobalServletField("payments")
     private Payments payments;
 
     /**
      * An instance of the invoices collection
      */
-    @GlobalServletField("invoices")
     private Invoices invoices;
 
     /**
      * An instance of the shipments collection
      */
-    @GlobalServletField("shipments")
     private Shipments shipments;
 
     /**
      * An instance of the payment methods collection
      */
-    @GlobalServletField("paymentMethods")
     private PaymentMethods paymentMethods;
 
     /**
      * An instance of the logs collection
      */
-    @GlobalServletField("logs")
     private Logs logs;
 
     boolean skipAdminUserCreation;

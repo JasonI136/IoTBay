@@ -63,7 +63,7 @@
 
                         <div class="row">
                             <div class="col bor8 m-b-20 how-pos4-parent">
-                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" id="username"
+                                <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text"  id="username"
                                        name="username" required placeholder="Your User Name">
                                 <img class="how-pos4 pointer-none"
                                      src="${pageContext.request.contextPath}/public/images/icons/user.svg" alt="ICON">

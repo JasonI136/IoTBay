@@ -1,7 +1,6 @@
 package iotbay.listeners;
 
 import com.stripe.Stripe;
-import iotbay.annotations.GlobalServletField;
 import iotbay.database.DatabaseManager;
 import iotbay.database.StaticDatabaseManager;
 import iotbay.exceptions.ConfigMissingException;
@@ -18,7 +17,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -105,13 +103,6 @@ public class AppContextListener implements ServletContextListener {
         );
 
         StaticDatabaseManager.setInstance(db);
-
-        for (Field dbField : db.getClass().getDeclaredFields()) {
-            if (dbField.isAnnotationPresent(GlobalServletField.class)) {
-                dbField.setAccessible(true);
-                this.scx.setAttribute(dbField.getName(), dbField.get(db));
-            }
-        }
 
         this.scx.setAttribute("db", db);
         this.scx.setAttribute("appConfig", appConfig);
